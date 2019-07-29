@@ -142,6 +142,184 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker_build" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/07/29/docker_build/">Docker简单使用</a>
+    </h1>
+  
+
+        
+        <a href="/2019/07/29/docker_build/" class="archive-article-date">
+  	<time datetime="2019-07-29T07:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><h3 id="1-yum包更新到最新"><a href="#1-yum包更新到最新" class="headerlink" title="1.yum包更新到最新"></a>1.yum包更新到最新</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-安装需要的软件包"><a href="#2-安装需要的软件包" class="headerlink" title="2.安装需要的软件包"></a>2.安装需要的软件包</h3><h4 id="yum-util提供yum-config-manager功能，另外两个是devicemapper驱动依赖的"><a href="#yum-util提供yum-config-manager功能，另外两个是devicemapper驱动依赖的" class="headerlink" title="yum-util提供yum-config-manager功能，另外两个是devicemapper驱动依赖的"></a>yum-util提供yum-config-manager功能，另外两个是devicemapper驱动依赖的</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils decice-mapper-persistent-data lvm2</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-设置yum源为阿里云"><a href="#3-设置yum源为阿里云" class="headerlink" title="3.设置yum源为阿里云"></a>3.设置yum源为阿里云</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-安装Docker"><a href="#4-安装Docker" class="headerlink" title="4.安装Docker"></a>4.安装Docker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install docker-ce</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-安装完后查看Docker版本"><a href="#5-安装完后查看Docker版本" class="headerlink" title="5.安装完后查看Docker版本"></a>5.安装完后查看Docker版本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker -v</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-设置ustc的镜像源"><a href="#6-设置ustc的镜像源" class="headerlink" title="6.设置ustc的镜像源"></a>6.设置ustc的镜像源</h3><h4 id="编辑文件"><a href="#编辑文件" class="headerlink" title="编辑文件"></a>编辑文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;: [&quot;https://docker.mirrors.ustc.edu.cn&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-拉取镜像"><a href="#7-拉取镜像" class="headerlink" title="7.拉取镜像"></a>7.拉取镜像</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull + 镜像名称</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-删除镜像"><a href="#8-删除镜像" class="headerlink" title="8.删除镜像"></a>8.删除镜像</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi + 镜像ID</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-删除所有镜像"><a href="#9-删除所有镜像" class="headerlink" title="9.删除所有镜像"></a>9.删除所有镜像</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi `docker images -q`</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-交互方式创建容器"><a href="#10-交互方式创建容器" class="headerlink" title="10.交互方式创建容器"></a>10.交互方式创建容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name=容器名 镜像名：标签 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-退出当前容器"><a href="#11-退出当前容器" class="headerlink" title="11.退出当前容器"></a>11.退出当前容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-查看运行容器"><a href="#12-查看运行容器" class="headerlink" title="12.查看运行容器"></a>12.查看运行容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-查看所有容器"><a href="#13-查看所有容器" class="headerlink" title="13.查看所有容器"></a>13.查看所有容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-查看最后一次运行的"><a href="#14-查看最后一次运行的" class="headerlink" title="14.查看最后一次运行的"></a>14.查看最后一次运行的</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -l</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-查看停止的"><a href="#15-查看停止的" class="headerlink" title="15.查看停止的"></a>15.查看停止的</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -f status=exited</span><br></pre></td></tr></table></figure>
+
+<h3 id="16-守护方式创建容器"><a href="#16-守护方式创建容器" class="headerlink" title="16.守护方式创建容器"></a>16.守护方式创建容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run di --name=容器名 镜像名：标签</span><br></pre></td></tr></table></figure>
+
+<h3 id="17-登录守护容器"><a href="#17-登录守护容器" class="headerlink" title="17.登录守护容器"></a>17.登录守护容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 容器名（或容器id） /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-停止启动容器"><a href="#18-停止启动容器" class="headerlink" title="18.停止启动容器"></a>18.停止启动容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop/start 容器名称（id）</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-文件拷贝"><a href="#19-文件拷贝" class="headerlink" title="19.文件拷贝"></a>19.文件拷贝</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">拷贝到容器内（拷贝到外，相反）</span><br><span class="line">docker cp 需要拷贝的文件或者目录 容器名称：容器目录</span><br></pre></td></tr></table></figure>
+
+<h3 id="20-目录挂载"><a href="#20-目录挂载" class="headerlink" title="20.目录挂载"></a>20.目录挂载</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di -v /usr/loacl/myhtml:/usr/loacl/myhtml --name=mycentos centos:7</span><br></pre></td></tr></table></figure>
+
+<h3 id="21-查看IP地址"><a href="#21-查看IP地址" class="headerlink" title="21.查看IP地址"></a>21.查看IP地址</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker inspect 容器名称（id）</span><br><span class="line">或者</span><br><span class="line">docker inspect --format=&apos;&#123;&#123;.NetworkSettings.IPAddress&#125;&#125;&apos; 容器名称（id）</span><br></pre></td></tr></table></figure>
+
+<h3 id="22-删除容器"><a href="#22-删除容器" class="headerlink" title="22.删除容器"></a>22.删除容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm 容器名</span><br></pre></td></tr></table></figure>
+
+<h2 id="Mysql部署"><a href="#Mysql部署" class="headerlink" title="Mysql部署"></a>Mysql部署</h2><h3 id="1-拉取Mysql镜像"><a href="#1-拉取Mysql镜像" class="headerlink" title="1.拉取Mysql镜像"></a>1.拉取Mysql镜像</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建容器"><a href="#2-创建容器" class="headerlink" title="2.创建容器"></a>2.创建容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name=tensqure_mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-p为端口映射，宿主机映射端口：容器运行端口</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-e 代表添加环境变量MYSQL_ROOT_PASSWORD是root的用户密码</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-进入mysql容器"><a href="#3-进入mysql容器" class="headerlink" title="3.进入mysql容器"></a>3.进入mysql容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it tensqure_mysql /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-登录mysql"><a href="#4-登录mysql" class="headerlink" title="4.登录mysql"></a>4.登录mysql</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<h2 id="tomcat部署"><a href="#tomcat部署" class="headerlink" title="tomcat部署"></a>tomcat部署</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull tomcat:7-jre7</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name=mytomcat -p 8080:8080</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-v /usr/loacl/webapps:/usr/loacl/tomcat/webapps tomcat:7-jre7</span><br></pre></td></tr></table></figure>
+
+<h2 id="nginx部署"><a href="#nginx部署" class="headerlink" title="nginx部署"></a>nginx部署</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name=mynginx -p80:80 nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="redis部署"><a href="#redis部署" class="headerlink" title="redis部署"></a>redis部署</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name=myredis -p 6379:6379 redis</span><br></pre></td></tr></table></figure>
+
+<h2 id="迁移与备份"><a href="#迁移与备份" class="headerlink" title="迁移与备份"></a>迁移与备份</h2><h3 id="保存为镜像"><a href="#保存为镜像" class="headerlink" title="保存为镜像"></a>保存为镜像</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit mynginx mynginx_i</span><br></pre></td></tr></table></figure>
+
+<h3 id="将镜像保存为tar文件"><a href="#将镜像保存为tar文件" class="headerlink" title="将镜像保存为tar文件"></a>将镜像保存为tar文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o mynginx.tar mynginx_i</span><br></pre></td></tr></table></figure>
+
+<h3 id="镜像迁移和恢复"><a href="#镜像迁移和恢复" class="headerlink" title="镜像迁移和恢复"></a>镜像迁移和恢复</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load -i mynginx.tar</span><br></pre></td></tr></table></figure>
+
+<h2 id="Dockerfile构建"><a href="#Dockerfile构建" class="headerlink" title="Dockerfile构建"></a>Dockerfile构建</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi Dockerfile</span><br></pre></td></tr></table></figure>
+
+<pre><code>FROM centos:7
+MAINTAINER loki
+WORKDIR /usr
+RUN mkdir /usr/local/java
+ADD jdk-8u211-linux-x64.tar.gz /usr/local/java
+
+ENV JAVA_HOME /usr/local/java/jdk.1.8.0_211
+ENV JRE_HOME $JAVA_HOME/jre
+ENV CLASSPATH $JAVA_HOME/bin/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib:$CLASSPATH
+ENV PATH $JAVA_HOME/bin:$PATH</code></pre><h3 id="然后"><a href="#然后" class="headerlink" title="然后"></a>然后</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t=&apos;jdk1.8&apos;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Docker私有仓库构建"><a href="#Docker私有仓库构建" class="headerlink" title="Docker私有仓库构建"></a>Docker私有仓库构建</h2><pre><code>docker pull registry
+
+docker run -di --name=registry -p 5000:5000 registry</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">访问地址+/v2/_catalog</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改daemon-json"><a href="#修改daemon-json" class="headerlink" title="修改daemon.json"></a>修改daemon.json</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">添加：&#123;&quot;insecure-registries&quot;:[&quot;192.168.16.40:5000&quot;]&#125;  让docker信任私有仓库地址</span><br></pre></td></tr></table></figure>
+
+<h2 id="镜像上传"><a href="#镜像上传" class="headerlink" title="镜像上传"></a>镜像上传</h2><pre><code>docker tag jdk1.8 192.168.16.40:5000/jdk1.8
+
+docker push 192.168.16.40:5000/jdk1.8</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/07/29/docker_build/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ps" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -310,6 +488,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
               </li>
             
             <div class="clearfix"></div>
