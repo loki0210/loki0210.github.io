@@ -16,10 +16,12 @@
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
 <meta property="og:description" content="Dagger2较其它依赖注入工具有一个优势，就是它是采用静态编译的方式编译代码的，会在编译期生成好辅助代码，不会影响运行时性能，这一点非常适合用于移动端。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-10T03:41:12.847Z">
+<meta property="og:image" content="https://i.imgur.com/94mRc4X.jpg">
+<meta property="og:updated_time" content="2019-09-11T10:35:06.620Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dagger2">
 <meta name="twitter:description" content="Dagger2较其它依赖注入工具有一个优势，就是它是采用静态编译的方式编译代码的，会在编译期生成好辅助代码，不会影响运行时性能，这一点非常适合用于移动端。">
+<meta name="twitter:image" content="https://i.imgur.com/94mRc4X.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -163,9 +165,14 @@
       
         <p>Dagger2较其它依赖注入工具有一个优势，就是它是采用静态编译的方式编译代码的，会在编译期生成好辅助代码，不会影响运行时性能，这一点非常适合用于移动端。</p>
 <a id="more"></a>
-
-
-
+<p>##依赖注入的好处</p>
+<p>###依赖注入就是调用者需要的另一个对象实例不在调用者内部实现，而是通过一定的方式从外部传入实例，解决了各个类之间的耦合。通俗一点讲：将该对象的实例化交给其调用者，通过某种方式传入进来，这种模式就是依赖注入。</p>
+<p>###常见的降低耦合的方式：</p>
+<ol>
+<li>构造方法注入。</li>
+<li>Setter方式注入。</li>
+<li>接口注入。<br>###Dagger2 的原理是在编译期生成相应的依赖注入代码。<br>##注解使用<br><img src="https://i.imgur.com/94mRc4X.jpg" alt></li>
+</ol>
 
       
 
