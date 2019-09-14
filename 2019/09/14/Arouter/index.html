@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
 <meta property="og:description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-14T14:14:33.351Z">
+<meta property="og:updated_time" content="2019-09-14T14:18:17.799Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Arouter">
 <meta name="twitter:description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
@@ -163,9 +163,7 @@
       
         <h3 id="一个用于帮助-Android-App-进行组件化改造的框架-——-支持模块间的路由、通信、解耦"><a href="#一个用于帮助-Android-App-进行组件化改造的框架-——-支持模块间的路由、通信、解耦" class="headerlink" title="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦"></a>一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦</h3><a id="more"></a>
 
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h4 id="1-在工程build-gradle中添加"><a href="#1-在工程build-gradle中添加" class="headerlink" title="1. 在工程build.gradle中添加"></a>1. 在工程build.gradle中添加</h4> <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">classpath</span> <span class="string">'com.alibaba:arouter-register:1.0.2'</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="2-在工程中添加arouter-gradle文件"><a href="#2-在工程中添加arouter-gradle文件" class="headerlink" title="2. 在工程中添加arouter.gradle文件"></a>2. 在工程中添加arouter.gradle文件</h4><pre><code> apply plugin: &apos;com.alibaba.arouter&apos;
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h4 id="1-在工程build-gradle中添加"><a href="#1-在工程build-gradle中添加" class="headerlink" title="1. 在工程build.gradle中添加"></a>1. 在工程build.gradle中添加</h4><pre><code>classpath &apos;com.alibaba:arouter-register:1.0.2&apos;</code></pre><h4 id="2-在工程中添加arouter-gradle文件"><a href="#2-在工程中添加arouter-gradle文件" class="headerlink" title="2. 在工程中添加arouter.gradle文件"></a>2. 在工程中添加arouter.gradle文件</h4><pre><code>apply plugin: &apos;com.alibaba.arouter&apos;
 
 android{
 defaultConfig {
@@ -181,7 +179,7 @@ defaultConfig {
 dependencies {
 annotationProcessor &apos;com.alibaba:arouter-compiler:1.2.2&apos;
 api &apos;com.alibaba:arouter-api:1.5.0&apos;
-}</code></pre>
+}</code></pre><h3 id="3-在各module中的build-gradle中导入arouter-gradle"><a href="#3-在各module中的build-gradle中导入arouter-gradle" class="headerlink" title="3.在各module中的build.gradle中导入arouter.gradle"></a>3.在各module中的build.gradle中导入arouter.gradle</h3><pre><code>apply from: &apos;../arouter.gradle&apos;</code></pre>
       
 
       
