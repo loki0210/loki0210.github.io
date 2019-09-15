@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
 <meta property="og:description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-14T15:09:05.327Z">
+<meta property="og:updated_time" content="2019-09-15T10:04:16.354Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Arouter">
 <meta name="twitter:description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
@@ -185,6 +185,37 @@ api &apos;com.alibaba:arouter-api:1.5.0&apos;
 public class YourActivity extend Activity {
 ...
 }</code></pre><h3 id="详情见官方文档"><a href="#详情见官方文档" class="headerlink" title="详情见官方文档"></a>详情见官方文档</h3><p><a href="https://github.com/alibaba/ARouter/blob/master/README_CN.md" title="Arouter" target="_blank" rel="noopener">https://github.com/alibaba/ARouter/blob/master/README_CN.md</a></p>
+<h3 id="注意scheme-host问题"><a href="#注意scheme-host问题" class="headerlink" title="注意scheme host问题"></a>注意scheme host问题</h3><pre><code> /**
+ * example : app://account/login?a=b =&gt; /_app_/_account_/login?a=b
+ * @param content
+ * @return
+ * 将scheme host格式转换位Arouter可使用的格式，才能路由跳转
+ */
+private static String wrapPathQuery(String content){
+    try {
+        Uri uri = Uri.parse(content);
+        if (!TextUtils.isEmpty(uri.getScheme()) &amp;&amp; !TextUtils.isEmpty(uri.getHost())) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(&quot;/_&quot;);
+            stringBuilder.append(uri.getScheme());
+            stringBuilder.append(&quot;_/_&quot;);
+            stringBuilder.append(uri.getHost());
+            stringBuilder.append(&quot;_&quot;);
+            stringBuilder.append(uri.getPath());
+            //添加query
+            String splits []=content.split(&quot;\\?&quot;);
+            if(splits.length&gt;1){
+                stringBuilder.append(&quot;?&quot;);
+                stringBuilder.append(splits[1]);
+            }
+            Log.e(&quot;sssssss&quot;,stringBuilder.toString());
+            return stringBuilder.toString();
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return content;
+}</code></pre><h3 id="Arouter测试使用地址"><a href="#Arouter测试使用地址" class="headerlink" title="Arouter测试使用地址"></a>Arouter测试使用地址</h3><p><a href="https://github.com/loki0210/MyArouter/tree/master" title="Arouter测试" target="_blank" rel="noopener">https://github.com/loki0210/MyArouter/tree/master</a></p>
 
       
 
