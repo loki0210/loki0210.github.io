@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://www.shiguangyilao.cn">
-  <title>Arouter | Zihuatanejo&#39;s Blog</title>
+  <title>Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
-<meta name="keywords" content="IT技术,Android">
+  <meta name="description" content="#公开课之面试题详解  ###1. Java基础高级部分  集合部分  java中的引用类型    强引用  软引用 SoftReference 弱引用 WeakRefrence 虚引用 PhantomReference    对象的可及性： 强可及对象，永远都不会被GC回收。 软可及对象：当系统内存不足的时候，被GC回收。 弱可及对象：当系统GC发现这个对象，就被回收。     多线程线程池部分">
+<meta name="keywords" content="Android">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Arouter">
-<meta property="og:url" content="http://www.shiguangyilao.cn/2019/09/14/Arouter/index.html">
+<meta property="og:title" content="Zihuatanejo&#39;s Blog">
+<meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/06/面试详解/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
+<meta property="og:description" content="#公开课之面试题详解  ###1. Java基础高级部分  集合部分  java中的引用类型    强引用  软引用 SoftReference 弱引用 WeakRefrence 虚引用 PhantomReference    对象的可及性： 强可及对象，永远都不会被GC回收。 软可及对象：当系统内存不足的时候，被GC回收。 弱可及对象：当系统GC发现这个对象，就被回收。     多线程线程池部分">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-15T10:04:16.354Z">
+<meta property="og:updated_time" content="2019-09-24T01:59:38.098Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Arouter">
-<meta name="twitter:description" content="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦">
+<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
+<meta name="twitter:description" content="#公开课之面试题详解  ###1. Java基础高级部分  集合部分  java中的引用类型    强引用  软引用 SoftReference 弱引用 WeakRefrence 虚引用 PhantomReference    对象的可及性： 强可及对象，永远都不会被GC回收。 软可及对象：当系统内存不足的时候，被GC回收。 弱可及对象：当系统GC发现这个对象，就被回收。     多线程线程池部分">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -141,81 +141,123 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Arouter" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-面试详解" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Arouter
-    </h1>
-  
-
-        
-        <a href="/2019/09/14/Arouter/" class="archive-article-date">
-  	<time datetime="2019-09-14T02:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-14</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="一个用于帮助-Android-App-进行组件化改造的框架-——-支持模块间的路由、通信、解耦"><a href="#一个用于帮助-Android-App-进行组件化改造的框架-——-支持模块间的路由、通信、解耦" class="headerlink" title="一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦"></a>一个用于帮助 Android App 进行组件化改造的框架 —— 支持模块间的路由、通信、解耦</h3><a id="more"></a>
-
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h4 id="1-在工程build-gradle中添加"><a href="#1-在工程build-gradle中添加" class="headerlink" title="1. 在工程build.gradle中添加"></a>1. 在工程build.gradle中添加</h4><pre><code>classpath &apos;com.alibaba:arouter-register:1.0.2&apos;</code></pre><h4 id="2-在工程中添加arouter-gradle文件"><a href="#2-在工程中添加arouter-gradle文件" class="headerlink" title="2. 在工程中添加arouter.gradle文件"></a>2. 在工程中添加arouter.gradle文件</h4><pre><code>apply plugin: &apos;com.alibaba.arouter&apos;
-
-android{
-defaultConfig {
-    //arouter配置
-    javaCompileOptions {
-        annotationProcessorOptions {
-            arguments = [AROUTER_MODULE_NAME: project.getName()，AROUTER_GENERATE_DOC: &quot;enable&quot;]
-            }
-        }
-    }
-}
-
-dependencies {
-annotationProcessor &apos;com.alibaba:arouter-compiler:1.2.2&apos;
-api &apos;com.alibaba:arouter-api:1.5.0&apos;
-}</code></pre><h3 id="3-在各module中的build-gradle中导入arouter-gradle"><a href="#3-在各module中的build-gradle中导入arouter-gradle" class="headerlink" title="3.在各module中的build.gradle中导入arouter.gradle"></a>3.在各module中的build.gradle中导入arouter.gradle</h3><pre><code>apply from: &apos;../arouter.gradle&apos;</code></pre><h3 id="4-添加注解"><a href="#4-添加注解" class="headerlink" title="4.添加注解"></a>4.添加注解</h3><pre><code>// 在支持路由的页面上添加注解(必选)
-// 这里的路径需要注意的是至少需要有两级，/xx/xx
-@Route(path = &quot;/test/activity&quot;)
-public class YourActivity extend Activity {
-...
-}</code></pre><h3 id="详情见官方文档"><a href="#详情见官方文档" class="headerlink" title="详情见官方文档"></a>详情见官方文档</h3><p><a href="https://github.com/alibaba/ARouter/blob/master/README_CN.md" title="Arouter" target="_blank" rel="noopener">https://github.com/alibaba/ARouter/blob/master/README_CN.md</a></p>
-<h3 id="注意scheme-host问题"><a href="#注意scheme-host问题" class="headerlink" title="注意scheme host问题"></a>注意scheme host问题</h3><pre><code> /**
- * example : app://account/login?a=b =&gt; /_app_/_account_/login?a=b
- * @param content
- * @return
- * 将scheme host格式转换位Arouter可使用的格式，才能路由跳转
- */
-private static String wrapPathQuery(String content){
-    try {
-        Uri uri = Uri.parse(content);
-        if (!TextUtils.isEmpty(uri.getScheme()) &amp;&amp; !TextUtils.isEmpty(uri.getHost())) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(&quot;/_&quot;);
-            stringBuilder.append(uri.getScheme());
-            stringBuilder.append(&quot;_/_&quot;);
-            stringBuilder.append(uri.getHost());
-            stringBuilder.append(&quot;_&quot;);
-            stringBuilder.append(uri.getPath());
-            //添加query
-            String splits []=content.split(&quot;\\?&quot;);
-            if(splits.length&gt;1){
-                stringBuilder.append(&quot;?&quot;);
-                stringBuilder.append(splits[1]);
-            }
-            Log.e(&quot;sssssss&quot;,stringBuilder.toString());
-            return stringBuilder.toString();
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return content;
-}</code></pre><h3 id="Arouter测试使用地址"><a href="#Arouter测试使用地址" class="headerlink" title="Arouter测试使用地址"></a>Arouter测试使用地址</h3><p><a href="https://github.com/loki0210/MyArouter/tree/master" title="Arouter测试" target="_blank" rel="noopener">https://github.com/loki0210/MyArouter/tree/master</a></p>
+        <p>#公开课之面试题详解</p>
+<hr>
+<p>###1. Java基础高级部分</p>
+<ol>
+<li><p>集合部分</p>
+</li>
+<li><p>java中的引用类型</p>
+</li>
+</ol>
+<ul>
+<li>强引用 </li>
+<li>软引用 SoftReference</li>
+<li>弱引用 WeakRefrence</li>
+<li>虚引用 PhantomReference </li>
+</ul>
+<ul>
+<li>对象的可及性：<ul>
+<li>强可及对象，永远都不会被GC回收。</li>
+<li>软可及对象：当系统内存不足的时候，被GC回收。</li>
+<li>弱可及对象：当系统GC发现这个对象，就被回收。</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>多线程线程池部分</li>
+</ol>
+<ul>
+<li>需求：控制一个方法的并发量，比如同时只能有5个线程进来。</li>
+</ul>
+<p>###2. Android基础必问（必回）部分</p>
+<ol>
+<li><p>Android中的IOC（DI）框架</p>
+<ul>
+<li>ViewUtils（xUtils中的四大部分之一）</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><p>自定义注解+反射</p>
+</li>
+<li><p>IOC ： Inverse of Controller  控制反转。 </p>
+</li>
+<li><p>DI ： Dependency Inject 依赖注入</p>
+</li>
+<li><p>GitHub 全球最大的同性（代码托管）交友平台。</p>
+</li>
+</ul>
+<p>###3. Android高级部分</p>
+<ol>
+<li>Android中Handler源码详解（让子线程给主线程发送消息，反过来。）</li>
+</ol>
+<ul>
+<li><p>Looper.prepare</p>
+<ul>
+<li>创建了Looper对象，在构造函数中创建了MessageQueue</li>
+<li>然后将Looper对象通过ThreadLocal跟当前的主线程绑定</li>
+</ul>
+</li>
+<li><p>new handler();</p>
+<ul>
+<li>通过Looper类中的ThreadLocal从主线程中获取到了Looper对象</li>
+<li>然后通过Looper对象获取到了MessageQueue的引用</li>
+</ul>
+</li>
+<li><p>handler.sendMsg();</p>
+<ul>
+<li>找到MessageQueue对象</li>
+<li>然后msg.target=this,将handler对象成为msg的一个成员变量</li>
+<li>最后把msg添加到MessageQueue中</li>
+</ul>
+</li>
+<li><p>Looper.loop();</p>
+<ul>
+<li>找到MessageQueue</li>
+<li>然后开启死循环遍历MessageQueue池</li>
+<li>当获取到msg的时候，通过msg.target找到发送这个msg的handler</li>
+<li>然后调用handler的dispatchMessage</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>Fragment的回退栈管理（手动维护回退栈）</li>
+</ol>
+<p>###4. Android高级部分</p>
+<ol>
+<li>Serializable和Parcelable的区别   Intent可以传递数据类型有哪些？</li>
+</ol>
+<ul>
+<li><p>Serializable是javaSE实现的用于对象的序列化的接口，而Parcelable是Android推出的用于序列化的接口。</p>
+</li>
+<li><p>transient 关键字的作用</p>
+</li>
+</ul>
+<ol start="2">
+<li>Activity状态的保存（笔试形式）</li>
+</ol>
+<ol start="3">
+<li>自定义权限</li>
+</ol>
+<ol start="4">
+<li>IntentService的使用</li>
+</ol>
+<ul>
+<li>Service<ul>
+<li>startService启动 那么启动的Service就一直（相对来说）在后台运行，与启动该Service的其他组件的生命周期没关系</li>
+<li>bindService启动 如果是Activity启动的，那么当这个Activity销毁的时候Service也销毁</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>假设我们有这样的需求：我们想让一个Service帮我们干一个比较耗时的工作（比如下载大文件），当Service干完活后自动销毁（目的是为了节省内存）。</li>
+</ul>
 
       
 
@@ -224,21 +266,6 @@ private static String wrapPathQuery(String content){
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
@@ -289,7 +316,7 @@ private static String wrapPathQuery(String content){
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.shiguangyilao.cn/2019/09/14/Arouter/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.shiguangyilao.cn/2019/10/06/面试详解/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -303,18 +330,9 @@ private static String wrapPathQuery(String content){
   
 <nav id="article-nav">
   
-    <a href="/2019/10/06/面试详解/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/09/11/flutter/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Flutter</div>
+    <a href="/2019/09/14/Arouter/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Arouter</div>
       <i class="icon-circle-right"></i>
     </a>
   
