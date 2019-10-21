@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://www.shiguangyilao.cn">
   <title>自定义控件 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.1：分类自定义View的实现方式有以下几种类型    | 定义自定义组合控件 | （多个控件组合成为一个新的控件，方便多处复用）继承系统View控件 | （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）继承View | （不复用系统控件逻辑，继承View进行功能定义）继承系统ViewGroup | （继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展）">
+  <meta name="description" content="1.1：分类自定义View的实现方式有以下几种   表头 表头    单元格 单元格   单元格 单元格   类型 定义   自定义组合控件 （多个控件组合成为一个新的控件，方便多处复用）   继承系统View控件 （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）   继承View （不复用系统控件逻辑，继承View进行功能定义）   继承系统ViewGroup （继承自Lin">
 <meta name="keywords" content="IT技术,Android,kotlin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="自定义控件">
 <meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/21/自定义view/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="1.1：分类自定义View的实现方式有以下几种类型    | 定义自定义组合控件 | （多个控件组合成为一个新的控件，方便多处复用）继承系统View控件 | （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）继承View | （不复用系统控件逻辑，继承View进行功能定义）继承系统ViewGroup | （继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展）">
+<meta property="og:description" content="1.1：分类自定义View的实现方式有以下几种   表头 表头    单元格 单元格   单元格 单元格   类型 定义   自定义组合控件 （多个控件组合成为一个新的控件，方便多处复用）   继承系统View控件 （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）   继承View （不复用系统控件逻辑，继承View进行功能定义）   继承系统ViewGroup （继承自Lin">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-21T07:48:28.981Z">
+<meta property="og:updated_time" content="2019-10-21T07:56:35.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义控件">
-<meta name="twitter:description" content="1.1：分类自定义View的实现方式有以下几种类型    | 定义自定义组合控件 | （多个控件组合成为一个新的控件，方便多处复用）继承系统View控件 | （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）继承View | （不复用系统控件逻辑，继承View进行功能定义）继承系统ViewGroup | （继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展）">
+<meta name="twitter:description" content="1.1：分类自定义View的实现方式有以下几种   表头 表头    单元格 单元格   单元格 单元格   类型 定义   自定义组合控件 （多个控件组合成为一个新的控件，方便多处复用）   继承系统View控件 （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）   继承View （不复用系统控件逻辑，继承View进行功能定义）   继承系统ViewGroup （继承自Lin">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -161,7 +161,46 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-1：分类"><a href="#1-1：分类" class="headerlink" title="1.1：分类"></a>1.1：分类</h2><h3 id="自定义View的实现方式有以下几种"><a href="#自定义View的实现方式有以下几种" class="headerlink" title="自定义View的实现方式有以下几种"></a>自定义View的实现方式有以下几种</h3><p>类型    | 定义<br>自定义组合控件 | （多个控件组合成为一个新的控件，方便多处复用）<br>继承系统View控件 | （继承自TextView等系统控件，在系统控件的基础功能上进行扩展）<br>继承View | （不复用系统控件逻辑，继承View进行功能定义）<br>继承系统ViewGroup | （继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展）<br>继承ViewViewGroup | （不复用系统控件逻辑，继承ViewGroup进行功能定义）</p>
+        <h2 id="1-1：分类"><a href="#1-1：分类" class="headerlink" title="1.1：分类"></a>1.1：分类</h2><h3 id="自定义View的实现方式有以下几种"><a href="#自定义View的实现方式有以下几种" class="headerlink" title="自定义View的实现方式有以下几种"></a>自定义View的实现方式有以下几种</h3><table>
+<thead>
+<tr>
+<th>表头</th>
+<th>表头</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单元格</td>
+<td>单元格</td>
+</tr>
+<tr>
+<td>单元格</td>
+<td>单元格</td>
+</tr>
+<tr>
+<td>类型</td>
+<td>定义</td>
+</tr>
+<tr>
+<td>自定义组合控件</td>
+<td>（多个控件组合成为一个新的控件，方便多处复用）</td>
+</tr>
+<tr>
+<td>继承系统View控件</td>
+<td>（继承自TextView等系统控件，在系统控件的基础功能上进行扩展）</td>
+</tr>
+<tr>
+<td>继承View</td>
+<td>（不复用系统控件逻辑，继承View进行功能定义）</td>
+</tr>
+<tr>
+<td>继承系统ViewGroup</td>
+<td>（继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展）</td>
+</tr>
+<tr>
+<td>继承ViewViewGroup</td>
+<td>（不复用系统控件逻辑，继承ViewGroup进行功能定义）</td>
+</tr>
+</tbody></table>
 <pre><code>private val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) } //懒加载定义画笔</code></pre>
       
 
