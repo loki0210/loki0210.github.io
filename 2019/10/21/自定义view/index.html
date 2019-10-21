@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://www.shiguangyilao.cn">
   <title>自定义控件 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.1：分类自定义View的实现方式有以下几种">
+  <meta name="description" content="1.1：分类自定义View的实现方式有以下几种参考https://www.jianshu.com/p/705a6cb6bfee">
 <meta name="keywords" content="IT技术,Android,kotlin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="自定义控件">
 <meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/21/自定义view/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="1.1：分类自定义View的实现方式有以下几种">
+<meta property="og:description" content="1.1：分类自定义View的实现方式有以下几种参考https://www.jianshu.com/p/705a6cb6bfee">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-21T08:16:01.564Z">
+<meta property="og:updated_time" content="2019-10-21T12:22:16.895Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义控件">
-<meta name="twitter:description" content="1.1：分类自定义View的实现方式有以下几种">
+<meta name="twitter:description" content="1.1：分类自定义View的实现方式有以下几种参考https://www.jianshu.com/p/705a6cb6bfee">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -161,7 +161,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-1：分类"><a href="#1-1：分类" class="headerlink" title="1.1：分类"></a>1.1：分类</h2><h3 id="自定义View的实现方式有以下几种"><a href="#自定义View的实现方式有以下几种" class="headerlink" title="自定义View的实现方式有以下几种"></a>自定义View的实现方式有以下几种</h3><a id="more"></a>
+        <h2 id="1-1：分类"><a href="#1-1：分类" class="headerlink" title="1.1：分类"></a>1.1：分类</h2><h3 id="自定义View的实现方式有以下几种"><a href="#自定义View的实现方式有以下几种" class="headerlink" title="自定义View的实现方式有以下几种"></a>自定义View的实现方式有以下几种</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://www.jianshu.com/p/705a6cb6bfee" title="自定义view" target="_blank" rel="noopener">https://www.jianshu.com/p/705a6cb6bfee</a></p>
+<a id="more"></a>
 <table>
 <thead>
 <tr>
@@ -188,6 +189,30 @@
 <tr>
 <td>继承ViewViewGroup</td>
 <td>不复用系统控件逻辑，继承ViewGroup进行功能定义</td>
+</tr>
+</tbody></table>
+<h2 id="1-2：绘制流程"><a href="#1-2：绘制流程" class="headerlink" title="1.2：绘制流程"></a>1.2：绘制流程</h2><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>相关方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>measure()</td>
+<td>测量view的宽高</td>
+<td>measure(),setMeasuredDimension(),onMeasure()</td>
+</tr>
+<tr>
+<td>layout()</td>
+<td>计算当前View以及子View的位置</td>
+<td>layout(),onLayout(),setFrame()</td>
+</tr>
+<tr>
+<td>draw()</td>
+<td>视图的绘制工作</td>
+<td>draw(),onDraw()</td>
 </tr>
 </tbody></table>
 <pre><code>private val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) } //懒加载定义画笔</code></pre>
