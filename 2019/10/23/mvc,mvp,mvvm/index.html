@@ -8,21 +8,21 @@
   <link rel="dns-prefetch" href="http://www.shiguangyilao.cn">
   <title>MVC,MVP和MVVM | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="写在前面记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。  通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切忌犯为了设计而">
+  <meta name="description" content="写在前面记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。 通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容&amp;gt;&amp;gt;易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切">
 <meta name="keywords" content="IT技术,Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MVC,MVP和MVVM">
 <meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/23/mvc,mvp,mvvm/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="写在前面记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。  通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切忌犯为了设计而">
+<meta property="og:description" content="写在前面记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。 通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容&amp;gt;&amp;gt;易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://www.shiguangyilao.cn/assets/img/mvc.jpg">
 <meta property="og:image" content="http://www.shiguangyilao.cn/assets/img/mvp.jpg">
 <meta property="og:image" content="http://www.shiguangyilao.cn/assets/img/mvvm.jpg">
-<meta property="og:updated_time" content="2019-10-23T07:42:30.343Z">
+<meta property="og:updated_time" content="2019-10-23T07:44:33.814Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MVC,MVP和MVVM">
-<meta name="twitter:description" content="写在前面记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。  通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切忌犯为了设计而">
+<meta name="twitter:description" content="写在前面记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。 通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容&amp;gt;&amp;gt;易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切">
 <meta name="twitter:image" content="http://www.shiguangyilao.cn/assets/img/mvc.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
@@ -166,8 +166,8 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><pre><code>记录一下所学到的Android中MVC,MVP,MVVM之间的联系和区别，加深对三种架构的记忆，内容来源于各种博客。</code></pre><blockquote>
+<p>通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容&gt;&gt;易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切忌犯为了设计而设计，为了架构而架构的毛病。</p>
 </blockquote>
-<p>通过设计使程序模块化，做到模块内部的高聚合和模块之间的低耦合。这样做的好处是使得程序在开发的过程中，开发人员只需要专注于一点，提高程序开发的效率，并且更容易进行后续的测试以及定位问题。但设计不能违背目的，对于不同量级的工程，具体架构的实现方式必然是不同的，切忌犯为了设计而设计，为了架构而架构的毛病。</p>
 <a id="more"></a>
 
 <h2 id="1-MVC架构"><a href="#1-MVC架构" class="headerlink" title="1.MVC架构"></a>1.MVC架构</h2><blockquote>
