@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://www.shiguangyilao.cn">
-  <title>Android面试 | Zihuatanejo&#39;s Blog</title>
+  <title>自定义View | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="公开课之面试题详解">
-<meta name="keywords" content="IT技术,Android">
+  <meta name="description" content="1.1：分类自定义View的实现方式有以下几种参考https://www.jianshu.com/p/705a6cb6bfee">
+<meta name="keywords" content="IT技术,Android,kotlin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android面试">
-<meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/06/面试详解/index.html">
+<meta property="og:title" content="自定义View">
+<meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/21/View/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="公开课之面试题详解">
+<meta property="og:description" content="1.1：分类自定义View的实现方式有以下几种参考https://www.jianshu.com/p/705a6cb6bfee">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-21T07:55:42.304Z">
+<meta property="og:updated_time" content="2019-10-23T03:00:36.299Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android面试">
-<meta name="twitter:description" content="公开课之面试题详解">
+<meta name="twitter:title" content="自定义View">
+<meta name="twitter:description" content="1.1：分类自定义View的实现方式有以下几种参考https://www.jianshu.com/p/705a6cb6bfee">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -141,136 +141,81 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-面试详解" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-View" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Android面试
+      自定义View
     </h1>
   
 
         
-        <a href="/2019/10/06/面试详解/" class="archive-article-date">
-  	<time datetime="2019-10-06T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-06</time>
+        <a href="/2019/10/21/View/" class="archive-article-date">
+  	<time datetime="2019-10-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-21</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="公开课之面试题详解"><a href="#公开课之面试题详解" class="headerlink" title="公开课之面试题详解"></a>公开课之面试题详解</h1><a id="more"></a>
-
-<hr>
-<h3 id="1-Java基础高级部分"><a href="#1-Java基础高级部分" class="headerlink" title="1. Java基础高级部分"></a>1. Java基础高级部分</h3><ol>
-<li><p>集合部分</p>
-</li>
-<li><p>java中的引用类型</p>
-</li>
-</ol>
-<ul>
-<li>强引用 </li>
-<li>软引用 SoftReference</li>
-<li>弱引用 WeakRefrence</li>
-<li>虚引用 PhantomReference </li>
-</ul>
-<ul>
-<li>对象的可及性：<ul>
-<li>强可及对象，永远都不会被GC回收。</li>
-<li>软可及对象：当系统内存不足的时候，被GC回收。</li>
-<li>弱可及对象：当系统GC发现这个对象，就被回收。</li>
-</ul>
-</li>
-</ul>
-<ol start="3">
-<li>多线程线程池部分</li>
-</ol>
-<ul>
-<li>需求：控制一个方法的并发量，比如同时只能有5个线程进来。</li>
-</ul>
-<h3 id="2-Android基础必问（必回）部分"><a href="#2-Android基础必问（必回）部分" class="headerlink" title="2. Android基础必问（必回）部分"></a>2. Android基础必问（必回）部分</h3><ol>
-<li><p>Android中的IOC（DI）框架</p>
-<ul>
-<li>ViewUtils（xUtils中的四大部分之一）</li>
-</ul>
-</li>
-</ol>
-<ul>
-<li><p>自定义注解+反射</p>
-</li>
-<li><p>IOC ： Inverse of Controller  控制反转。 </p>
-</li>
-<li><p>DI ： Dependency Inject 依赖注入</p>
-</li>
-<li><p>GitHub 全球最大的同性（代码托管）交友平台。</p>
-</li>
-</ul>
-<h3 id="3-Android高级部分"><a href="#3-Android高级部分" class="headerlink" title="3. Android高级部分"></a>3. Android高级部分</h3><ol>
-<li>Android中Handler源码详解（让子线程给主线程发送消息，反过来。）</li>
-</ol>
-<ul>
-<li><p>Looper.prepare</p>
-<ul>
-<li>创建了Looper对象，在构造函数中创建了MessageQueue</li>
-<li>然后将Looper对象通过ThreadLocal跟当前的主线程绑定</li>
-</ul>
-</li>
-<li><p>new handler();</p>
-<ul>
-<li>通过Looper类中的ThreadLocal从主线程中获取到了Looper对象</li>
-<li>然后通过Looper对象获取到了MessageQueue的引用</li>
-</ul>
-</li>
-<li><p>handler.sendMsg();</p>
-<ul>
-<li>找到MessageQueue对象</li>
-<li>然后msg.target=this,将handler对象成为msg的一个成员变量</li>
-<li>最后把msg添加到MessageQueue中</li>
-</ul>
-</li>
-<li><p>Looper.loop();</p>
-<ul>
-<li>找到MessageQueue</li>
-<li>然后开启死循环遍历MessageQueue池</li>
-<li>当获取到msg的时候，通过msg.target找到发送这个msg的handler</li>
-<li>然后调用handler的dispatchMessage</li>
-</ul>
-</li>
-</ul>
-<ol start="2">
-<li>Fragment的回退栈管理（手动维护回退栈）</li>
-</ol>
-<h3 id="4-Android高级部分"><a href="#4-Android高级部分" class="headerlink" title="4. Android高级部分"></a>4. Android高级部分</h3><ol>
-<li>Serializable和Parcelable的区别   Intent可以传递数据类型有哪些？</li>
-</ol>
-<ul>
-<li><p>Serializable是javaSE实现的用于对象的序列化的接口，而Parcelable是Android推出的用于序列化的接口。</p>
-</li>
-<li><p>transient 关键字的作用</p>
-</li>
-</ul>
-<ol start="2">
-<li>Activity状态的保存（笔试形式）</li>
-</ol>
-<ol start="3">
-<li>自定义权限</li>
-</ol>
-<ol start="4">
-<li>IntentService的使用</li>
-</ol>
-<ul>
-<li>Service<ul>
-<li>startService启动 那么启动的Service就一直（相对来说）在后台运行，与启动该Service的其他组件的生命周期没关系</li>
-<li>bindService启动 如果是Activity启动的，那么当这个Activity销毁的时候Service也销毁</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>假设我们有这样的需求：我们想让一个Service帮我们干一个比较耗时的工作（比如下载大文件），当Service干完活后自动销毁（目的是为了节省内存）。</li>
-</ul>
-
+        <h2 id="1-1：分类"><a href="#1-1：分类" class="headerlink" title="1.1：分类"></a>1.1：分类</h2><h3 id="自定义View的实现方式有以下几种"><a href="#自定义View的实现方式有以下几种" class="headerlink" title="自定义View的实现方式有以下几种"></a>自定义View的实现方式有以下几种</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://www.jianshu.com/p/705a6cb6bfee" title="自定义view" target="_blank" rel="noopener">https://www.jianshu.com/p/705a6cb6bfee</a></p>
+<a id="more"></a>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>自定义组合控件</td>
+<td>多个控件组合成为一个新的控件，方便多处复用</td>
+</tr>
+<tr>
+<td>继承系统View控件</td>
+<td>继承自TextView等系统控件，在系统控件的基础功能上进行扩展</td>
+</tr>
+<tr>
+<td>继承View</td>
+<td>不复用系统控件逻辑，继承View进行功能定义</td>
+</tr>
+<tr>
+<td>继承系统ViewGroup</td>
+<td>继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展</td>
+</tr>
+<tr>
+<td>继承ViewViewGroup</td>
+<td>不复用系统控件逻辑，继承ViewGroup进行功能定义</td>
+</tr>
+</tbody></table>
+<h2 id="1-2：绘制流程"><a href="#1-2：绘制流程" class="headerlink" title="1.2：绘制流程"></a>1.2：绘制流程</h2><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>相关方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>measure()</td>
+<td>测量view的宽高</td>
+<td>measure(),setMeasuredDimension(),onMeasure()</td>
+</tr>
+<tr>
+<td>layout()</td>
+<td>计算当前View以及子View的位置</td>
+<td>layout(),onLayout(),setFrame()</td>
+</tr>
+<tr>
+<td>draw()</td>
+<td>视图的绘制工作</td>
+<td>draw(),onDraw()</td>
+</tr>
+</tbody></table>
+<pre><code>private val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) } //懒加载定义画笔</code></pre>
       
 
       
@@ -288,6 +233,10 @@
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">kotlin</a>
         		</li>
       		
 		</ul>
@@ -343,7 +292,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.shiguangyilao.cn/2019/10/06/面试详解/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.shiguangyilao.cn/2019/10/21/View/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -357,11 +306,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/10/21/自定义view/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/10/23/mvc,mvp,mvvm/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          自定义View
+          MVC,MVP和MVVM
         
       </div>
     </a>
