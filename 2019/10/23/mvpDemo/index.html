@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://www.shiguangyilao.cn">
-  <title>自定义View | Zihuatanejo&#39;s Blog</title>
+  <title>MVPDemo | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.1：分类自定义View的实现方式有以下几种参考Android自定义View全解">
+  <meta name="description" content="写在前面 MVP在实现代码简洁的同时，额外增加了大量的接口、类，不方便进行管理，于是就出现了Contract将Model、View、Presenter 进行约束管理，方便后期类的查找、维护。">
 <meta name="keywords" content="IT技术,Android,kotlin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自定义View">
-<meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/21/View/index.html">
+<meta property="og:title" content="MVPDemo">
+<meta property="og:url" content="http://www.shiguangyilao.cn/2019/10/23/mvpDemo/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="1.1：分类自定义View的实现方式有以下几种参考Android自定义View全解">
+<meta property="og:description" content="写在前面 MVP在实现代码简洁的同时，额外增加了大量的接口、类，不方便进行管理，于是就出现了Contract将Model、View、Presenter 进行约束管理，方便后期类的查找、维护。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-23T08:07:02.095Z">
+<meta property="og:updated_time" content="2019-10-23T09:48:41.307Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="自定义View">
-<meta name="twitter:description" content="1.1：分类自定义View的实现方式有以下几种参考Android自定义View全解">
+<meta name="twitter:title" content="MVPDemo">
+<meta name="twitter:description" content="写在前面 MVP在实现代码简洁的同时，额外增加了大量的接口、类，不方便进行管理，于是就出现了Contract将Model、View、Presenter 进行约束管理，方便后期类的查找、维护。">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -141,81 +141,210 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-View" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-mvpDemo" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      自定义View
+      MVPDemo
     </h1>
   
 
         
-        <a href="/2019/10/21/View/" class="archive-article-date">
-  	<time datetime="2019-10-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-21</time>
+        <a href="/2019/10/23/mvpDemo/" class="archive-article-date">
+  	<time datetime="2019-10-23T07:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-23</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-1：分类"><a href="#1-1：分类" class="headerlink" title="1.1：分类"></a>1.1：分类</h2><h3 id="自定义View的实现方式有以下几种"><a href="#自定义View的实现方式有以下几种" class="headerlink" title="自定义View的实现方式有以下几种"></a>自定义View的实现方式有以下几种</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://www.jianshu.com/p/705a6cb6bfee" title="自定义view" target="_blank" rel="noopener">Android自定义View全解</a></p>
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><blockquote>
+<p>MVP在实现代码简洁的同时，额外增加了大量的接口、类，不方便进行管理，于是就出现了Contract<br>将Model、View、Presenter 进行约束管理，方便后期类的查找、维护。</p>
+</blockquote>
 <a id="more"></a>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>定义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>自定义组合控件</td>
-<td>多个控件组合成为一个新的控件，方便多处复用</td>
-</tr>
-<tr>
-<td>继承系统View控件</td>
-<td>继承自TextView等系统控件，在系统控件的基础功能上进行扩展</td>
-</tr>
-<tr>
-<td>继承View</td>
-<td>不复用系统控件逻辑，继承View进行功能定义</td>
-</tr>
-<tr>
-<td>继承系统ViewGroup</td>
-<td>继承自LinearLayout等系统控件，在系统控件的基础功能上进行扩展</td>
-</tr>
-<tr>
-<td>继承ViewViewGroup</td>
-<td>不复用系统控件逻辑，继承ViewGroup进行功能定义</td>
-</tr>
-</tbody></table>
-<h2 id="1-2：绘制流程"><a href="#1-2：绘制流程" class="headerlink" title="1.2：绘制流程"></a>1.2：绘制流程</h2><table>
-<thead>
-<tr>
-<th>函数</th>
-<th>作用</th>
-<th>相关方法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>measure()</td>
-<td>测量view的宽高</td>
-<td>measure(),setMeasuredDimension(),onMeasure()</td>
-</tr>
-<tr>
-<td>layout()</td>
-<td>计算当前View以及子View的位置</td>
-<td>layout(),onLayout(),setFrame()</td>
-</tr>
-<tr>
-<td>draw()</td>
-<td>视图的绘制工作</td>
-<td>draw(),onDraw()</td>
-</tr>
-</tbody></table>
-<pre><code>private val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) } //懒加载定义画笔</code></pre>
+
+<h4 id="1-创建LoginContract"><a href="#1-创建LoginContract" class="headerlink" title="1.创建LoginContract"></a>1.创建LoginContract</h4><pre><code>/**
+* Contract类管理相关模块方法
+ */
+class LoginContract {
+interface Presenter : BasePresenter {
+    fun login(username: String, password: String)
+    }
+
+interface View {
+    fun onUserNameError()
+    fun onPasswordError()
+    fun onStartLogin()
+    fun onLoginInSuccess()
+    fun onLoginInFailed()
+    }
+}</code></pre><h4 id="2-创建BaseActivity"><a href="#2-创建BaseActivity" class="headerlink" title="2.创建BaseActivity"></a>2.创建BaseActivity</h4><pre><code>abstract class BaseActivity : AppCompatActivity() {
+val progressDialog by lazy {
+    ProgressDialog(this)
+    }
+//隐藏软键盘
+val inputMethodManager by lazy {
+    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
+
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(getLayoutResId())
+    init()
+    }
+
+open fun init() {
+
+    }
+
+abstract fun getLayoutResId(): Int
+
+fun showProgress(message: String) {
+    progressDialog.setMessage(message)
+    progressDialog.show()
+    }
+
+fun dismissProgress() {
+    progressDialog.dismiss()
+    }
+
+//隐藏软键盘
+fun hideSoftKeyboard() {
+    inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+    }
+
+//在Ui线程弹出toast
+protected fun MyToast(message: String) {
+    runOnUiThread { toast(message) }
+    }
+//跳转后finish原来的
+inline fun &lt;reified T : BaseActivity&gt; startActivityAndFinish() {
+    startActivity&lt;T&gt;()
+    finish()
+    }
+}</code></pre><h4 id="3-创建BasePresenter"><a href="#3-创建BasePresenter" class="headerlink" title="3.创建BasePresenter"></a>3.创建BasePresenter</h4><pre><code>interface BasePresenter {
+//创建伴生对象
+companion object {
+    val handler by lazy {
+        Handler(Looper.getMainLooper())
+    }
+    }
+// 用以子线程通知主线程
+fun uiThread(f: () -&gt; Unit) {
+    handler.post { f() }
+    }
+}</code></pre><h4 id="4-创建LoginPresenter"><a href="#4-创建LoginPresenter" class="headerlink" title="4.创建LoginPresenter"></a>4.创建LoginPresenter</h4><pre><code>class LoginPresenter(val view: LoginContract.View) : LoginContract.Presenter {
+override fun login(username: String, password: String) {
+    if (username.isValidUserName()) {
+        if (password.isValidPassword()) {
+            //密码合法
+            view.onStartLogin()
+            loginEaseMob(username, password)
+            } else view.onPasswordError()
+        } else view.onUserNameError()
+    }
+
+private fun loginEaseMob(username: String, password: String) {
+    EMClient.getInstance().login(username, password, object : EMCallBackAdapter() {
+        //在子线程回调的
+        override fun onSuccess() {
+            EMClient.getInstance().groupManager().loadAllGroups()
+            EMClient.getInstance().chatManager().loadAllConversations()
+            //在主线程中通知主线程
+            uiThread {
+                view.onLoginInSuccess()
+            }
+        }
+
+        override fun onError(p0: Int, p1: String?) {
+            uiThread {
+                view.onLoginInFailed()
+            }
+            }
+
+        })
+    }
+}</code></pre><h4 id="5-创建LoginActivity"><a href="#5-创建LoginActivity" class="headerlink" title="5.创建LoginActivity"></a>5.创建LoginActivity</h4><pre><code>class LoginActivity : BaseActivity(), LoginContract.View {
+    val presenter = LoginPresenter(this)
+    override fun init() {
+        super.init()
+        login.setOnClickListener {
+            loginIn()
+        }
+        btn_register.setOnClickListener {
+            startActivity&lt;RegisterActivity&gt;()
+        }
+        password.setOnEditorActionListener { _, _, _ -&gt;
+            loginIn()
+            true
+        }
+    }
+
+    private fun loginIn() {
+        //隐藏软键盘
+        hideSoftKeyboard()
+        if (hasWriteExternalStoragePermission()) {
+            val usernameString = username.text.trim().toString()
+            val passwordString = password.text.trim().toString()
+            presenter.login(usernameString, passwordString)
+        } else applyWriteExternalStoragePermission()
+
+
+    }
+
+    //动态权限申请
+    private fun applyWriteExternalStoragePermission() {
+        val permission = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        ActivityCompat.requestPermissions(this, permission, 0)
+    }
+
+    private fun hasWriteExternalStoragePermission(): Boolean {
+        val result =
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return result == PackageManager.PERMISSION_DENIED
+    }
+
+    override fun onUserNameError() {
+        username.error = &quot;用户名不合法&quot;
+    }
+
+    override fun onPasswordError() {
+        password.error = &quot;密码不合法&quot;
+    }
+
+    override fun onStartLogin() {
+        //弹出进度条
+        showProgress(&quot;登录中&quot;)
+    }
+
+    override fun onLoginInSuccess() {
+        dismissProgress()
+        startActivityAndFinish&lt;MainActivity&gt;()
+    }
+
+    override fun onLoginInFailed() {
+        dismissProgress()
+        toast(&quot;登录失败&quot;)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array&lt;out String&gt;,
+        grantResults: IntArray
+    ) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //用户同意权限
+            loginIn()
+        } else toast(&quot;权限被拒绝&quot;)
+    }
+
+    override fun getLayoutResId(): Int = R.layout.activity_login
+}</code></pre><h3 id="Demo地址"><a href="#Demo地址" class="headerlink" title="Demo地址"></a>Demo地址</h3><p><a href="https://github.com/loki0210/IM," kotlindemo"" target="_blank" rel="noopener">IM-MvpDemo</a></p>
+<p><a href="https://github.com/loki0210/MvpDemo," javademo"" target="_blank" rel="noopener">MVPDemo</a></p>
+
       
 
       
@@ -292,7 +421,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.shiguangyilao.cn/2019/10/21/View/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.shiguangyilao.cn/2019/10/23/mvpDemo/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -306,18 +435,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/10/23/mvc,mvp,mvvm/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          MVC,MVP和MVVM
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/09/14/Arouter/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Arouter</div>
+    <a href="/2019/10/23/mvc,mvp,mvvm/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">MVC,MVP和MVVM</div>
       <i class="icon-circle-right"></i>
     </a>
   
