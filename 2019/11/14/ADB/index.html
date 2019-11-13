@@ -6,19 +6,31 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://www.shsf.xyz">
-  <title>Archives: 2019/11 | Zihuatanejo&#39;s Blog</title>
+  <title>ADB常用命令 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://www.shsf.xyz/archives/2019/11/index.html">
+  <meta name="description" content="针对移动端 Android 的测试， adb 命令是很重要的一个点，必须将常用的 adb 命令熟记于心，  将会为 Android 测试带来很大的方便，其中很多命令将会用于自动化测试的脚本当中。这里记录一些里面常用的命令：">
+<meta name="keywords" content="IT技术,Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ADB常用命令">
+<meta property="og:url" content="http://www.shsf.xyz/2019/11/14/ADB/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="针对移动端 Android 的测试， adb 命令是很重要的一个点，必须将常用的 adb 命令熟记于心，  将会为 Android 测试带来很大的方便，其中很多命令将会用于自动化测试的脚本当中。这里记录一些里面常用的命令：">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adbdevices.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/get-state.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adbinstall.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adbinstall2.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adbpush.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adblistpackage.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adblistpackage2.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adblog.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adbmonkey.png">
+<meta property="og:image" content="http://www.shsf.xyz/assets/img/adbmonkey2.png">
+<meta property="og:updated_time" content="2019-11-13T15:06:03.940Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="ADB常用命令">
+<meta name="twitter:description" content="针对移动端 Android 的测试， adb 命令是很重要的一个点，必须将常用的 adb 命令熟记于心，  将会为 Android 测试带来很大的方便，其中很多命令将会用于自动化测试的脚本当中。这里记录一些里面常用的命令：">
+<meta name="twitter:image" content="http://www.shsf.xyz/assets/img/adbdevices.png">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -140,36 +152,183 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-ADB" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      ADB常用命令
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/14/ADB/" class="archive-article-date">
+
+        
+        <a href="/2019/11/14/ADB/" class="archive-article-date">
   	<time datetime="2019-11-14T15:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-14</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/14/ADB/">ADB常用命令</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>针对移动端 Android 的测试， adb 命令是很重要的一个点，必须将常用的 adb 命令熟记于心， 
+将会为 Android 测试带来很大的方便，其中很多命令将会用于自动化测试的脚本当中。</code></pre><h3 id="这里记录一些里面常用的命令："><a href="#这里记录一些里面常用的命令：" class="headerlink" title="这里记录一些里面常用的命令："></a>这里记录一些里面常用的命令：</h3><a id="more"></a> 
+<h3 id="1-adb-devices-获取设备列表及设备状态"><a href="#1-adb-devices-获取设备列表及设备状态" class="headerlink" title="1.adb devices , 获取设备列表及设备状态"></a>1.adb devices , 获取设备列表及设备状态</h3><p><img src="/assets/img/adbdevices.png" alt></p>
+<h3 id="2-adb-get-state-获取设备的状态"><a href="#2-adb-get-state-获取设备的状态" class="headerlink" title="2.adb get-state , 获取设备的状态"></a>2.adb get-state , 获取设备的状态</h3><p><img src="/assets/img/get-state.png" alt></p>
+<pre><code>设备的状态有3种，device , offline , unknown
 
-        <div class="article-info info-on-right">
-          
+device：设备正常连接
+
+offline：连接出现异常，设备无响应
+
+unknown：没有连接设备</code></pre><h3 id="3-安装卸载应用程序"><a href="#3-安装卸载应用程序" class="headerlink" title="3.安装卸载应用程序"></a>3.安装卸载应用程序</h3><p>adb install 用于安装</p>
+<p><img src="/assets/img/adbinstall.png" alt></p>
+<pre><code>安装成功，返回成功提示 &quot;Success&quot;；
+
+安装失败，会返回以下：
+
+INSTALL_FAILED_ALREADY_EXISTS
+
+此时需要用 -r 参数来重新安装。
+
+INSTALL_FAILED_SIGNATURE_ERROR
+
+应用的签名不一致，可能是发布版和调试版签名不同所致。也有可能是没卸载旧应用导致。
+
+INSTALL_FAILED_INSUFFICIENT_STORAGE
+
+存储空间不足，需要检查设备存储情况。
+
+adb uninstall 用于卸载
+
+adb uninstall 后面带的是应用的包名，而不是应用名。
+
+查看系统所有应用的包名：
+
+adb shell pm list packages –f</code></pre><p><img src="/assets/img/adbinstall2.png" alt></p>
+<h3 id="4．上传、下载文件"><a href="#4．上传、下载文件" class="headerlink" title="4．上传、下载文件"></a>4．上传、下载文件</h3><pre><code>adb push 命令将PC机上的文件推到 DLT-RK3288 机器上；
+
+adb pull  命令将DLT-RK3288机器上的文件拉到PC机上；
+
+例如：
+
+adb push d:/new.txt /sdcard/  
+
+将D盘下new.txt文件 推到内部存储器
+
+adb pull /sdcard/new.txt    d:\
+
+将DLT-RK3288 内部存储器根目录下的new.txt 拉到D盘</code></pre><p><img src="/assets/img/adbpush.png" alt></p>
+<h3 id="5-adb-shell-pm-list-package"><a href="#5-adb-shell-pm-list-package" class="headerlink" title="5. adb shell pm list package"></a>5. adb shell pm list package</h3><pre><code>Package Manager , 可以用获取到一些安装在 Android 设备上得应用信息
+
+-s：列出系统应用
+
+-f：列出应用包名及对应的apk名及存放位置</code></pre><p><img src="/assets/img/adblistpackage.png" alt></p>
+<p>过滤应用<br><img src="/assets/img/adblistpackage2.png" alt></p>
+<h3 id="6-adb-shell"><a href="#6-adb-shell" class="headerlink" title="6.adb shell"></a>6.adb shell</h3><pre><code>通过adb shell 命令，就可以进入设备或者模拟器的shell环境了，在这个Linux shell中，我们就可以执行各种Linux命令了。
+如果只想执行一条shell命令，就可以采用：adb shell [shell_command]，在实际使用中，经常与grep或findstr一起使用，
+起到过滤作用，查看自己需要的关键信息。</code></pre><h3 id="7-常见命令"><a href="#7-常见命令" class="headerlink" title="7.常见命令"></a>7.常见命令</h3><pre><code>如 ls, cd, rm, mkdir, touch, pwd, cp, mv, ifconfig, netstat, ping, ps, top等，进入adb shell即可执行，与linux相似</code></pre><h3 id="8-adb-logcat"><a href="#8-adb-logcat" class="headerlink" title="8.adb logcat"></a>8.adb logcat</h3><p>有时候我们在手机程序上的日志要在其他地方调试，然后要看里面的Log日志。在cmd窗口中输入如下命令：</p>
+<pre><code>//格式1：打印默认日志数据
+
+adb logcat
+
+//格式2：需要打印日志详细时间的简单数据
+
+adb logcat -v time
+
+//格式3：需要打印级别为Error的信息
+
+adb logcat *:E
+
+//格式4：需要打印时间和级别是Error的信息
+
+adb logcat -v time *:E
+
+//格式5：将日志保存到电脑固定的位置，比如D:\log.txt
+
+adb logcat -v time &gt;D:\log.txt</code></pre><p>这时手机日志更新什么日志，cmd窗口也会同步更新数据。</p>
+<p>但是这样没有过滤条件，如果Log日志很多，很难找到我们想要的信息，</p>
+<p>当然也可以复制cmd中的数据到一个文本中慢慢处理的，就是效率不高。</p>
+<p>下面介绍adb logcat中的详细参数命令以及如何才能高效的打印日志，或者把日志保存到我们指定的位置。</p>
+<h4 id="adb-logcat如果用过，但是具体命令又不记得，可以输入adb-logcat-help，查看一下一些简单的数据格式："><a href="#adb-logcat如果用过，但是具体命令又不记得，可以输入adb-logcat-help，查看一下一些简单的数据格式：" class="headerlink" title="adb logcat如果用过，但是具体命令又不记得，可以输入adb logcat -help，查看一下一些简单的数据格式："></a>adb logcat如果用过，但是具体命令又不记得，可以输入adb logcat -help，查看一下一些简单的数据格式：</h4><p><img src="/assets/img/adblog.png" alt></p>
+<h4 id="日志过滤：adb-logcat-priority"><a href="#日志过滤：adb-logcat-priority" class="headerlink" title="日志过滤：adb logcat [:priority]"></a>日志过滤：adb logcat <tag>[:priority]</tag></h4><pre><code>tag表示标签，priority输出的级别，日志默认级别是V，如果错误日志我们选择E就可以。
+
+Android 的日志分为如下几个优先级（priority）：
+
+V —— Verbose（最低，输出得最多）
+
+D —— Debug
+
+I —— Info
+
+W —— Warning
+
+E —— Error
+
+F —— Fatal
+
+S —— Silent（最高，啥也不输出）
+
+按某级别过滤日志则会将该级别及以上的日志输出。比如，命令：adb logcat *:W
+
+其实*可以是某个tag，如果没有指明，就表示所有。
+
+tag可以由多个 [:priority] 组成。比如，命令：
+
+adb logcat ActivityManager:I MyApp:D *:S
+
+表示输出 tag ActivityManager 的 Info 以上级别日志，输出 tag MyApp 的 Debug 以上级别日志，
+及其它 tag 的 Silent 级别日志（即屏蔽其它 tag 日志）。</code></pre><h4 id="adb-logcat选项解析"><a href="#adb-logcat选项解析" class="headerlink" title="adb logcat选项解析"></a>adb logcat选项解析</h4><pre><code>--&quot;-s&quot;选项 : 设置输出日志*：s的标签, 只显示该标签的日志;
+
+--&quot;-f&quot;选项 : 将日志输出到文件, 默认输出到标准输出流中, -f 参数执行不成功;
+
+--&quot;-r&quot;选项 : 按照每千字节输出日志, 需要 -f 参数, 不过这个命令没有执行成功;
+
+--&quot;-n&quot;选项 : 设置日志输出的最大数目, 需要 -r 参数, 这个执行 感觉 跟 adb logcat 效果一样;
+
+--&quot;-v&quot;选项 : 设置日志的输出格式, 注意只能设置一项;
+
+--&quot;-c&quot;选项 : 清空所有的日志缓存信息;
+
+--&quot;-d&quot;选项 : 将缓存的日志输出到屏幕上, 并且不会阻塞;
+
+--&quot;-t&quot;选项 : 输出最近的几行日志, 输出完退出, 不阻塞;
+
+--&quot;-g&quot;选项 : 查看日志缓冲区信息;
+
+--&quot;-B&quot;选项 : 以二进制形式输出日志;</code></pre><h4 id="把日志信息保存到电脑中"><a href="#把日志信息保存到电脑中" class="headerlink" title="把日志信息保存到电脑中"></a>把日志信息保存到电脑中</h4><pre><code>adb logcat最后添加” &gt; 保存文件的地址，比如需要将的信息保存到电脑中使用下面的命令： adb logcat -v time &gt; D:\log.txt</code></pre><h3 id="9-monkey测试"><a href="#9-monkey测试" class="headerlink" title="9.monkey测试"></a>9.monkey测试</h3><h4 id="一、Monkey测试简介"><a href="#一、Monkey测试简介" class="headerlink" title="一、Monkey测试简介"></a>一、Monkey测试简介</h4><p>Monkey测试是Android平台自动化测试的一种手段，通过Monkey程序模拟用户触摸屏幕、滑动Trackball、按键等操作来对设备上的程序进行测<br>试</p>
+<h4 id="二、Monkey命令的简单帮助"><a href="#二、Monkey命令的简单帮助" class="headerlink" title="二、Monkey命令的简单帮助"></a>二、Monkey命令的简单帮助</h4><pre><code>要获取Monkey命令自带的简单帮助，在CMD中执行命令：
+
+adb shell monkey –help</code></pre><p><img src="/assets/img/adbmonkey.png" alt></p>
+<h4 id="四、Monkey命令参数介绍"><a href="#四、Monkey命令参数介绍" class="headerlink" title="四、Monkey命令参数介绍"></a>四、Monkey命令参数介绍</h4><p><img src="/assets/img/adbmonkey2.png" alt></p>
+<pre><code>说明：第一个-s指定设备，如果只连接了一台设备，可不用该参数。
+
+-p &lt;apk包名&gt;只允许系统启动指定的app，如果不指定，将允许系统启动设备中的所有app，也可指定多个包。
+
+--throttle &lt;毫秒数&gt; 指定用户操作（事件）间的时延。
+
+--ignore-crashes 指定当应用程序崩溃时，Monkey依然发送事件，直到事件计数完成。
+
+--ignore-timeouts 当应用程序发生ANR错误时，Monkey依然会发送事件，直到事件计数完成。
+
+第2个-s，用于指定伪随机数生成器的seed值，如果seed相同，则两次Monkey测试所产生的事件序列也相同的。
+
+-v 用于指定反馈信息级别，总共分为level 0、level 1、level 2三个级别，级别越高，输出的日志越详细。</code></pre><h4 id="日志级别-Level-0"><a href="#日志级别-Level-0" class="headerlink" title="日志级别 Level 0"></a>日志级别 Level 0</h4><p>示例 adb shellmonkey -p com.amaker.mp –v 100</p>
+<pre><code>说明 缺省值，仅提供启动提示、测试完成和最终结果等少量信息</code></pre><h4 id="日志级别-Level-1"><a href="#日志级别-Level-1" class="headerlink" title="日志级别 Level 1"></a>日志级别 Level 1</h4><p>示例 adb shellmonkey -p com.amaker.mp –v -v 100</p>
+<pre><code>说明 提供较为详细的日志，包括每个发送到Activity的事件信息</code></pre><h4 id="日志级别-Level-2"><a href="#日志级别-Level-2" class="headerlink" title="日志级别 Level 2"></a>日志级别 Level 2</h4><p>示例 adb shellmonkey -p com.amaker.mp –v -v –v 100</p>
+<pre><code>说明 最详细的日志，包括了测试中选中/未选中的Activity信息
+
+最后的数字（这里是500）：表示Monkey程序模拟500次随机用户操作事件。
+
+输出测试结果到D:\monkeylog.txt</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -185,145 +344,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.shsf.xyz/2019/11/14/ADB/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/14/AssetAndRes/" class="archive-article-date">
-  	<time datetime="2019-11-14T14:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-14</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/11/14/AssetAndRes/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Asset目录与res目录的区别</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/14/AssetAndRes/">Asset目录与res目录的区别</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/13/AndroidIcon/" class="archive-article-date">
-  	<time datetime="2019-11-13T14:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-13</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/13/AndroidIcon/">Android应用图标的尺寸大小</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/04/HashMap/" class="archive-article-date">
-  	<time datetime="2019-11-04T14:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/04/HashMap/">HashMap</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -346,8 +466,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

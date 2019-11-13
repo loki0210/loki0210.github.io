@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://www.shsf.xyz">
-  <title>Archives: 2019/11 | Zihuatanejo&#39;s Blog</title>
+  <title>Asset目录与res目录的区别 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://www.shsf.xyz/archives/2019/11/index.html">
+  <meta name="description" content="res/raw和assets的相同点：两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。res/raw和assets的不同点：res/raw中的文件会被映射到R.java文件中，访问的时候直接使用资源ID即R.id.filename； assets文件夹下的文件不会被映射到R.java中，访问的时候需要AssetManager类。 res/raw不可以有目录结构，而asse">
+<meta name="keywords" content="IT技术,Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Asset目录与res目录的区别">
+<meta property="og:url" content="http://www.shsf.xyz/2019/11/14/AssetAndRes/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="res/raw和assets的相同点：两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。res/raw和assets的不同点：res/raw中的文件会被映射到R.java文件中，访问的时候直接使用资源ID即R.id.filename； assets文件夹下的文件不会被映射到R.java中，访问的时候需要AssetManager类。 res/raw不可以有目录结构，而asse">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-13T14:14:34.712Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="Asset目录与res目录的区别">
+<meta name="twitter:description" content="res/raw和assets的相同点：两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。res/raw和assets的不同点：res/raw中的文件会被映射到R.java文件中，访问的时候直接使用资源ID即R.id.filename； assets文件夹下的文件不会被映射到R.java中，访问的时候需要AssetManager类。 res/raw不可以有目录结构，而asse">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -140,78 +141,59 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-AssetAndRes" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/14/ADB/" class="archive-article-date">
-  	<time datetime="2019-11-14T15:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-14</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/14/ADB/">ADB常用命令</a>
+    <h1 class="article-title" itemprop="name">
+      Asset目录与res目录的区别
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/14/AssetAndRes/" class="archive-article-date">
+        
+        <a href="/2019/11/14/AssetAndRes/" class="archive-article-date">
   	<time datetime="2019-11-14T14:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-14</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/14/AssetAndRes/">Asset目录与res目录的区别</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="res-raw和assets的相同点："><a href="#res-raw和assets的相同点：" class="headerlink" title="res/raw和assets的相同点："></a>res/raw和assets的相同点：</h2><pre><code>两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。</code></pre><h2 id="res-raw和assets的不同点："><a href="#res-raw和assets的不同点：" class="headerlink" title="res/raw和assets的不同点："></a>res/raw和assets的不同点：</h2><pre><code>res/raw中的文件会被映射到R.java文件中，访问的时候直接使用资源ID即R.id.filename；
+assets文件夹下的文件不会被映射到R.java中，访问的时候需要AssetManager类。
+res/raw不可以有目录结构，而assets则可以有目录结构，也就是assets目录下可以再建立文件夹</code></pre><a id="more"></a>
+<h3 id="读取文件资源："><a href="#读取文件资源：" class="headerlink" title="读取文件资源："></a>读取文件资源：</h3><h4 id="读取res-raw下的文件资源，通过以下方式获取输入流来进行写操作"><a href="#读取res-raw下的文件资源，通过以下方式获取输入流来进行写操作" class="headerlink" title="读取res/raw下的文件资源，通过以下方式获取输入流来进行写操作"></a>读取res/raw下的文件资源，通过以下方式获取输入流来进行写操作</h4><pre><code>InputStream is =getResources().openRawResource(R.id.filename);  </code></pre><h4 id="读取assets下的文件资源，通过以下方式获取输入流来进行写操作"><a href="#读取assets下的文件资源，通过以下方式获取输入流来进行写操作" class="headerlink" title="读取assets下的文件资源，通过以下方式获取输入流来进行写操作"></a>读取assets下的文件资源，通过以下方式获取输入流来进行写操作</h4><pre><code> /**  
+ * 从assets中读取图片  
+ */  
+private Bitmap getImageFromAssetsFile(String fileName)  
+  {  
+      Bitmap image = null;  
+      AssetManager am = getResources().getAssets();  
+      try  
+      {  
+          InputStream is = am.open(fileName);  
+          image = BitmapFactory.decodeStream(is);  
+          is.close();  
+      }  
+      catch (IOException e)  
+      {  
+          e.printStackTrace();  
+      }   
+      return image;  
+  }  </code></pre><ul>
+<li>注意1：Google的Android系统处理Assert有个bug，在AssertManager中不能处理单个超过1MB的文件，不然会报异常，raw没这个限制可以放个4MB的Mp3文件没问题。</li>
+<li>注意2：assets 文件夹是存放不进行编译加工的原生文件，即该文件夹里面的文件不会像 xml， java 文件被预编译，可以存放一些图片，html，js, css 等文件。</li>
+</ul>
 
-        <div class="article-info info-on-right">
-          
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -227,103 +209,115 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.shsf.xyz/2019/11/14/AssetAndRes/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/13/AndroidIcon/" class="archive-article-date">
-  	<time datetime="2019-11-13T14:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-13</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2019/11/14/ADB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          ADB常用命令
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/11/13/AndroidIcon/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android应用图标的尺寸大小</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/13/AndroidIcon/">Android应用图标的尺寸大小</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/04/HashMap/" class="archive-article-date">
-  	<time datetime="2019-11-04T14:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/04/HashMap/">HashMap</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -346,8 +340,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
