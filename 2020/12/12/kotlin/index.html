@@ -17,7 +17,7 @@
 <meta property="og:description" content="写在前面Andorid第一行代码Kotlin小课堂">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/kotlin/001.jpg">
-<meta property="og:updated_time" content="2020-12-12T07:34:32.330Z">
+<meta property="og:updated_time" content="2020-12-12T07:45:50.499Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin小课堂">
 <meta name="twitter:description" content="写在前面Andorid第一行代码Kotlin小课堂">
@@ -196,65 +196,94 @@
 </ol>
 <h3 id="if条件语句"><a href="#if条件语句" class="headerlink" title="if条件语句"></a>if条件语句</h3><ul>
 <li><p>Kotlin中的if语句相比于Java有一个额外的功能：它是可以有返回值的，返回值就是if语句每一个条件中最后一行代码的返回值。</p>
-<p>  fun largerNumber(num1: Int, num2: Int): Int {<br>  val value = if (num1 &gt; num2) {</p>
-<pre><code>num1</code></pre><p>  } else {</p>
-<pre><code>num2
-}</code></pre><p>  return value<br>  }</p>
+<p>  fun largerNumber(num1: Int, num2: Int): Int {<br>  val value = if (num1 &gt; num2) {<br>   num1<br>   } else {<br>   num2<br>   }<br>   return value<br>  }</p>
 </li>
-<li><p>仔细观察上述代码，你会发现value其实是一个多余的变量，我们可以直接将if语句返回，这样代码将会变得更加精简，如下所示：<br>  fun largerNumber(num1: Int, num2: Int): Int {<br>  return if (num1 &gt; num2) {</p>
+<li><p>仔细观察上述代码，你会发现value其实是一个多余的变量，我们可以直接将if语句返回，这样代码将会变得更加精简，如下所示：</p>
+<p>  fun largerNumber(num1: Int, num2: Int): Int {<br>  return if (num1 &gt; num2) {</p>
 <pre><code>num1</code></pre><p>  } else {</p>
 <pre><code>num2
 }</code></pre><p>  }</p>
 </li>
-<li><p>当一个函数只有一行代码时，可以省略函数体部分，直接将这一行代码使用等号串连在函数定义的尾部。虽然largerNumber()函数不止只有一行代码，但是它和只有一行代码的作用是相同的，只是return了一下if语句的返回值而已，符合该语法糖的使用条件。那么我们就可以将代码进一步精简：<br>  fun largerNumber(num1: Int, num2: Int) = if (num1 &gt; num2) {</p>
+<li><p>当一个函数只有一行代码时，可以省略函数体部分，直接将这一行代码使用等号串连在函数定义的尾部。虽然largerNumber()函数不止只有一行代码，但是它和只有一行代码的作用是相同的，只是return了一下if语句的返回值而已，符合该语法糖的使用条件。那么我们就可以将代码进一步精简：</p>
+<p>  fun largerNumber(num1: Int, num2: Int) = if (num1 &gt; num2) {</p>
 <pre><code>    num1
 } else {
     num2</code></pre><p>  }</p>
 </li>
-<li><p>最后，还可以将上述代码再精简一下，直接压缩成一行代码：<br>  fun largerNumber(num1: Int, num2: Int) = if (num1 &gt; num2) num1 else num2</p>
+<li><p>最后，还可以将上述代码再精简一下，直接压缩成一行代码：</p>
+<p>  fun largerNumber(num1: Int, num2: Int) = if (num1 &gt; num2) num1 else num2</p>
 </li>
 </ul>
 <h3 id="when条件语句"><a href="#when条件语句" class="headerlink" title="when条件语句"></a>when条件语句</h3><ul>
-<li>当需要判断的条件非常多的时候，可以考虑使用when语句来替代if语句。<br>  fun getScore(name: String) = when (name) {<br>  “Tom” -&gt; 86<br>  “Jim” -&gt; 77<br>  “Jack” -&gt; 95<br>  “Lily” -&gt; 100<br>  else -&gt; 0<br>  }</li>
-<li>除了精确匹配之外，when语句还允许进行类型匹配。<br>  fun checkNumber(num: Number) {<br>  when (num) {<pre><code>is Int -&gt; println(&quot;number is Int&quot;)
+<li><p>当需要判断的条件非常多的时候，可以考虑使用when语句来替代if语句。</p>
+<p>  fun getScore(name: String) = when (name) {<br>  “Tom” -&gt; 86<br>  “Jim” -&gt; 77<br>  “Jack” -&gt; 95<br>  “Lily” -&gt; 100<br>  else -&gt; 0<br>  }</p>
+</li>
+<li><p>除了精确匹配之外，when语句还允许进行类型匹配。</p>
+<p>  fun checkNumber(num: Number) {<br>  when (num) {</p>
+<pre><code>is Int -&gt; println(&quot;number is Int&quot;)
 is Double -&gt; println(&quot;number is Double&quot;)
-else -&gt; println(&quot;number not support&quot;)</code></pre>  }<br>  }</li>
+else -&gt; println(&quot;number not support&quot;)</code></pre><p>   }<br>  }</p>
+</li>
 </ul>
 <h3 id="for-in循环语句"><a href="#for-in循环语句" class="headerlink" title="for-in循环语句"></a>for-in循环语句</h3><ul>
-<li>我们可以使用如下Kotlin代码来表示一个区间：<br>  val range = 0..10</li>
-<li>上述代码表示创建了一个0到10的区间，并且两端都是闭区间，这意味着0到10这两个端点都是包含在区间中的，用数学的方式表达出来就是[0, 10]。也可以使用until关键字来创建一个左闭右开的区间：<br>  val range = 0 until 10</li>
-<li>上述代码表示创建了一个0到10的左闭右开区间，它的数学表达方式是[0, 10)。有了区间之后，我们就可以通过for-in循环来遍历这个区间：<br>  fun main() {<br>  for (i in 0..10) {<pre><code>println(i)</code></pre>  }<br>  }</li>
-<li>如果你想跳过其中的一些元素，可以使用step关键字：<br>  fun main() {<br>  for (i in 0 until 10 step 2) {<pre><code>println(i)</code></pre>  }<br>  }</li>
-<li>如果你想创建一个降序的区间，可以使用downTo关键字：<br>  fun main() {<br>  for (i in 10 downTo 1) {<pre><code>println(i)</code></pre>  }<br>  }</li>
+<li><p>我们可以使用如下Kotlin代码来表示一个区间：</p>
+<p>  val range = 0..10</p>
+</li>
+<li><p>上述代码表示创建了一个0到10的区间，并且两端都是闭区间，这意味着0到10这两个端点都是包含在区间中的，用数学的方式表达出来就是[0, 10]。也可以使用until关键字来创建一个左闭右开的区间：</p>
+<p>  val range = 0 until 10</p>
+</li>
+<li><p>上述代码表示创建了一个0到10的左闭右开区间，它的数学表达方式是[0, 10)。有了区间之后，我们就可以通过for-in循环来遍历这个区间：</p>
+<p>  fun main() {<br>  for (i in 0..10) {</p>
+<pre><code>println(i)</code></pre><p>   }<br>  }</p>
+</li>
+<li><p>如果你想跳过其中的一些元素，可以使用step关键字：</p>
+<p>  fun main() {<br>  for (i in 0 until 10 step 2) {</p>
+<pre><code>println(i)</code></pre><p>   }<br>  }</p>
+</li>
+<li><p>如果你想创建一个降序的区间，可以使用downTo关键字：</p>
+<p>  fun main() {<br>  for (i in 10 downTo 1) {</p>
+<pre><code>println(i)</code></pre><p>   }<br>  }</p>
+</li>
 </ul>
 <h2 id="面向对象编程"><a href="#面向对象编程" class="headerlink" title="面向对象编程"></a>面向对象编程</h2><h3 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h3><ul>
-<li><p>可以使用如下代码定义一个类，以及声明它所拥有的字段和函数：<br>  class Person {<br>  var name = “”<br>  var age = 0</p>
+<li><p>可以使用如下代码定义一个类，以及声明它所拥有的字段和函数：</p>
+<p>  class Person {<br>  var name = “”<br>  var age = 0</p>
 <p>  fun eat() {</p>
-<pre><code>println(name + &quot; is eating. He is &quot; + age + &quot; years old.&quot;)
+<pre><code> println(name + &quot; is eating. He is &quot; + age + &quot; years old.&quot;)
 }</code></pre><p>  }</p>
 </li>
-<li><p>然后使用如下代码创建对象，并对对象进行操作：<br>  fun main() {<br>  val p = Person()<br>  p.name = “Jack”<br>  p.age = 19<br>  p.eat()<br>  }</p>
-<h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4></li>
-<li><p>Kotlin中一个类默认是不可以被继承的，如果想要让一个类可以被继承，需要主动声明open关键字：<br>  open class Person {<br>  …<br>  }</p>
+<li><p>然后使用如下代码创建对象，并对对象进行操作：</p>
+<p>  fun main() {<br>   val p = Person()<br>   p.name = “Jack”<br>   p.age = 19<br>   p.eat()<br>  }</p>
 </li>
-<li><p>要让另一个类去继承Person类，则需要使用冒号关键字：<br>  class Student : Person() {<br>  var sno = “”<br>  var grade = 0<br>  }</p>
+</ul>
+<h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4><ul>
+<li><p>Kotlin中一个类默认是不可以被继承的，如果想要让一个类可以被继承，需要主动声明open关键字：</p>
+<p>  open class Person {<br>  …<br>  }</p>
+</li>
+<li><p>要让另一个类去继承Person类，则需要使用冒号关键字：</p>
+<p>  class Student : Person() {<br>  var sno = “”<br>  var grade = 0<br>  }</p>
 </li>
 <li><p>现在Student类中就自动拥有了Person类中的字段和函数，还可以定义自己独有的字段和函数。</p>
 <h4 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h4></li>
 <li><p>Kotlin中定义接口的关键字和Java中是相同的，都是使用的interface：<br>  interface Study {<br>  fun readBooks()<br>  fun doHomework()<br>  }</p>
 </li>
-<li><p>而Kotlin中实现接口的关键字变量了冒号，和继承使用的是同样的关键字：<br>  class Student(val name: String, val age: Int) : Study {<br>  override fun readBooks() {</p>
-<pre><code>println(name + &quot; is reading.&quot;)</code></pre><p>  }</p>
-<p>  override fun doHomework() {</p>
-<pre><code>println(name + &quot; is doing homework.&quot;)</code></pre><p>  }<br>  }</p>
+<li><p>而Kotlin中实现接口的关键字变量了冒号，和继承使用的是同样的关键字：</p>
+<p>  class Student(val name: String, val age: Int) : Study {<br>   override fun readBooks() {</p>
+<pre><code>  println(name + &quot; is reading.&quot;)
+}</code></pre><p>  override fun doHomework() {</p>
+<pre><code>  println(name + &quot; is doing homework.&quot;)
+}</code></pre><p>   }</p>
 <h4 id="数据类"><a href="#数据类" class="headerlink" title="数据类"></a>数据类</h4></li>
-<li><p>Kotlin中使用data关键字可以定义一个数据类：<br>  data class Cellphone(val brand: String, val price: Double)</p>
+<li><p>Kotlin中使用data关键字可以定义一个数据类：</p>
+<p>  data class Cellphone(val brand: String, val price: Double)</p>
 <p>  Kotlin会根据数据类的主构造函数中的参数将equals()、hashCode()、toString()等固定且无实际逻辑意义的方法自动生成，从而大大简少了开发的工作量。</p>
 <h4 id="单例类"><a href="#单例类" class="headerlink" title="单例类"></a>单例类</h4></li>
-<li><p>Kotlin中使用object关键字可以定义一个单例类：<br>  object Singleton {<br>  fun singletonTest() {</p>
-<pre><code>println(&quot;singletonTest is called.&quot;)</code></pre><p>  }<br>  }</p>
+<li><p>Kotlin中使用object关键字可以定义一个单例类：</p>
+<p>  object Singleton {<br>  fun singletonTest() {</p>
+<pre><code>println(&quot;singletonTest is called.&quot;)</code></pre><p>   }<br>  }</p>
 </li>
-<li><p>而调用单例类中的函数比较类似于Java中静态方法的调用方式：<br>  Singleton.singletonTest()</p>
+<li><p>而调用单例类中的函数比较类似于Java中静态方法的调用方式：</p>
+<p>  Singleton.singletonTest()</p>
 <p>  这种写法虽然看上去像是静态方法的调用，但其实Kotlin在背后自动帮我们创建了一个Singleton类的实例，并且保证全局只会存在一个Singleton实例。</p>
 </li>
 </ul>
@@ -270,7 +299,7 @@ else -&gt; println(&quot;number not support&quot;)</code></pre>  }<br>  }</li>
 <p>  首先最外层是一对大括号，如果有参数传入到Lambda表达式中的话，我们还需要声明参数列表，参数列表的结尾使用一个-&gt;符号，表示参数列表的结束以及函数体的开始，函数体中可以编写任意行代码，并且最后一行代码会自动作为Lambda表达式的返回值。</p>
 <h3 id="集合的函数式API"><a href="#集合的函数式API" class="headerlink" title="集合的函数式API"></a>集合的函数式API</h3><p>  集合中的map函数是最常用的一种函数式API，它用于将集合中的每个元素都映射成一个另外的值，映射的规则在Lambda表达式中指定，最终生成一个新的集合。比如，这里我们希望让所有的水果名都变成大写模式，就可以这样写：</p>
 <p>  fun main() {<br>  val list = listOf(“Apple”, “Banana”, “Orange”, “Pear”, “Grape”, “Watermelon”)<br>  val newList = list.map({ fruit: String -&gt; fruit.toUpperCase() })<br>  for (fruit in newList) {</p>
-<pre><code>println(fruit)
+<pre><code> println(fruit)
 }</code></pre><p>  }</p>
 </li>
 </ul>
@@ -302,17 +331,19 @@ public interface OnClickListener {
 button.setOnClickListener { v -&gt;
 }</code></pre><h2 id="空指针检查"><a href="#空指针检查" class="headerlink" title="空指针检查"></a>空指针检查</h2><ul>
 <li><p>空指针是一种不受编程语言检查的运行时异常，只能由程序员主动通过逻辑判断来避免，但即使是最出色的程序员，也不可能将所有潜在的空指针异常全部考虑到。</p>
-<p>  public void doStudy(Study study) {<br>  study.readBooks();<br>  study.doHomework();<br>  }</p>
+<p>  public void doStudy(Study study) {<br>   study.readBooks();<br>   study.doHomework();<br>  }</p>
 <p>  这段Java代码安全吗？不一定，因为这要取决于调用方传入的参数是什么，如果我们向doStudy()方法传入了一个null参数，那么毫无疑问这里就会发生空指针异常。因此，更加稳妥的做法是在调用参数的方法之前先进行一个判空处理，如下所示：</p>
 <p>  public void doStudy(Study study) {<br>  if (study != null) {</p>
-<pre><code>study.readBooks();
-study.doHomework();
+<pre><code> study.readBooks();
+ study.doHomework();
 }</code></pre><p>  }</p>
 </li>
 </ul>
 <h3 id="可空类型系统"><a href="#可空类型系统" class="headerlink" title="可空类型系统"></a>可空类型系统</h3><ul>
 <li><p>Kotlin中引入了一个可空类型系统的概念，它利用编译时判空检查的机制几乎杜绝了空指针异常。</p>
-<p>  fun doStudy(study: Study) {<br>  study.readBooks()<br>  study.doHomework()<br>  }</p>
+<p>  fun doStudy(study: Study) {</p>
+<pre><code>study.readBooks()
+study.doHomework()</code></pre><p>  }</p>
 <p>  这段代码看上去和刚才的Java版本并没有什么区别，但实际上它是没有空指针风险的，因为Kotlin默认所有的参数和变量都不可为空，所以这里传入的Study参数也一定不会为空，可以放心地调用它的任何函数。</p>
 <p>  Kotlin提供了另外一套可为空的类型系统，就是在类名的后面加上一个问号。比如，Int表示不可为空的整型，而Int?就表示可为空的整型；String表示不可为空的字符串，而String?就表示可为空的字符串。</p>
 <p>  使用可为空的类型系统时，需要在编译时期就把所有的空指针异常都处理掉才行。</p>
@@ -322,13 +353,16 @@ study.doHomework();
 </ul>
 <ul>
 <li><p>?. 操作符表示当对象不为空时正常调用相应的方法，当对象为空时则什么都不做。比如：</p>
-<p>  if (a != null) {<br>  a.doSomething()<br>  }</p>
+<p>  if (a != null) {</p>
+<pre><code>a.doSomething()</code></pre><p>  }</p>
 </li>
 <li><p>这段代码使用?.操作符就可以简化成：</p>
 <p>  a?.doSomething()</p>
 </li>
 <li><p>?: 操作符表示如果左边表达式的结果不为空就返回左边表达式的结果，否则就返回右边表达式的结果。比如：</p>
-<p>  val c = if (a ! = null) {<br>  a<br>  } else {<br>  b<br>  }</p>
+<p>  val c = if (a ! = null) {</p>
+<pre><code>a</code></pre><p>  } else {</p>
+<pre><code>b</code></pre><p>  }</p>
 </li>
 <li><p>这段代码的逻辑使用?:操作符就可以简化成：</p>
 <p>  val c = a ?: b</p>
@@ -342,20 +376,20 @@ study?.let {
     it.doHomework()
     }
 }</code></pre><h2 id="Kotlin中的小魔术"><a href="#Kotlin中的小魔术" class="headerlink" title="Kotlin中的小魔术"></a>Kotlin中的小魔术</h2><h3 id="字符串内嵌表达式"><a href="#字符串内嵌表达式" class="headerlink" title="字符串内嵌表达式"></a>字符串内嵌表达式</h3><pre><code>在Kotlin中，我们可以直接将表达式写在字符串里面，即使是构建非常复杂的字符串，也会变得轻而易举。</code></pre><ul>
-<li><p>Kotlin中字符串内嵌表达式的语法规则如下：</p>
-<p>  “hello, ${obj.name}. nice to meet you!”</p>
-</li>
-<li><p>当表达式中仅有一个变量的时候，还可以将两边的大括号省略：</p>
-<p>  “hello, $name. nice to meet you!”</p>
-</li>
+<li>Kotlin中字符串内嵌表达式的语法规则如下：</li>
 </ul>
-<h3 id="函数的参数默认值"><a href="#函数的参数默认值" class="headerlink" title="函数的参数默认值"></a>函数的参数默认值</h3><ul>
-<li><p>Kotlin允许在定义函数的时候给任意参数设定一个默认值，这样当调用此函数时就不会强制要求调用方为此参数传值，在没有传值的情况下会自动使用参数的默认值。语法格式如下：</p>
-<p>  fun printParams(num: Int, str: String = “hello”) {<br>  println(“num is $num , str is $str”)<br>  }</p>
-<p>  这里给printParams()函数的第二个参数设定了一个默认值，这样当调用printParams()函数时，可以选择给第二个参数传值，也可以选择不传，在不传的情况下就会自动使用默认值。</p>
-</li>
+<pre><code>&quot;hello, ${obj.name}. nice to meet you!&quot;</code></pre><ul>
+<li>当表达式中仅有一个变量的时候，还可以将两边的大括号省略：</li>
 </ul>
+<pre><code>&quot;hello, $name. nice to meet you!&quot;</code></pre><h3 id="函数的参数默认值"><a href="#函数的参数默认值" class="headerlink" title="函数的参数默认值"></a>函数的参数默认值</h3><ul>
+<li>Kotlin允许在定义函数的时候给任意参数设定一个默认值，这样当调用此函数时就不会强制要求调用方为此参数传值，在没有传值的情况下会自动使用参数的默认值。语法格式如下：</li>
+</ul>
+<pre><code>fun printParams(num: Int, str: String = &quot;hello&quot;) {
+    println(&quot;num is $num , str is $str&quot;)
+}
 
+
+这里给printParams()函数的第二个参数设定了一个默认值，这样当调用printParams()函数时，可以选择给第二个参数传值，也可以选择不传，在不传的情况下就会自动使用默认值。</code></pre>
       
 
       
