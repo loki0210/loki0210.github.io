@@ -17,7 +17,7 @@
 <meta property="og:description" content="写在前面Andorid第一行代码Kotlin小课堂">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/kotlin/001.jpg">
-<meta property="og:updated_time" content="2020-12-13T00:53:29.796Z">
+<meta property="og:updated_time" content="2020-12-13T00:58:43.533Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin小课堂">
 <meta name="twitter:description" content="写在前面Andorid第一行代码Kotlin小课堂">
@@ -172,11 +172,7 @@
 <li>val（value的简写的简写）用来声明一个不可变的变量，这种变量在初始赋值之后就再也不能重新赋值，对应Java中的final变量。</li>
 <li>var（variable的简写的简写）用来声明一个可变的变量，这种变量在初始赋值之后仍然可以再被重新赋值复制，对应Java中的非final变量。<br>  Kotlin完全抛弃了Java中的基本数据类型，全部使用了对象数据类型。在Java中int是整型变量的关键字，而在Kotlin中Int变成了一个类，它拥有自己的方法和继承结构。<br><img src="/assets/img/kotlin/001.jpg" alt></li>
 </ul>
-<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><h4 id="定义一个函数的语法规则如下："><a href="#定义一个函数的语法规则如下：" class="headerlink" title="定义一个函数的语法规则如下："></a>定义一个函数的语法规则如下：</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function"><span class="keyword">fun</span> <span class="title">methodName</span><span class="params">(param1: <span class="type">Int</span>, param2: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<ul>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><h4 id="定义一个函数的语法规则如下："><a href="#定义一个函数的语法规则如下：" class="headerlink" title="定义一个函数的语法规则如下："></a>定义一个函数的语法规则如下：</h4><pre><code><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function"><span class="keyword">fun</span> <span class="title">methodName</span><span class="params">(param1: <span class="type">Int</span>, param2: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><ul>
 <li><p>fun（function的简写）是定义函数的关键字，无论你定义什么函数，都一定要使用fun来声明。</p>
 </li>
 <li><p>紧跟在fun后面的是函数名，良好的编程习惯是函数名最好要有一定的意义，能表达这个函数的作用是什么。</p>
@@ -188,7 +184,7 @@
 <li><p>两个大括号之间的内容就是函数体了，可以在这里编写函数的具体逻辑。</p>
 </li>
 </ul>
-<h4 id="当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖："><a href="#当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖：" class="headerlink" title="当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖："></a>当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖：</h4><pre><code>fun methodName(param1: Int, param2: Int) = 0</code></pre><ul>
+<h4 id="当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖："><a href="#当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖：" class="headerlink" title="当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖："></a>当一个函数的函数体中只有一行代码时，可以使用单行代码函数的语法糖：</h4><pre><code><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">methodName</span><span class="params">(param1: <span class="type">Int</span>, param2: <span class="type">Int</span>)</span></span> = <span class="number">0</span></span><br></pre></td></tr></table></figure></code></pre><ul>
 <li><p>使用这种写法，可以直接将唯一的一行代码写在函数定义的尾部，中间用等号连接即可。</p>
 </li>
 <li><p>return关键字也可以省略，等号足以表达返回值的意思。</p>
@@ -198,7 +194,7 @@
 </ul>
 <h3 id="if条件语句"><a href="#if条件语句" class="headerlink" title="if条件语句"></a>if条件语句</h3><ul>
 <li><p>Kotlin中的if语句相比于Java有一个额外的功能：它是可以有返回值的，返回值就是if语句每一个条件中最后一行代码的返回值。</p>
-  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">largerNumber</span><span class="params">(num1: <span class="type">Int</span>, num2: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">   <span class="keyword">val</span> value = <span class="keyword">if</span> (num1 &gt; num2) &#123;</span><br><span class="line">    num1</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    num2</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">largerNumber</span><span class="params">(num1: <span class="type">Int</span>, num2: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">   <span class="keyword">val</span> value = <span class="keyword">if</span> (num1 &gt; num2) &#123;</span><br><span class="line">    	num1</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    	num2</span><br><span class="line">    	&#125;</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>仔细观察上述代码，你会发现value其实是一个多余的变量，我们可以直接将if语句返回，这样代码将会变得更加精简，如下所示：</p>
   <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">largerNumber</span><span class="params">(num1: <span class="type">Int</span>, num2: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">if</span> (num1 &gt; num2) &#123;</span><br><span class="line">       num1</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       num2</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -300,7 +296,7 @@
 {参数名1: 参数类型, 参数名2: 参数类型 -&gt; 函数体}
 
 首先最外层是一对大括号，如果有参数传入到Lambda表达式中的话，我们还需要声明参数列表，参数列表的结尾使用一个-&gt;符号，表示参数列表的结束以及函数体的开始，函数体中可以编写任意行代码，并且最后一行代码会自动作为Lambda表达式的返回值。</code></pre><h3 id="集合的函数式API"><a href="#集合的函数式API" class="headerlink" title="集合的函数式API"></a>集合的函数式API</h3><pre><code>集合中的map函数是最常用的一种函数式API，它用于将集合中的每个元素都映射成一个另外的值，映射的规则在Lambda表达式中指定，最终生成一个新的集合。比如，这里我们希望让所有的水果名都变成大写模式，就可以这样写：
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">val</span> list = listOf(<span class="string">"Apple"</span>, <span class="string">"Banana"</span>, <span class="string">"Orange"</span>, <span class="string">"Pear"</span>, <span class="string">"Grape"</span>, <span class="string">"Watermelon"</span>)</span><br><span class="line">   <span class="keyword">val</span> newList = list.map(&#123; fruit: String -&gt; fruit.toUpperCase() &#125;)</span><br><span class="line">   <span class="keyword">for</span> (fruit <span class="keyword">in</span> newList) &#123;</span><br><span class="line">        println(fruit)</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">val</span> list = listOf(<span class="string">"Apple"</span>, <span class="string">"Banana"</span>, <span class="string">"Orange"</span>, <span class="string">"Pear"</span>, <span class="string">"Grape"</span>, <span class="string">"Watermelon"</span>)</span><br><span class="line">   <span class="keyword">val</span> newList = list.map(&#123; fruit: String -&gt; fruit.toUpperCase() &#125;)</span><br><span class="line">   <span class="keyword">for</span> (fruit <span class="keyword">in</span> newList) &#123;</span><br><span class="line">        println(fruit)</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><ul>
 <li><p>当Lambda参数是函数的最后一个参数时，可以将Lambda表达式移到函数括号的外面。</p>
 </li>
 <li><p>如果Lambda参数是函数的唯一一个参数的话，还可以将函数的括号省略。</p>
@@ -309,7 +305,7 @@
 </li>
 <li><p>当Lambda表达式的参数列表中只有一个参数时，也不必声明参数名，而是可以使用it关键字来代替。</p>
 </li>
-</ol>
+</ul>
 <ul>
 <li>因此，Lambda表达式的写法可以进一步简化成如下方式：  <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">val newList = <span class="built_in">list</span>.map &#123; <span class="keyword">it</span>.toUpperCase() &#125;</span><br></pre></td></tr></table></figure>
 
