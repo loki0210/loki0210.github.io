@@ -17,7 +17,7 @@
 <meta property="og:description" content="写在前面Andorid第一行代码Kotlin小课堂">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/kotlin/001.jpg">
-<meta property="og:updated_time" content="2020-12-12T07:45:50.499Z">
+<meta property="og:updated_time" content="2020-12-13T00:41:00.368Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin小课堂">
 <meta name="twitter:description" content="写在前面Andorid第一行代码Kotlin小课堂">
@@ -196,7 +196,7 @@
 </ol>
 <h3 id="if条件语句"><a href="#if条件语句" class="headerlink" title="if条件语句"></a>if条件语句</h3><ul>
 <li><p>Kotlin中的if语句相比于Java有一个额外的功能：它是可以有返回值的，返回值就是if语句每一个条件中最后一行代码的返回值。</p>
-<p>  fun largerNumber(num1: Int, num2: Int): Int {<br>  val value = if (num1 &gt; num2) {<br>   num1<br>   } else {<br>   num2<br>   }<br>   return value<br>  }</p>
+<pre><code>fun largerNumber(num1: Int, num2: Int): Int {</code></pre><p>  val value = if (num1 &gt; num2) {<br>   num1<br>   } else {<br>   num2<br>   }<br>   return value<br>  }</p>
 </li>
 <li><p>仔细观察上述代码，你会发现value其实是一个多余的变量，我们可以直接将if语句返回，这样代码将会变得更加精简，如下所示：</p>
 <p>  fun largerNumber(num1: Int, num2: Int): Int {<br>  return if (num1 &gt; num2) {</p>
