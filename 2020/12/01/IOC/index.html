@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Archives: 2019 | Zihuatanejo&#39;s Blog</title>
+  <title>IOC注解框架 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/archives/2019/page/3/index.html">
+  <meta name="description" content="写在前面打造自己的简单IOC注解框架">
+<meta name="keywords" content="IT技术,Android,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IOC注解框架">
+<meta property="og:url" content="http://blog.findwork.xyz/2020/12/01/IOC/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="写在前面打造自己的简单IOC注解框架">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-12-15T12:46:32.103Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="IOC注解框架">
+<meta name="twitter:description" content="写在前面打造自己的简单IOC注解框架">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -144,36 +145,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-IOC" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/09/10/dagger2/" class="archive-article-date">
-  	<time datetime="2019-09-10T02:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-10</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/09/10/dagger2/">Dagger2</a>
+    <h1 class="article-title" itemprop="name">
+      IOC注解框架
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/loki0210.github.io/2020/12/01/IOC/" class="archive-article-date">
+  	<time datetime="2020-12-01T11:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><pre><code>打造自己的简单IOC注解框架</code></pre><a id="more"></a>
+
+<h2 id="1-创建annotation类"><a href="#1-创建annotation类" class="headerlink" title="1.创建annotation类"></a>1.创建annotation类</h2><h3 id="View"><a href="#View" class="headerlink" title="View"></a>View</h3><pre><code><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代表Annotation的位置， FIELD属性 TYPE类上   CONSTRUCTOR构造函数上</span></span><br><span class="line"><span class="variable">@Target</span>(ElementType.FIELD)</span><br><span class="line"><span class="comment">//代表什么时候生效  CLASS编译时 RUNTIME运行时  SOURCE源码时</span></span><br><span class="line"><span class="variable">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line">public <span class="variable">@interface</span> ViewById &#123;</span><br><span class="line">   	<span class="selector-tag">int</span> <span class="selector-tag">value</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><h3 id="点击监听"><a href="#点击监听" class="headerlink" title="点击监听"></a>点击监听</h3><pre><code><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="variable">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line">public <span class="variable">@interface</span> OnClick &#123;</span><br><span class="line">   	<span class="selector-tag">int</span><span class="selector-attr">[]</span> <span class="selector-tag">value</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><h3 id="网络状态判断"><a href="#网络状态判断" class="headerlink" title="网络状态判断"></a>网络状态判断</h3><pre><code><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="variable">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line">public <span class="variable">@interface</span> CheckNet &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><h2 id="2-创建View的findViewById的辅助类"><a href="#2-创建View的findViewById的辅助类" class="headerlink" title="2.创建View的findViewById的辅助类"></a>2.创建View的findViewById的辅助类</h2><pre><code><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ViewFinder</span> &#123;</span><br><span class="line">   	<span class="keyword">private</span> Activity mActivity;</span><br><span class="line">   	<span class="keyword">private</span> View mView;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">public</span> <span class="title">ViewFinder</span>(<span class="params">Activity activity</span>)</span> &#123;</span><br><span class="line">       	<span class="keyword">this</span>.mActivity = activity;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">public</span> <span class="title">ViewFinder</span>(<span class="params">View view</span>)</span> &#123;</span><br><span class="line">       	<span class="keyword">this</span>.mView = view;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">public</span> View <span class="title">findViewById</span>(<span class="params"><span class="keyword">int</span> viewId</span>)</span> &#123;</span><br><span class="line">       	<span class="keyword">return</span> mActivity != <span class="literal">null</span> ? mActivity.findViewById(viewId) : mView.findViewById(viewId);</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><h2 id="3-创建工具类"><a href="#3-创建工具类" class="headerlink" title="3.创建工具类"></a>3.创建工具类</h2><pre><code><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewUtils</span> </span>&#123;</span><br><span class="line">   	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(View view, Object object)</span> </span>&#123;</span><br><span class="line">   	&#125;</span><br><span class="line">   	<span class="comment">//兼容 上面三个方法，object -&gt;  反射需要执行的类</span></span><br><span class="line">   	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(ViewFinder finder, Object object)</span> </span>&#123;</span><br><span class="line">       	injectField(finder, object);</span><br><span class="line">       	injectEvent(finder, object);</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   </span><br><span class="line">     <span class="comment">// 注入属性    </span></span><br><span class="line">   	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">injectField</span><span class="params">(ViewFinder finder, Object object)</span> </span>&#123;</span><br><span class="line">       	<span class="comment">//1.获取类里面的所有属性</span></span><br><span class="line">       	Class&lt;?&gt; clazz = object.getClass();</span><br><span class="line">       	<span class="comment">// 获取所有属性包括私有和共有</span></span><br><span class="line">       	Field[] fields = clazz.getDeclaredFields();</span><br><span class="line">       	<span class="comment">//2.获取ViewById找到view</span></span><br><span class="line">       	<span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">       	    ViewById viewById = field.getAnnotation(ViewById.class);</span><br><span class="line">       	    <span class="keyword">if</span> (viewById != <span class="keyword">null</span>) &#123;</span><br><span class="line">       	        <span class="comment">//获取注解里的id值-&gt;R.id.xx</span></span><br><span class="line">       	        <span class="keyword">int</span> viewId = viewById.value();</span><br><span class="line">       	        <span class="comment">//3.findViewById找到view</span></span><br><span class="line">       	        View view = finder.findViewById(viewId);</span><br><span class="line">       	        <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">       	            <span class="comment">//能够注入所有修饰符private public</span></span><br><span class="line">       	            field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">       	            <span class="keyword">try</span> &#123;</span><br><span class="line">       	                <span class="comment">//4.动态注入扎到view</span></span><br><span class="line">       	                field.set(object, view);</span><br><span class="line">       	            &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">       	                e.printStackTrace();</span><br><span class="line">       	            &#125;</span><br><span class="line">       	        &#125;</span><br><span class="line">       	    &#125;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">injectEvent</span><span class="params">(ViewFinder finder, Object object)</span> </span>&#123;</span><br><span class="line">       	Class&lt;?&gt; clazz = object.getClass();</span><br><span class="line">       	Method[] methods = clazz.getDeclaredMethods();</span><br><span class="line"></span><br><span class="line">       	<span class="keyword">for</span> (Method method : methods) &#123;</span><br><span class="line">       	    OnClick onClick = method.getAnnotation(OnClick.class);</span><br><span class="line">       	    <span class="keyword">if</span> (onClick != <span class="keyword">null</span>) &#123;</span><br><span class="line">       	        <span class="keyword">int</span>[] viewIds = onClick.value();</span><br><span class="line">       	        <span class="keyword">for</span> (<span class="keyword">int</span> viewId : viewIds) &#123;</span><br><span class="line">       	            View view = finder.findViewById(viewId);</span><br><span class="line">       	            <span class="keyword">boolean</span> isCheckNet = method.getAnnotation(CheckNet.class) != <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">       	            <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">       	                view.setOnClickListener(<span class="keyword">new</span> DeclaredOnClickListener(method, object, isCheckNet));</span><br><span class="line">       	            &#125;</span><br><span class="line">       	        &#125;</span><br><span class="line">       	    &#125;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DeclaredOnClickListener</span> <span class="keyword">implements</span> <span class="title">View</span>.<span class="title">OnClickListener</span> </span>&#123;</span><br><span class="line">       	<span class="keyword">private</span> <span class="keyword">final</span> Object mObject;</span><br><span class="line">       	<span class="keyword">private</span> <span class="keyword">final</span> Method mMethod;</span><br><span class="line">       	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">boolean</span> mIsCheckNet;</span><br><span class="line"></span><br><span class="line">       	<span class="function"><span class="keyword">public</span> <span class="title">DeclaredOnClickListener</span><span class="params">(Method method, Object object, <span class="keyword">boolean</span> isCheckNet)</span> </span>&#123;</span><br><span class="line">       	    <span class="keyword">this</span>.mMethod = method;</span><br><span class="line">       	    <span class="keyword">this</span>.mObject = object;</span><br><span class="line">       	    <span class="keyword">this</span>.mIsCheckNet = isCheckNet;</span><br><span class="line">       	&#125;</span><br><span class="line"></span><br><span class="line">       	<span class="meta">@Override</span></span><br><span class="line">       	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">       	    <span class="keyword">if</span> (mIsCheckNet) &#123;</span><br><span class="line">       	        <span class="keyword">if</span> (!networkAvailable(v.getContext())) &#123;</span><br><span class="line">       	            Toast.makeText(v.getContext(), <span class="string">"网络不可用"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">       	            <span class="keyword">return</span>;</span><br><span class="line">       	        &#125;</span><br><span class="line">       	    &#125;</span><br><span class="line">       	    <span class="keyword">try</span> &#123;</span><br><span class="line">       	        mMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">       	        mMethod.invoke(mObject, v);</span><br><span class="line">       	    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">       	        e.printStackTrace();</span><br><span class="line">       	        <span class="keyword">try</span> &#123;</span><br><span class="line">       	            mMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">       	            mMethod.invoke(mObject, <span class="keyword">null</span>);</span><br><span class="line">       	        &#125; <span class="keyword">catch</span> (Exception e1) &#123;</span><br><span class="line">       	            e1.printStackTrace();</span><br><span class="line">       	        &#125;</span><br><span class="line">       	    &#125;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">networkAvailable</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">       	<span class="keyword">try</span> &#123;</span><br><span class="line">           	ConnectivityManager connectivityManager = (ConnectivityManager)</span><br><span class="line">                   	context.getSystemService(Context.CONNECTIVITY_SERVICE);</span><br><span class="line">           	NetworkInfo activeNetWorkInfo = connectivityManager.getActiveNetworkInfo();</span><br><span class="line">           	<span class="keyword">if</span> (activeNetWorkInfo != <span class="keyword">null</span> &amp;&amp; activeNetWorkInfo.isConnected()) &#123;</span><br><span class="line">               	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">           	&#125;</span><br><span class="line">       	&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">           	e.printStackTrace();</span><br><span class="line">       	&#125;</span><br><span class="line">       	<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><pre><code><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@ViewById</span>(R.id.test_tv)</span><br><span class="line">   private TextView textView;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable">@CheckNet</span></span><br><span class="line">   <span class="variable">@OnClick</span>(R.id.test_tv)</span><br><span class="line">   private void onClick(View view) &#123;</span><br><span class="line">       <span class="selector-tag">Toast</span><span class="selector-class">.makeText</span>(this, <span class="string">"click"</span>, Toast.LENGTH_SHORT)<span class="selector-class">.show</span>();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -185,110 +186,122 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/09/10/hexo/" class="archive-article-date">
-  	<time datetime="2019-09-10T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/09/10/hexo/">hexo 简单使用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2020/12/01/IOC/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/07/29/docker_build/" class="archive-article-date">
-  	<time datetime="2019-07-29T07:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-29</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/loki0210.github.io/2020/12/12/kotlin/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Kotlin小课堂
+        
+      </div>
+    </a>
+  
+  
+    <a href="/loki0210.github.io/2020/11/28/dp2px/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">dp与px的转换</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/07/29/docker_build/">Docker简单使用</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/loki0210.github.io/archives/2019/page/2/">&laquo; Prev</a><a class="page-number" href="/loki0210.github.io/archives/2019/">1</a><a class="page-number" href="/loki0210.github.io/archives/2019/page/2/">2</a><span class="page-number current">3</span>
-    </nav>
+  
+
   
 
 
@@ -312,8 +325,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
