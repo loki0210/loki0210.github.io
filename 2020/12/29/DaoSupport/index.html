@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Tag: Android | Zihuatanejo&#39;s Blog</title>
+  <title>自己的网络框架配合数据库缓存使用 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/tags/Android/page/2/index.html">
+  <meta name="description" content="首先创建IDaoSupport接口规范">
+<meta name="keywords" content="IT技术,Android,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自己的网络框架配合数据库缓存使用">
+<meta property="og:url" content="http://blog.findwork.xyz/2020/12/29/DaoSupport/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="首先创建IDaoSupport接口规范">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-12-29T11:40:00.647Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="自己的网络框架配合数据库缓存使用">
+<meta name="twitter:description" content="首先创建IDaoSupport接口规范">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -144,36 +145,58 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-DaoSupport" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/15/IOC/" class="archive-article-date">
-  	<time datetime="2020-12-15T11:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-15</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/15/IOC/">IOC注解框架</a>
+    <h1 class="article-title" itemprop="name">
+      自己的网络框架配合数据库缓存使用
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/loki0210.github.io/2020/12/29/DaoSupport/" class="archive-article-date">
+  	<time datetime="2020-12-29T10:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="首先创建IDaoSupport接口规范"><a href="#首先创建IDaoSupport接口规范" class="headerlink" title="首先创建IDaoSupport接口规范"></a>首先创建IDaoSupport接口规范</h3><a id="more"></a>
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">interface</span> <span class="title">IDaoSupport</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>初始化</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     *</span></span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>@param sqLiteDatabase s</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>@param clazz          c</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    <span class="keyword">void</span> init(SQLiteDatabase sqLiteDatabase, Class&lt;T&gt; clazz);</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>插入</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     *</span></span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>@param t t</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>@return l</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    long insert(T t);</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>批量插入，检测性能</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     *</span></span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>@param datas l</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    <span class="keyword">void</span> insert(<span class="built_in">List</span>&lt;T&gt; datas);</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>获取专门查询的支持类</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    QuerySupport&lt;T&gt; querySupport();</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>删除</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    <span class="built_in">int</span> delete(<span class="built_in">String</span> whereClause, <span class="built_in">String</span>... whereArgs);</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>更新</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    <span class="built_in">int</span> update(T object, <span class="built_in">String</span> whereClause, <span class="built_in">String</span>... whereArgs);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建DaoSupportFactory工厂类"><a href="#创建DaoSupportFactory工厂类" class="headerlink" title="创建DaoSupportFactory工厂类"></a>创建DaoSupportFactory工厂类</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> DaoSupportFactory &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> DaoSupportFactory mFactory;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 持有外部数据库的引用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SQLiteDatabase mSqLiteDatabase;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DaoSupportFactory() &#123;</span><br><span class="line">        <span class="comment">//打开或者创建一个数据库，放到内存卡里</span></span><br><span class="line">        <span class="keyword">File</span> dbRoot = <span class="keyword">new</span> <span class="keyword">File</span>(Environment.getExternalStorageDirectory().getAbsolutePath()</span><br><span class="line">                + <span class="keyword">File</span>.separator + <span class="string">"nhdz"</span> + <span class="keyword">File</span>.separator + <span class="string">"database"</span>);</span><br><span class="line">        <span class="keyword">if</span> (!dbRoot.exists()) &#123;</span><br><span class="line">            dbRoot.mkdirs();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">File</span> dbFile = <span class="keyword">new</span> <span class="keyword">File</span>(dbRoot, <span class="string">"nhdz.db"</span>);</span><br><span class="line">        mSqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(dbFile, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> DaoSupportFactory getFactory() &#123;</span><br><span class="line">        <span class="keyword">if</span> (mFactory == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (DaoSupportFactory.<span class="keyword">class</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (mFactory == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mFactory = <span class="keyword">new</span> DaoSupportFactory();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mFactory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; IDaoSupport&lt;T&gt; getDao(<span class="keyword">Class</span>&lt;T&gt; clazz) &#123;</span><br><span class="line">        IDaoSupport&lt;T&gt; daoSupport = <span class="keyword">new</span> DaoSupport&lt;&gt;();</span><br><span class="line">        daoSupport.init(mSqLiteDatabase, clazz);</span><br><span class="line">        <span class="keyword">return</span> daoSupport;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建DaoUtils工具类"><a href="#创建DaoUtils工具类" class="headerlink" title="创建DaoUtils工具类"></a>创建DaoUtils工具类</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DaoUtils</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">DaoUtils</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(<span class="string">"cannot be instantiated"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getTableName</span>(<span class="params">Class&lt;?&gt; clazz</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> clazz.getSimpleName();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getColumnType</span>(<span class="params">String type</span>)</span> &#123;</span><br><span class="line">        String <span class="keyword">value</span> = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (type.contains(<span class="string">"String"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" text"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.contains(<span class="string">"int"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" integer"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.contains(<span class="string">"boolean"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" boolean"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.contains(<span class="string">"float"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" float"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.contains(<span class="string">"double"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" double"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.contains(<span class="string">"char"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" varchar"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.contains(<span class="string">"long"</span>)) &#123;</span><br><span class="line">            <span class="keyword">value</span> = <span class="string">" long"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">capitalize</span>(<span class="params">String <span class="keyword">string</span></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!TextUtils.isEmpty(<span class="keyword">string</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">string</span>.substring(<span class="number">0</span>, <span class="number">1</span>).toUpperCase(Locale.US) + <span class="keyword">string</span>.substring(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">string</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建查询类QuerySupport"><a href="#创建查询类QuerySupport" class="headerlink" title="创建查询类QuerySupport"></a>创建查询类QuerySupport</h3><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class QuerySupport&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询列</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span>[] mQueryColumns;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询条件</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mQuerySelection;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询参数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span>[] mQuerySelectionArgs;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询分组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mQueryGroupBy;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询对结果进行过滤</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mQueryHaving;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询排序</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mQueryOrderBy;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询可用于分页</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mQueryLimit;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Class&lt;T&gt; mClazz;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SQLiteDatabase mSqLiteDatabase;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport(SQLiteDatabase sqLiteDatabase, Class&lt;T&gt; mClass) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mClazz = mClass;</span><br><span class="line">        <span class="keyword">this</span>.mSqLiteDatabase = sqLiteDatabase;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; columns(<span class="keyword">String</span>... columns) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQueryColumns = columns;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; selectionArgs(<span class="keyword">String</span>... selectionArgs) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQuerySelectionArgs = selectionArgs;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; having(<span class="keyword">String</span> having) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQueryHaving = having;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; orderBy(<span class="keyword">String</span> orderBy) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQueryOrderBy = orderBy;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; limit(<span class="keyword">String</span> limit) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQueryLimit = limit;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; groupBy(<span class="keyword">String</span> groupBy) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQueryGroupBy = groupBy;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; selection(<span class="keyword">String</span> selection) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mQuerySelection = selection;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;T&gt; query() &#123;</span><br><span class="line">        Cursor <span class="built_in">cursor</span> = mSqLiteDatabase.query(DaoUtils.getTableName(mClazz), mQueryColumns,</span><br><span class="line">                mQuerySelection, mQuerySelectionArgs, mQueryGroupBy, mQueryHaving, mQueryOrderBy, mQueryLimit);</span><br><span class="line">        clearQueryParams();</span><br><span class="line">        <span class="keyword">return</span> cursorToList(<span class="built_in">cursor</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;T&gt; queryAll() &#123;</span><br><span class="line">        Cursor <span class="built_in">cursor</span> = mSqLiteDatabase.query(DaoUtils.getTableName(mClazz),</span><br><span class="line">                <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">        <span class="keyword">return</span> cursorToList(<span class="built_in">cursor</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> clearQueryParams() &#123;</span><br><span class="line">        mQueryColumns = <span class="keyword">null</span>;</span><br><span class="line">        mQuerySelection = <span class="keyword">null</span>;</span><br><span class="line">        mQuerySelectionArgs = <span class="keyword">null</span>;</span><br><span class="line">        mQueryGroupBy = <span class="keyword">null</span>;</span><br><span class="line">        mQueryHaving = <span class="keyword">null</span>;</span><br><span class="line">        mQueryOrderBy = <span class="keyword">null</span>;</span><br><span class="line">        mQueryLimit = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;T&gt; cursorToList(Cursor <span class="built_in">cursor</span>) &#123;</span><br><span class="line">        List&lt;T&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">cursor</span> != <span class="keyword">null</span> &amp;&amp; <span class="built_in">cursor</span>.moveToFirst()) &#123;</span><br><span class="line">            <span class="comment">//不断从游标里面获取数据</span></span><br><span class="line">            do &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">//通过反射new对象</span></span><br><span class="line">                    T instance = mClazz.newInstance();</span><br><span class="line">                    Field[] fields = mClazz.getDeclaredFields();</span><br><span class="line">                    <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">                        <span class="comment">//遍历属性,设置权限</span></span><br><span class="line">                        field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                        <span class="keyword">String</span> name = field.getName();</span><br><span class="line">                        <span class="comment">//获取角标</span></span><br><span class="line">                        <span class="built_in">int</span> index = <span class="built_in">cursor</span>.getColumnIndex(name);</span><br><span class="line">                        <span class="keyword">if</span> (index == <span class="number">-1</span>) &#123;</span><br><span class="line">                            <span class="keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//通过反射获取游标的方法 ,field.getType()获取类型</span></span><br><span class="line">                        Method cursorMethod = cursorMethod(field.getType());</span><br><span class="line">                        <span class="keyword">Object</span> value = cursorMethod.invoke(<span class="built_in">cursor</span>, index);</span><br><span class="line">                        <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            <span class="keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//处理一些特殊的部分</span></span><br><span class="line">                        <span class="keyword">if</span> (field.getType() == <span class="built_in">boolean</span>.class || field.getType() == <span class="built_in">boolean</span>.class) &#123;</span><br><span class="line">                            <span class="keyword">if</span> (<span class="string">"0"</span>.equals(<span class="keyword">String</span>.valueOf(value))) &#123;</span><br><span class="line">                                value = <span class="keyword">false</span>;</span><br><span class="line">                            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"1"</span>.equals(<span class="keyword">String</span>.valueOf(value))) &#123;</span><br><span class="line">                                value = <span class="keyword">true</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (field.getType() == <span class="built_in">char</span>.class || field.getType() == Character.class) &#123;</span><br><span class="line">                            value = ((<span class="keyword">String</span>) value).charAt(<span class="number">0</span>);</span><br><span class="line">                        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (field.getType() == Date.class) &#123;</span><br><span class="line">                            <span class="keyword">long</span> date = (Long) value;</span><br><span class="line">                            <span class="keyword">if</span> (date &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                                value = <span class="keyword">null</span>;</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                value = <span class="keyword">new</span> Date(date);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//通过反射注入</span></span><br><span class="line">                        field.<span class="built_in">set</span>(instance, value);</span><br><span class="line">                    &#125;</span><br><span class="line">                    list.<span class="built_in">add</span>(instance);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">while</span> (<span class="built_in">cursor</span>.moveToNext());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">cursor</span> != <span class="keyword">null</span>;</span><br><span class="line">        <span class="built_in">cursor</span>.close();</span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Method cursorMethod(Class&lt;?&gt; type) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">String</span> methodName = getColumnMethodName(type);</span><br><span class="line">        <span class="keyword">return</span> Cursor.class.getMethod(methodName, <span class="built_in">int</span>.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> getColumnMethodName(Class&lt;?&gt; fieldType) &#123;</span><br><span class="line">        <span class="keyword">String</span> typeName;</span><br><span class="line">        <span class="keyword">if</span> (fieldType.isPrimitive()) &#123;</span><br><span class="line">            typeName = DaoUtils.capitalize(fieldType.getName());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            typeName = fieldType.getSimpleName();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">String</span> methodName = <span class="string">"get"</span> + typeName;</span><br><span class="line">        <span class="keyword">switch</span> (methodName) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"getBoolean"</span>:</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"getInteger"</span>:</span><br><span class="line">                methodName = <span class="string">"getInt"</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"getChar"</span>:</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"getCharacter"</span>:</span><br><span class="line">                methodName = <span class="string">"getString"</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"getData"</span>:</span><br><span class="line">                methodName = <span class="string">"getLong"</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> methodName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建DaoSupport类"><a href="#创建DaoSupport类" class="headerlink" title="创建DaoSupport类"></a>创建DaoSupport类</h3><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class DaoSupport&lt;T&gt; implements IDaoSupport&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> SQLiteDatabase mSqLiteDatabase;</span><br><span class="line">    <span class="keyword">private</span> Class&lt;T&gt; mClazz;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">String</span> TAG = <span class="string">"DaoSupport"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">Object</span>[] M_PUT_METHOD_ARGS = <span class="keyword">new</span> <span class="keyword">Object</span>[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;<span class="keyword">String</span>, Method&gt; M_PUT_METHODS = <span class="keyword">new</span> ArrayMap&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> QuerySupport&lt;T&gt; mQuerySupport;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> init(SQLiteDatabase sqLiteDatabase, Class&lt;T&gt; clazz) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mSqLiteDatabase = sqLiteDatabase;</span><br><span class="line">        <span class="keyword">this</span>.mClazz = clazz;</span><br><span class="line">        StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        sb.<span class="built_in">append</span>(<span class="string">"create table if not exists "</span>)</span><br><span class="line">                .<span class="built_in">append</span>(DaoUtils.getTableName(clazz))</span><br><span class="line">                .<span class="built_in">append</span>(<span class="string">" (id integer primary key autoincrement, "</span>);</span><br><span class="line">        Field[] fields = mClazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">            <span class="comment">//设置权限</span></span><br><span class="line">            field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            <span class="keyword">String</span> name = field.getName();</span><br><span class="line">            <span class="comment">// int String boolean</span></span><br><span class="line">            <span class="keyword">String</span> type = field.getType().getSimpleName();</span><br><span class="line">            <span class="comment">//type需要转换 int -&gt;Integer String -&gt;text</span></span><br><span class="line">            sb.<span class="built_in">append</span>(name).<span class="built_in">append</span>(DaoUtils.getColumnType(type)).<span class="built_in">append</span>(<span class="string">", "</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        sb.replace(sb.length() - <span class="number">2</span>, sb.length(), <span class="string">") "</span>);</span><br><span class="line">        <span class="keyword">String</span> createTableSql = sb.toString();</span><br><span class="line">        Log.e(TAG, <span class="string">"表语句--&gt;"</span> + createTableSql);</span><br><span class="line">        mSqLiteDatabase.execSQL(createTableSql);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 插入数据，T是任何对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * @param object o</span></span><br><span class="line"><span class="comment">     * @return i</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">long</span> insert(T object) &#123;</span><br><span class="line">        <span class="comment">//使用的其实还是 原生的，只封装了一下</span></span><br><span class="line">        ContentValues values = contentValuesByObj(object);</span><br><span class="line">        <span class="keyword">return</span> mSqLiteDatabase.insert(DaoUtils.getTableName(mClazz), <span class="keyword">null</span>, values);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> insert(List&lt;T&gt; datas) &#123;</span><br><span class="line">        <span class="comment">//多条插入采用事务</span></span><br><span class="line">        mSqLiteDatabase.beginTransaction();</span><br><span class="line">        <span class="keyword">for</span> (T data : datas) &#123;</span><br><span class="line">            <span class="comment">//调用单条插入</span></span><br><span class="line">            insert(data);</span><br><span class="line">        &#125;</span><br><span class="line">        mSqLiteDatabase.setTransactionSuccessful();</span><br><span class="line">        mSqLiteDatabase.endTransaction();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> QuerySupport&lt;T&gt; querySupport() &#123;</span><br><span class="line">        <span class="keyword">if</span> (mQuerySupport == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mQuerySupport = <span class="keyword">new</span> QuerySupport&lt;&gt;(mSqLiteDatabase, mClazz);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mQuerySupport;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> delete(<span class="keyword">String</span> whereClause, <span class="keyword">String</span>... whereArgs) &#123;</span><br><span class="line">        <span class="keyword">return</span> mSqLiteDatabase.delete(DaoUtils.getTableName(mClazz), whereClause, whereArgs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> update(T object, <span class="keyword">String</span> whereClause, <span class="keyword">String</span>... whereArgs) &#123;</span><br><span class="line">        ContentValues values = contentValuesByObj(object);</span><br><span class="line">        <span class="keyword">return</span> mSqLiteDatabase.update(DaoUtils.getTableName(mClazz), values, whereClause, whereArgs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * obj 转成ContentValues</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> ContentValues contentValuesByObj(T object) &#123;</span><br><span class="line">        ContentValues values = <span class="keyword">new</span> ContentValues();</span><br><span class="line">        <span class="comment">//封装values</span></span><br><span class="line">        Field[] declaredFields = mClazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span> (Field declaredField : declaredFields) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//设置权限，私有和公有都可以使用</span></span><br><span class="line">                declaredField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                <span class="keyword">String</span> <span class="built_in">key</span> = declaredField.getName();</span><br><span class="line">                <span class="comment">//获取value，第二个参数是类型，把它转换</span></span><br><span class="line">                <span class="keyword">Object</span> value = declaredField.<span class="built_in">get</span>(object);</span><br><span class="line">                <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">String</span> declaredFieldTypeName = declaredField.getType().getName();</span><br><span class="line">                <span class="comment">//使用反射 获取方法，反射一定程度上会影响性能</span></span><br><span class="line">                <span class="comment">//缓存方法</span></span><br><span class="line">                Method putMethod = M_PUT_METHODS.<span class="built_in">get</span>(declaredFieldTypeName);</span><br><span class="line">                <span class="keyword">if</span> (putMethod == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    putMethod = ContentValues.class.getMethod(<span class="string">"put"</span></span><br><span class="line">                            , <span class="keyword">String</span>.class, value.getClass());</span><br><span class="line">                    M_PUT_METHODS.put(declaredFieldTypeName, putMethod);</span><br><span class="line">                &#125;</span><br><span class="line">                M_PUT_METHOD_ARGS[<span class="number">0</span>] = <span class="built_in">key</span>;</span><br><span class="line">                M_PUT_METHOD_ARGS[<span class="number">1</span>] = value;</span><br><span class="line">                putMethod.invoke(values, M_PUT_METHOD_ARGS);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                M_PUT_METHOD_ARGS[<span class="number">0</span>] = <span class="keyword">null</span>;</span><br><span class="line">                M_PUT_METHOD_ARGS[<span class="number">1</span>] = <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> values;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建CacheData实体类"><a href="#创建CacheData实体类" class="headerlink" title="创建CacheData实体类"></a>创建CacheData实体类</h3><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacheData</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> getUrlKey() &#123;</span><br><span class="line">        <span class="keyword">return</span> mUrlKey;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> getResultJson() &#123;</span><br><span class="line">        <span class="keyword">return</span> mResultJson;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 请求的链接</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mUrlKey;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 后台返回的json</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> mResultJson;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> CacheData() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> CacheData(<span class="keyword">String</span> urlKey, <span class="keyword">String</span> resultJson) &#123;</span><br><span class="line">        <span class="built_in">this</span>.mResultJson = resultJson;</span><br><span class="line">        <span class="built_in">this</span>.mUrlKey = urlKey;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建缓存帮助类CacheDataUtil"><a href="#创建缓存帮助类CacheDataUtil" class="headerlink" title="创建缓存帮助类CacheDataUtil"></a>创建缓存帮助类CacheDataUtil</h3><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class CacheDataUtil &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">String</span> getCacheResultJson(<span class="keyword">String</span> jointUrl) &#123;</span><br><span class="line">        <span class="keyword">final</span> IDaoSupport&lt;CacheData&gt; dataDaoSupport = DaoSupportFactory.getFactory().getDao(CacheData.class);</span><br><span class="line">        List&lt;CacheData&gt; cacheData = dataDaoSupport.querySupport().selection(<span class="string">"mUrlKey = ?"</span>)</span><br><span class="line">                .selectionArgs(MD5Util.string2MD5(jointUrl)).query();</span><br><span class="line">        <span class="keyword">if</span> (cacheData.<span class="built_in">size</span>() != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//如果有数据</span></span><br><span class="line">            CacheData data = cacheData.<span class="built_in">get</span>(<span class="number">0</span>);</span><br><span class="line">            <span class="keyword">return</span> data.getResultJson();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 缓存数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> cacheData(<span class="keyword">String</span> jointUrl, <span class="keyword">String</span> result) &#123;</span><br><span class="line">        <span class="keyword">final</span> IDaoSupport&lt;CacheData&gt; dataDaoSupport = DaoSupportFactory.getFactory().getDao(CacheData.class);</span><br><span class="line">        dataDaoSupport.delete(<span class="string">"mUrlKey=?"</span>, MD5Util.string2MD5(jointUrl));</span><br><span class="line">        <span class="keyword">long</span> number = dataDaoSupport.insert(<span class="keyword">new</span> CacheData(MD5Util.string2MD5(jointUrl), result));</span><br><span class="line">        Log.e(<span class="string">"number"</span>, <span class="string">"number-&gt;"</span> + number);</span><br><span class="line">        <span class="keyword">return</span> number;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="将网络请求引擎OkHttpEngine提到中间层"><a href="#将网络请求引擎OkHttpEngine提到中间层" class="headerlink" title="将网络请求引擎OkHttpEngine提到中间层"></a>将网络请求引擎OkHttpEngine提到中间层</h3><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class OkHttpEngine implements IHttpEngine &#123;</span><br><span class="line">    <span class="keyword">private</span> static final OkHttpClient M_OK_HTTP_CLIENT = <span class="literal">new</span> OkHttpClient();</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="literal">void</span> get(<span class="built_in">boolean</span> <span class="keyword">cache</span>, Context context, <span class="built_in">String</span> url, <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; <span class="keyword">params</span>, EngineCallback callback) &#123;</span><br><span class="line">        final <span class="built_in">String</span> jointUrl = HttpUtils.joinParams(url, <span class="keyword">params</span>);</span><br><span class="line">        <span class="keyword">Log</span>.e(<span class="string">"Get请求路径: "</span>, jointUrl);</span><br><span class="line">        <span class="comment">//判断缓存有没有</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">cache</span>) &#123;</span><br><span class="line">            <span class="comment">//需要缓存,拿缓存</span></span><br><span class="line">            <span class="built_in">String</span> resultJson = CacheDataUtil.getCacheResultJson(jointUrl);</span><br><span class="line">            <span class="keyword">if</span> (!TextUtils.isEmpty(resultJson)) &#123;</span><br><span class="line">                <span class="comment">//需要缓存，而且数据库有缓存,直接返回数据</span></span><br><span class="line">                <span class="keyword">Log</span>.e(<span class="string">"Get数据和缓存一致直接返回: "</span>, resultJson);</span><br><span class="line">                callback.onSuccess(resultJson);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        Request request = <span class="literal">new</span> Request.Builder()</span><br><span class="line">                .url(url)</span><br><span class="line">                .get()</span><br><span class="line">                .<span class="built_in">tag</span>(context)</span><br><span class="line">                .build();</span><br><span class="line">        M_OK_HTTP_CLIENT.newCall(request).enqueue(</span><br><span class="line">                <span class="literal">new</span> Callback() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    <span class="keyword">public</span> <span class="literal">void</span> onFailure(@NotNull Call call, @NotNull IOException e) &#123;</span><br><span class="line">                        callback.onError(e);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    <span class="keyword">public</span> <span class="literal">void</span> onResponse(@NotNull Call call, @NotNull Response response) throws IOException &#123;</span><br><span class="line">                        <span class="built_in">String</span> result = Objects.requireNonNull(response.body()).<span class="built_in">string</span>();</span><br><span class="line">                        <span class="comment">//每次拿到数据之后比对上一次的内容</span></span><br><span class="line">                        <span class="keyword">if</span> (<span class="keyword">cache</span>) &#123;</span><br><span class="line">                            <span class="built_in">String</span> resultJson = CacheDataUtil.getCacheResultJson(jointUrl);</span><br><span class="line">                            <span class="keyword">if</span> (resultJson != <span class="built_in">null</span> &amp;&amp; !TextUtils.isEmpty(resultJson) &amp;&amp; resultJson.<span class="keyword">equals</span>(result)) &#123;</span><br><span class="line">                                <span class="comment">//比对内容</span></span><br><span class="line">                                <span class="comment">//内容相同，不需要执行success方法</span></span><br><span class="line">                                <span class="keyword">Log</span>.e(<span class="string">"Get数据和缓存一致: "</span>, result);</span><br><span class="line">                                <span class="keyword">return</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//执行success方法，缓存数据</span></span><br><span class="line">                        <span class="keyword">Log</span>.e(<span class="string">"Get返回结果: "</span>, result);</span><br><span class="line">                        Looper.prepare();</span><br><span class="line">                        callback.onSuccess(result);</span><br><span class="line">                        Looper.<span class="keyword">loop</span>();</span><br><span class="line">                        <span class="keyword">if</span> (<span class="keyword">cache</span>) &#123;</span><br><span class="line">                            <span class="comment">//缓存数据</span></span><br><span class="line">                            CacheDataUtil.cacheData(jointUrl, result);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="literal">void</span> post(<span class="built_in">boolean</span> <span class="keyword">cache</span>, Context context, <span class="built_in">String</span> url, <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; <span class="keyword">params</span>, EngineCallback callback) &#123;</span><br><span class="line">        final <span class="built_in">String</span> jointUrl = HttpUtils.joinParams(url, <span class="keyword">params</span>);</span><br><span class="line">        <span class="keyword">Log</span>.e(<span class="string">"Post请求路径: "</span>, jointUrl);</span><br><span class="line">        RequestBody requestBody = appendBody(<span class="keyword">params</span>);</span><br><span class="line">        Request request = <span class="literal">new</span> Request.Builder()</span><br><span class="line">                .url(url)</span><br><span class="line">                .<span class="built_in">tag</span>(context)</span><br><span class="line">                .post(requestBody)</span><br><span class="line">                .build();</span><br><span class="line">        M_OK_HTTP_CLIENT.newCall(request).enqueue(</span><br><span class="line">                <span class="literal">new</span> Callback() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    <span class="keyword">public</span> <span class="literal">void</span> onFailure(@NotNull Call call, @NotNull IOException e) &#123;</span><br><span class="line">                        callback.onError(e);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    <span class="keyword">public</span> <span class="literal">void</span> onResponse(@NotNull Call call, @NotNull Response response) throws IOException &#123;</span><br><span class="line">                        <span class="built_in">String</span> result = Objects.requireNonNull(response.body()).<span class="built_in">string</span>();</span><br><span class="line">                        <span class="keyword">Log</span>.e(<span class="string">"Post返回结果: "</span>, result);</span><br><span class="line">                        Looper.prepare();</span><br><span class="line">                        callback.onSuccess(result);</span><br><span class="line">                        Looper.<span class="keyword">loop</span>();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 组装post请求参数body</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> RequestBody appendBody(<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; <span class="keyword">params</span>) &#123;</span><br><span class="line">        MultipartBody.Builder builder = <span class="literal">new</span> MultipartBody.Builder()</span><br><span class="line">                .setType(MultipartBody.FORM);</span><br><span class="line">        addParams(builder, <span class="keyword">params</span>);</span><br><span class="line">        <span class="keyword">return</span> builder.build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加参数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="literal">void</span> addParams(MultipartBody.Builder builder, <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; <span class="keyword">params</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">params</span> != <span class="built_in">null</span> &amp;&amp; !<span class="keyword">params</span>.isEmpty()) &#123;</span><br><span class="line">            for (<span class="built_in">String</span> key : <span class="keyword">params</span>.keySet()) &#123;</span><br><span class="line">                builder.addFormDataPart(key, <span class="keyword">params</span>.get(key) + <span class="string">""</span>);</span><br><span class="line">                Object value = <span class="keyword">params</span>.get(key);</span><br><span class="line">                <span class="keyword">if</span> (value instanceof File) &#123;</span><br><span class="line">                    <span class="comment">//处理文件 --&gt;Object --&gt;file</span></span><br><span class="line">                    File file = (File) value;</span><br><span class="line">                    builder.addFormDataPart(key, file.getName(), RequestBody</span><br><span class="line">                            .create(file, MediaType.parse(guessMimeType(file.getAbsolutePath()))));</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (value instanceof <span class="built_in">List</span>) &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        <span class="built_in">List</span>&lt;File&gt; fileList = (<span class="built_in">List</span>&lt;File&gt;) value;</span><br><span class="line">                        for (int i = <span class="number">0</span>; i &lt; fileList.size(); i++) &#123;</span><br><span class="line">                            <span class="comment">//获取文件</span></span><br><span class="line">                            File file = fileList.get(i);</span><br><span class="line">                            builder.addFormDataPart(key + i, file.getName(), RequestBody</span><br><span class="line">                                    .create(file, MediaType.parse(guessMimeType(file.getAbsolutePath()))));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; catch (Exception e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    builder.addFormDataPart(key, value + <span class="string">""</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 猜测文件的类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> guessMimeType(<span class="built_in">String</span> path) &#123;</span><br><span class="line">        FileNameMap fileNameMap = URLConnection.getFileNameMap();</span><br><span class="line">        <span class="built_in">String</span> contentTypeFor = fileNameMap.getContentTypeFor(path);</span><br><span class="line">        <span class="keyword">if</span> (contentTypeFor == <span class="built_in">null</span>) &#123;</span><br><span class="line">            contentTypeFor = <span class="string">"application/octet-stream"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> contentTypeFor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改IHttpEngine"><a href="#修改IHttpEngine" class="headerlink" title="修改IHttpEngine"></a>修改IHttpEngine</h3><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> interface IHttpEngine &#123;</span><br><span class="line">    <span class="literal">void</span> get(<span class="built_in">boolean</span> <span class="keyword">cache</span>, Context context, <span class="built_in">String</span> url, <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; <span class="keyword">params</span>, EngineCallback callback);</span><br><span class="line">    <span class="literal">void</span> post(<span class="built_in">boolean</span> <span class="keyword">cache</span>, Context context, <span class="built_in">String</span> url, <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; <span class="keyword">params</span>, EngineCallback callback);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改HttpUtils"><a href="#修改HttpUtils" class="headerlink" title="修改HttpUtils"></a>修改HttpUtils</h3><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 是否配置缓存</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="keyword">public</span> HttpUtils cache(<span class="keyword">boolean</span> isCache) &#123;</span><br><span class="line">     mCache = isCache;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 默认OkHttpEngine</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> IHttpEngine mIHttpEngine = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">IDaoSupport&lt;Person&gt; daoSupport = DaoSupportFactory.getFactory().getDao(Person.class);</span><br><span class="line">List&lt;Person&gt; people = daoSupport.querySupport().queryAll();</span><br><span class="line">Log.d(<span class="string">"size"</span>, people.size() + <span class="string">""</span>);</span><br><span class="line">HttpUtils.with(<span class="keyword">this</span>).get().exchangeEngine(<span class="keyword">new</span> OkHttpEngine()).execute(<span class="keyword">new</span> HttpCallback&lt;Person&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onError</span><span class="params">(Exception e)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(Person result)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -193,342 +216,105 @@
 		</ul>
 	</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/12/kotlin/" class="archive-article-date">
-  	<time datetime="2020-12-12T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/12/kotlin/">Kotlin小课堂</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">kotlin</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/11/28/dp2px/" class="archive-article-date">
-  	<time datetime="2020-11-28T03:13:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-28</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/11/28/dp2px/">dp与px的转换</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/03/08/shape标签定义/" class="archive-article-date">
-  	<time datetime="2020-03-08T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/03/08/shape标签定义/">Android GradientDrawable(shape标签定义) 静态使用和动态使用(圆角，渐变实现)</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
       
-        </div></section>
+
       
+
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2019" class="archive-year">2019</a>
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/11/21/JavaMemory/" class="archive-article-date">
-  	<time datetime="2019-11-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/11/21/JavaMemory/">JAVA内存泄漏和内存溢出的区别和联系</a>
-    </h1>
-  
+      </div>
+    </span>
+  </div>
+</div>
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2020/12/29/DaoSupport/" alt="微信分享二维码">
+    </div>
+</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/11/21/OkHttpWebSocket/" class="archive-article-date">
-  	<time datetime="2019-11-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-21</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/loki0210.github.io/2020/12/27/HttpUtils/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">链式调用打造第三方的网络引擎</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/11/21/OkHttpWebSocket/">使用okhttp的websocket实现长连接</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/11/21/RetrofitLifeCycle/" class="archive-article-date">
-  	<time datetime="2019-11-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/11/21/RetrofitLifeCycle/">Android Retrofit生命周期的管理</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/11/14/ADB/" class="archive-article-date">
-  	<time datetime="2019-11-14T15:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/11/14/ADB/">ADB常用命令</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">IT技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/loki0210.github.io/tags/Android/">&laquo; Prev</a><a class="page-number" href="/loki0210.github.io/tags/Android/">1</a><span class="page-number current">2</span><a class="page-number" href="/loki0210.github.io/tags/Android/page/3/">3</a><a class="page-number" href="/loki0210.github.io/tags/Android/page/4/">4</a><a class="extend next" rel="next" href="/loki0210.github.io/tags/Android/page/3/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -552,9 +338,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: false,
