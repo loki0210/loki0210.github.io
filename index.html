@@ -146,6 +146,90 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-IPC" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/loki0210.github.io/2021/01/04/IPC/">Android进程间的通信实验</a>
+    </h1>
+  
+
+        
+        <a href="/loki0210.github.io/2021/01/04/IPC/" class="archive-article-date">
+  	<time datetime="2021-01-04T03:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><pre><code>为什么会出现IPC这个概念，Android操作系统为了确保进程之间不会产生相互干扰，就是为了你挂了不会影响我，所以采用了进程隔离的机制，即为每个进程分配独立虚拟地址空间，进程之间感觉不到彼此的存在，感觉自己仿佛占用整个内存空间。这样保证了进程的数据安全，但是必然存在另外的问题，那就是进程间通信，进程不可能完全独立运行，有时候需要相互通信获取别的进程的运行结果等，因此需要想办法解决进程间通信的问题，所以就出现了IPC这个概念。其他就不说了，假设我A应用要去B里面应用获取的数据该怎么办，接下来我们就写这么一个实例，这里就涉及到两个单独的应用，我们就把A应用作为客户端，B应用作为服务端。</code></pre>
+        
+          <a class="article-more-a" href="/loki0210.github.io/2021/01/04/IPC/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/loki0210.github.io/2021/01/04/IPC/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-changeSkin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -881,90 +965,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/loki0210.github.io/2020/12/21/AndroidUtils/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-IOC" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/loki0210.github.io/2020/12/15/IOC/">IOC注解框架</a>
-    </h1>
-  
-
-        
-        <a href="/loki0210.github.io/2020/12/15/IOC/" class="archive-article-date">
-  	<time datetime="2020-12-15T11:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><pre><code>打造自己的简单IOC注解框架</code></pre>
-        
-          <a class="article-more-a" href="/loki0210.github.io/2020/12/15/IOC/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/loki0210.github.io/2020/12/15/IOC/">展开全文 >></a>
         </p>
       
 
