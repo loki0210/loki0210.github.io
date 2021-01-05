@@ -16,12 +16,12 @@
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
 <meta property="og:description" content="下载开源库libjpeg-turbohttps://github.com/libjpeg-turbo/libjpeg-turbo">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://blog.findwork.xyz/assets/img/cmake/path.jpg">
-<meta property="og:updated_time" content="2021-01-05T11:05:08.734Z">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/cmake/path.png">
+<meta property="og:updated_time" content="2021-01-05T11:09:48.503Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AndroidStudio编译libjpeg-turbo生成so库">
 <meta name="twitter:description" content="下载开源库libjpeg-turbohttps://github.com/libjpeg-turbo/libjpeg-turbo">
-<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/cmake/path.jpg">
+<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/cmake/path.png">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -167,10 +167,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="下载开源库libjpeg-turbo"><a href="#下载开源库libjpeg-turbo" class="headerlink" title="下载开源库libjpeg-turbo"></a>下载开源库libjpeg-turbo</h3><p><a href="https://github.com/libjpeg-turbo/libjpeg-turbo" title="libjpeg-turbo" target="_blank" rel="noopener">https://github.com/libjpeg-turbo/libjpeg-turbo</a></p>
+        <h3 id="下载开源库libjpeg-turbo"><a href="#下载开源库libjpeg-turbo" class="headerlink" title="下载开源库libjpeg-turbo"></a>下载开源库libjpeg-turbo</h3><p><a href="所需开源库" title="libjpeg-turbo">https://github.com/libjpeg-turbo/libjpeg-turbo</a></p>
 <a id="more"></a>
 
-<h3 id="将libjpeg-turbo拷贝到新建的安卓工程项目下"><a href="#将libjpeg-turbo拷贝到新建的安卓工程项目下" class="headerlink" title="将libjpeg-turbo拷贝到新建的安卓工程项目下"></a>将libjpeg-turbo拷贝到新建的安卓工程项目下</h3><pre><code>路径如图</code></pre><p><img src="/assets/img/cmake/path.jpg" alt></p>
+<h3 id="将libjpeg-turbo拷贝到新建的安卓工程项目下"><a href="#将libjpeg-turbo拷贝到新建的安卓工程项目下" class="headerlink" title="将libjpeg-turbo拷贝到新建的安卓工程项目下"></a>将libjpeg-turbo拷贝到新建的安卓工程项目下</h3><pre><code>路径如图</code></pre><p><img src="/assets/img/cmake/path.png" alt></p>
 <h3 id="在build-gradle中添加"><a href="#在build-gradle中添加" class="headerlink" title="在build.gradle中添加"></a>在build.gradle中添加</h3><figure class="highlight puppet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">android</span> &#123;</span><br><span class="line">   	defaultConfig &#123;</span><br><span class="line">       ···</span><br><span class="line">       ndk &#123;</span><br><span class="line">           abiFilters  <span class="string">'armeabi-v7a'</span>, <span class="string">'arm64-v8a'</span></span><br><span class="line">       	&#125;</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">	···</span><br><span class="line">    <span class="keyword">externalNativeBuild</span> &#123;</span><br><span class="line">       cmake &#123;</span><br><span class="line">		//CMakeLists.txt文件路径</span><br><span class="line">           <span class="built_in">path</span> file(<span class="string">'src/main/cpp/libjpeg-turbo/CMakeLists.txt'</span>)</span><br><span class="line">       	&#125;</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="Build-gt-Make-Project开始编译"><a href="#Build-gt-Make-Project开始编译" class="headerlink" title="Build-&gt;Make Project开始编译"></a>Build-&gt;Make Project开始编译</h3><pre><code>编译完成之后，会在app/.cxx/cmake/debug/下生成所需的so库</code></pre>
