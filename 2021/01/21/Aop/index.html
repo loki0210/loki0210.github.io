@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Archives | Zihuatanejo&#39;s Blog</title>
+  <title>Aop第三方aspectjrt的使用 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/archives/page/5/index.html">
+  <meta name="description" content="介绍：AspectJ是一款面向切面(AOP)的第三方框架，当在AseptJ环境下编译java代码的时候，将使用ajc来替换javac编译，所以Asept是在编译期间就改变了代码结构。配置：1. 首先添加maven仓库路径：在项目的build.gradle中加入以下1234567891011121314buildscript &amp;#123;    repositories &amp;#123;">
+<meta name="keywords" content="Android,Java,IT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Aop第三方aspectjrt的使用">
+<meta property="og:url" content="http://blog.findwork.xyz/2021/01/21/Aop/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="介绍：AspectJ是一款面向切面(AOP)的第三方框架，当在AseptJ环境下编译java代码的时候，将使用ajc来替换javac编译，所以Asept是在编译期间就改变了代码结构。配置：1. 首先添加maven仓库路径：在项目的build.gradle中加入以下1234567891011121314buildscript &amp;#123;    repositories &amp;#123;">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2021-01-21T13:35:38.035Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="Aop第三方aspectjrt的使用">
+<meta name="twitter:description" content="介绍：AspectJ是一款面向切面(AOP)的第三方框架，当在AseptJ环境下编译java代码的时候，将使用ajc来替换javac编译，所以Asept是在编译期间就改变了代码结构。配置：1. 首先添加maven仓库路径：在项目的build.gradle中加入以下1234567891011121314buildscript &amp;#123;    repositories &amp;#123;">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -144,36 +145,47 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Aop" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Aop第三方aspectjrt的使用
+    </h1>
+  
+
+        
+        <a href="/loki0210.github.io/2021/01/21/Aop/" class="archive-article-date">
+  	<time datetime="2021-01-21T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-21</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="介绍："><a href="#介绍：" class="headerlink" title="介绍："></a>介绍：</h3><pre><code>AspectJ是一款面向切面(AOP)的第三方框架，当在AseptJ环境下编译java代码的时候，将使用ajc来替换javac编译，所以Asept是在编译期间就改变了代码结构。</code></pre><h3 id="配置："><a href="#配置：" class="headerlink" title="配置："></a>配置：</h3><h4 id="1-首先添加maven仓库路径："><a href="#1-首先添加maven仓库路径：" class="headerlink" title="1. 首先添加maven仓库路径："></a>1. 首先添加maven仓库路径：</h4><pre><code>在项目的build.gradle中加入以下</code></pre><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">"com.android.tools.build:gradle:4.1.2"</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'org.aspectj:aspectjtools:1.9.6'</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'org.aspectj:aspectjweaver:1.9.6'</span></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Do not place your application dependencies here; they belong</span></span><br><span class="line">        <span class="comment">// in the individual module build.gradle files</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-在module的build-gradle里添加以下代码"><a href="#2-在module的build-gradle里添加以下代码" class="headerlink" title="2. 在module的build.gradle里添加以下代码"></a>2. 在module的build.gradle里添加以下代码</h4><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.aspectj.bridge.IMessage</span><br><span class="line"><span class="keyword">import</span> org.aspectj.bridge.MessageHandler</span><br><span class="line"><span class="keyword">import</span> org.aspectj.tools.ajc.Main</span><br><span class="line">android &#123;</span><br><span class="line">    ···</span><br><span class="line">	···</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">def</span> log = <span class="keyword">project</span>.logger</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">def</span> variants = <span class="keyword">project</span>.android.applicationVariants</span><br><span class="line"></span><br><span class="line">    variants.all &#123; variant -&gt;</span><br><span class="line">        <span class="keyword">if</span> (!variant.buildType.isDebuggable()) &#123;</span><br><span class="line">            log.debug(<span class="string">"Skipping non-debuggable build type '$&#123;variant.buildType.name&#125;'."</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        JavaCompile javaCompile = variant.javaCompile</span><br><span class="line">        javaCompile.<span class="keyword">doLast</span> &#123;</span><br><span class="line">            String[] args = [<span class="string">"-showWeaveInfo"</span>,</span><br><span class="line">                             <span class="string">"-1.8"</span>,</span><br><span class="line">                             <span class="string">"-inpath"</span>, javaCompile.<span class="keyword">destinationDir</span>.toString(),</span><br><span class="line">                             <span class="string">"-aspectpath"</span>, javaCompile.<span class="keyword">classpath</span>.asPath,</span><br><span class="line">                             <span class="string">"-d"</span>, javaCompile.<span class="keyword">destinationDir</span>.toString(),</span><br><span class="line">                             <span class="string">"-classpath"</span>, javaCompile.<span class="keyword">classpath</span>.asPath,</span><br><span class="line">                             <span class="string">"-bootclasspath"</span>, <span class="keyword">project</span>.android.bootClasspath.<span class="keyword">join</span>(<span class="keyword">File</span>.pathSeparator)]</span><br><span class="line">            log.debug <span class="string">"ajc args: "</span> + Arrays.toString(args)</span><br><span class="line"></span><br><span class="line">            MessageHandler handler = <span class="keyword">new</span> MessageHandler(<span class="keyword">true</span>);</span><br><span class="line">            <span class="keyword">new</span> Main().run(args, handler);</span><br><span class="line">            <span class="keyword">for</span> (IMessage message : handler.getMessages(<span class="keyword">null</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">                <span class="keyword">switch</span> (message.getKind()) &#123;</span><br><span class="line">                    <span class="keyword">case</span> IMessage.ABORT:</span><br><span class="line">                    <span class="keyword">case</span> IMessage.ERROR:</span><br><span class="line">                    <span class="keyword">case</span> IMessage.FAIL:</span><br><span class="line">                        log.error message.message, message.thrown</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> IMessage.WARNING:</span><br><span class="line">                        log.warn message.message, message.thrown</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> IMessage.INFO:</span><br><span class="line">                        log.info message.message, message.thrown</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> IMessage.DEBUG:</span><br><span class="line">                        log.debug message.message, message.thrown</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line"></span><br><span class="line">    ···</span><br><span class="line"></span><br><span class="line">    implementation files(<span class="string">'libs/aspectjrt.jar'</span>)</span><br><span class="line">	<span class="comment">//或者</span></span><br><span class="line">	<span class="comment">// implementation 'org.aspectj:aspectjrt:1.9.6'</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-创建注解类IFirstAnnotation"><a href="#3-创建注解类IFirstAnnotation" class="headerlink" title="3. 创建注解类IFirstAnnotation"></a>3. 创建注解类IFirstAnnotation</h4><pre><code>@Target 注解目标，表示注解使用在什么地方，这里是METHOD方法；@Retention 保留策略，表示注解调用时机，这里RUNTIME运行时</code></pre><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="variable">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line">public <span class="variable">@interface</span> IFirstAnnotation &#123;</span><br><span class="line">  <span class="selector-tag">String</span> <span class="selector-tag">value</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-创建切面类MethodBehaviorAspect"><a href="#4-创建切面类MethodBehaviorAspect" class="headerlink" title="4. 创建切面类MethodBehaviorAspect"></a>4. 创建切面类MethodBehaviorAspect</h4><pre><code>自定义注解行为
+@Aspect指定切面类；@Pointcut切入点；@Around是切入方式Advice的一种，表示在切入点前后插入代码，还有@Before、@After；Pointcut语法，execution，表示根据Advice在执行方法内部代码前后插入代码,call，表示根据Advice在调用方法前后插入代码......
+@pointcut(execution(@全类名 * *(. .)))
+后面的两个表示*匹配所有的方法名，两个.表示匹配所有的方法参数.</code></pre><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodBehaviorAspect</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"aspect_aby"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Pointcut</span>(<span class="string">"execution(@com.test.qby.aspectjlib.annotation.IFirstAnnotation * *(..))"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">firstMethodAnnotationBehavior</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Pointcut</span>(<span class="string">"execution(* com.test.qby.newtestapplication.ui.MainActivity.aspectClick(android.view.View))"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">secondMethodAnnotationBehavior</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Around</span>(<span class="string">"firstMethodAnnotationBehavior()"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">wavePointcutAround</span><span class="params">(ProceedingJoinPoint joinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();</span><br><span class="line">        <span class="comment">// 类名</span></span><br><span class="line">        String className = methodSignature.getDeclaringType().getSimpleName();</span><br><span class="line">        <span class="comment">// 方法名</span></span><br><span class="line">        String methodName = methodSignature.getName();</span><br><span class="line">        <span class="comment">// 功能名</span></span><br><span class="line">        IFirstAnnotation behaviorTrace = methodSignature.getMethod()</span><br><span class="line">                .getAnnotation(IFirstAnnotation.class);</span><br><span class="line">        String value = behaviorTrace.value();</span><br><span class="line">        <span class="comment">//    String value = "点击";</span></span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        Object result = joinPoint.<span class="keyword">proceed</span>();</span><br><span class="line">        <span class="keyword">long</span> duration = System.currentTimeMillis() - start;</span><br><span class="line">        Log.e(TAG, String.format(<span class="string">"%s类中%s方法执行%s功能,耗时：%dms"</span>, className, methodName, value, duration));</span><br><span class="line">        Toast.makeText(getContext(joinPoint.getThis()), String.format(Locale.CHINESE, <span class="string">"%s类中%s方法执行%s功能,耗时：%dms"</span>, className, methodName, value, duration), Toast.LENGTH_SHORT).show();</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通过对象获取上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> o o</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> c</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function">Context <span class="title">getContext</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (o <span class="keyword">instanceof</span> Activity) &#123;</span><br><span class="line">            <span class="keyword">return</span> (Activity) o;</span><br><span class="line">        &#125; <span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(o <span class="keyword">instanceof</span> Fragment)</span> </span>&#123;</span><br><span class="line">            Fragment fragment = (Fragment) o;</span><br><span class="line">            <span class="function"><span class="keyword">return</span> fragment.<span class="title">getContext</span><span class="params">()</span></span>;</span><br><span class="line">        &#125; <span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(o <span class="keyword">instanceof</span> View)</span> </span>&#123;</span><br><span class="line">            View view = (View) o;</span><br><span class="line">            <span class="function"><span class="keyword">return</span> view.<span class="title">getContext</span><span class="params">()</span></span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-页面调用"><a href="#5-页面调用" class="headerlink" title="5. 页面调用"></a>5. 页面调用</h4><pre><code>@IFirstAnnotation调用注解，()内部为在IFirstAnnotation中写的value的值，去掉value()后此处去掉()</code></pre><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@IFirstAnnotation</span>(<span class="string">"测试Aspect"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">aspectClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     Thread.sleep(<span class="keyword">new</span> Random().nextInt(<span class="number">1000</span>));</span><br><span class="line">   &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">     e.printStackTrace();</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/10/21/NestedScrollView/" class="archive-article-date">
-  	<time datetime="2019-10-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/10/21/NestedScrollView/">NestedScrollView使用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -183,49 +195,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/10/21/View/" class="archive-article-date">
-  	<time datetime="2019-10-21T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/10/21/View/">自定义View</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">kotlin</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -235,232 +205,105 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2021/01/21/Aop/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/09/14/Arouter/" class="archive-article-date">
-  	<time datetime="2019-09-14T02:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-14</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/loki0210.github.io/2021/01/09/PhotoView/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">使用PhotoView</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/09/14/Arouter/">Arouter</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/09/11/flutter/" class="archive-article-date">
-  	<time datetime="2019-09-11T02:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-11</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/09/11/flutter/">Flutter</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Flutter</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/09/10/dagger2/" class="archive-article-date">
-  	<time datetime="2019-09-10T02:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/09/10/dagger2/">Dagger2</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/09/10/hexo/" class="archive-article-date">
-  	<time datetime="2019-09-10T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/09/10/hexo/">hexo 简单使用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2019/07/29/docker_build/" class="archive-article-date">
-  	<time datetime="2019-07-29T07:54:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2019/07/29/docker_build/">Docker简单使用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/loki0210.github.io/archives/page/4/">&laquo; Prev</a><a class="page-number" href="/loki0210.github.io/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/loki0210.github.io/archives/page/3/">3</a><a class="page-number" href="/loki0210.github.io/archives/page/4/">4</a><span class="page-number current">5</span>
-    </nav>
   
 
 
@@ -484,8 +327,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
