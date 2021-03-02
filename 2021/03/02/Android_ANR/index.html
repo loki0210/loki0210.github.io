@@ -16,10 +16,12 @@
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
 <meta property="og:description" content="前言在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应（ANR：Application Not Responding）对话框。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2021-03-02T02:10:04.590Z">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/anr/001.jpg">
+<meta property="og:updated_time" content="2021-03-02T02:30:42.119Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android ANR（应用无响应）">
 <meta name="twitter:description" content="前言在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应（ANR：Application Not Responding）对话框。">
+<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/anr/001.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -169,7 +171,7 @@
 
 <h3 id="ANR原因"><a href="#ANR原因" class="headerlink" title="ANR原因"></a>ANR原因</h3><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Android</span>系统中，<span class="selector-tag">ActivityManagerService</span>(简称AMS)和<span class="selector-tag">WindowManagerService</span>(简称WMS)会检测<span class="selector-tag">App</span>的响应时间，如果<span class="selector-tag">App</span>在特定时间无法相应屏幕触摸或键盘输入时间，或者特定事件没有处理完毕，就会出现<span class="selector-tag">ANR</span>。</span><br></pre></td></tr></table></figure>
 
-<pre><code>ANR问题本质是一个性能问题。ANR机制实际上对应用程序主线程的限制，要求主线程在限定的时间内处理完一些最常见的操作(启动服务、处理广播、处理输入)， 如果处理超时，则认为主线程已经失去了响应其他操作的能力。主线程中的耗时操作，譬如密集CPU运算、大量IO、复杂界面布局等，都会降低应用程序的响应能力。</code></pre><h3 id="ANR出现场景"><a href="#ANR出现场景" class="headerlink" title="ANR出现场景"></a>ANR出现场景</h3><pre><code>发生ANR时会调用AppNotRespondingDialog.show()方法弹出对话框提示用户，该对话框的依次调用关系如下图所示：</code></pre><p><a href="/assets/img/anr/001.jpg"></a></p>
+<pre><code>ANR问题本质是一个性能问题。ANR机制实际上对应用程序主线程的限制，要求主线程在限定的时间内处理完一些最常见的操作(启动服务、处理广播、处理输入)， 如果处理超时，则认为主线程已经失去了响应其他操作的能力。主线程中的耗时操作，譬如密集CPU运算、大量IO、复杂界面布局等，都会降低应用程序的响应能力。</code></pre><h3 id="ANR出现场景"><a href="#ANR出现场景" class="headerlink" title="ANR出现场景"></a>ANR出现场景</h3><pre><code>发生ANR时会调用AppNotRespondingDialog.show()方法弹出对话框提示用户，该对话框的依次调用关系如下图所示：</code></pre><p><img src="/assets/img/anr/001.jpg" alt></p>
 <pre><code>AppErrors.appNotResponding()，该方法是最终弹出ANR对话框的唯一入口，调用该方法的场景才会有ANR提示，也可以认为在主线程中执行无论再耗时的任务，只要最终不调用该方法，都不会有ANR提示，也不会有ANR相关日志及报告；通过调用关系可以看出哪些场景会导致ANR，有以下四种场景：</code></pre><ul>
 <li>InputDispatching Timeout：5秒内无法响应屏幕触摸事件或键盘输入事件。</li>
 <li>BroadcastQueue Timeout ：在执行前台广播（BroadcastReceiver）的onReceive()函数时10秒没有处理完成，后台为60秒。</li>
