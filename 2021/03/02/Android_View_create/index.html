@@ -16,12 +16,10 @@
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
 <meta property="og:description" content="前言一个View从构造到显示，需要经历以下步骤：    1、创建View对象(构造）    2、确定View占的空间尺寸(measure)    3、确定了空间尺寸，就需要确定摆放在哪个位置(layout)    4、确认了摆放位置，就需要确定在上面展示些什么东西(draw)">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://www.jianshu.com/p/7e260b7890a3,%22Android%22">
-<meta property="og:updated_time" content="2021-03-02T13:12:49.407Z">
+<meta property="og:updated_time" content="2021-03-02T13:15:07.314Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android View绘制的三大流程">
 <meta name="twitter:description" content="前言一个View从构造到显示，需要经历以下步骤：    1、创建View对象(构造）    2、确定View占的空间尺寸(measure)    3、确定了空间尺寸，就需要确定摆放在哪个位置(layout)    4、确认了摆放位置，就需要确定在上面展示些什么东西(draw)">
-<meta name="twitter:image" content="https://www.jianshu.com/p/7e260b7890a3,%22Android%22">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -198,7 +196,7 @@ Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);</code></pre><p>放�
 3、收到底层信号时，发送到主线程looper队列里，并标记我这是要告诉别人这是界面刷新的信号哦，耽搁不得，赶紧优先执行。
 4、执行第一步的请求，进行view三大绘制流程。</code></pre><p>这里有两个问题需要注意一下，还记得代码里提及的一些标记，过滤短时间内的重复请求。</p>
 <pre><code>1、mTraversalScheduled 标记，如果这次绘制请求没有被回调执行之前，那么下次请求将忽略，比如短时间内重复的requestLayout。
-2、mFrameScheduled 标记，如果底层的刷新信号没有来之前，再次发送给底层的信号将被忽略。</code></pre><p><img src="https://www.jianshu.com/p/7e260b7890a3,%22Android%22" alt><br><a href="https://www.jianshu.com/p/7e260b7890a3" title="Android " target="_blank" rel="noopener">https://www.jianshu.com/p/7e260b7890a3</a></p>
+2、mFrameScheduled 标记，如果底层的刷新信号没有来之前，再次发送给底层的信号将被忽略。</code></pre><p><a href="https://www.jianshu.com/p/7e260b7890a3" title="Android " target="_blank" rel="noopener">Android</a></p>
 
       
 
