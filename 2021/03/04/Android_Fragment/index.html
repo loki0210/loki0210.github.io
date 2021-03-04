@@ -6,19 +6,26 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Archives: 2021 | Zihuatanejo&#39;s Blog</title>
+  <title>Fragment生命周期 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/archives/2021/page/2/index.html">
+  <meta name="description" content="Fragment 概要Fragment表示 Activity 中的行为或用户界面部分。您可以将多个片段(片段就是指 Fragment )组合在一个 Activity 中来构建多窗格 UI，以及在多个 Activity 中重复使用某个片段。您可以将片段视为 Activity 的模块化组成部分，它具有自己的生命周期，能接收自己的输入事件，并且您可以在 Activity 运行时添加或移除片段（有点像您可">
+<meta name="keywords" content="IT,Android,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fragment生命周期">
+<meta property="og:url" content="http://blog.findwork.xyz/2021/03/04/Android_Fragment/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="Fragment 概要Fragment表示 Activity 中的行为或用户界面部分。您可以将多个片段(片段就是指 Fragment )组合在一个 Activity 中来构建多窗格 UI，以及在多个 Activity 中重复使用某个片段。您可以将片段视为 Activity 的模块化组成部分，它具有自己的生命周期，能接收自己的输入事件，并且您可以在 Activity 运行时添加或移除片段（有点像您可">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/001.png">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/002.png">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/003.png">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/004.png">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/005.png">
+<meta property="og:updated_time" content="2021-03-04T10:24:04.312Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="Fragment生命周期">
+<meta name="twitter:description" content="Fragment 概要Fragment表示 Activity 中的行为或用户界面部分。您可以将多个片段(片段就是指 Fragment )组合在一个 Activity 中来构建多窗格 UI，以及在多个 Activity 中重复使用某个片段。您可以将片段视为 Activity 的模块化组成部分，它具有自己的生命周期，能接收自己的输入事件，并且您可以在 Activity 运行时添加或移除片段（有点像您可">
+<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/fragment/001.png">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -144,36 +151,86 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Android_Fragment" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Fragment生命周期
+    </h1>
+  
+
+        
+        <a href="/loki0210.github.io/2021/03/04/Android_Fragment/" class="archive-article-date">
+  	<time datetime="2021-03-04T10:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-04</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Fragment-概要"><a href="#Fragment-概要" class="headerlink" title="Fragment 概要"></a>Fragment 概要</h3><pre><code>Fragment表示 Activity 中的行为或用户界面部分。您可以将多个片段(片段就是指 Fragment )组合在一个 Activity 中来构建多窗格 UI，以及在多个 Activity 中重复使用某个片段。您可以将片段视为 Activity 的模块化组成部分，它具有自己的生命周期，能接收自己的输入事件，并且您可以在 Activity 运行时添加或移除片段（有点像您可以在不同 Activity 中重复使用的“子 Activity”）。
+
+片段必须始终嵌入在 Activity 中，其生命周期直接受宿主 Activity 生命周期的影响。 例如，当 Activity 暂停时，其中的所有片段也会暂停；当 Activity 被销毁时，所有片段也会被销毁。
+
+当您将片段作为 Activity 布局的一部分添加时，它存在于 Activity 视图层次结构的某个 ViewGroup 内部，并且片段会定义其自己的视图布局。您可以通过在 Activity 的布局文件中声明片段，将其作为 &lt;fragment&gt; 元素插入您的 Activity 布局中，即静态添加。或者通过将其添加到某个现有 ViewGroup，利用应用代码进行动态插入。不过，片段并非必须成为 Activity 布局的一部分；您还可以将没有自己 UI 的片段用作 Activity 的不可见工作线程。</code></pre><a id="more"></a>
+
+<h3 id="Fragment-作用"><a href="#Fragment-作用" class="headerlink" title="Fragment 作用"></a>Fragment 作用</h3><pre><code>Android 在 Android 3.0 (API 11)中引入了片段，主要是为了给更大的屏幕（如平板电脑）上更加动态和灵活的 UI 设计提供支持。由于平板屏幕比手机的屏幕大得多，也能显示更多的布局和组件。
+
+例如，新闻应用可以使用一个片段在左侧显示文章列表，使用另一个片段在右侧显示文章 — 两个片段并排显示在一个 Activity 中，每个片段都具有自己的一套生命周期回调方法，并各自处理自己的用户输入事件。 因此，用户不需要使用一个 Activity 来选择文章，然后使用另一个 Activity 来阅读文章，而是可以在同一个 Activity 内选择文章并进行阅读，如图 1 中的平板电脑布局所示。</code></pre><p><img src="/assets/img/fragment/001.png" alt><br>    在平板电脑尺寸的设备上运行时，该应用可以在 Activity A 中嵌入两个片段。 不过，在手机尺寸的屏幕上，没有足以储存两个片段的空间，因此Activity A 只包括用于显示文章列表的片段，当用户选择文章时，它会启动Activity B，其中包括用于阅读文章的第二个片段。 因此，应用可通过重复使用不同组合的片段来同时支持平板电脑和手机，如图 1 所示。</p>
+<h3 id="Fragment-生命周期"><a href="#Fragment-生命周期" class="headerlink" title="Fragment 生命周期"></a>Fragment 生命周期</h3><p><img src="/assets/img/fragment/002.png" alt></p>
+<pre><code>可以看到 Fragment 的生命周期和 Activity 很相似，只是多了一下几个方法：
+**onAttach()** 在Fragment 和 Activity 建立关联是调用（Activity 传递到此方法内）
+**onCreateView()** 当Fragment 创建视图时调用
+**onActivityCreated()** 在相关联的 Activity 的 onCreate() 方法已返回时调用。
+**onDestroyView()** 当Fragment中的视图被移除时调用
+**onDetach()** 当Fragment 和 Activity 取消关联时调用。
+
+可以看下几种操作情况下Fragment 的生命周期变化</code></pre><p><img src="/assets/img/fragment/003.png" alt></p>
+<pre><code>管理 Fragment 生命周期和 Activity 生命周期很相似，同时 Activity 的生命周期对 Fragment 的生命周期也有一定的影响，如下图所示</code></pre><p><img src="/assets/img/fragment/004.png" alt><br>    用下图（来源）来表示 Activity 和 Fragment 的生命周期变化的先后过程是:<br><img src="/assets/img/fragment/005.png" alt><br>    Fragment 生命周期与 Activity 生命周期的一个关键区别就在于，Fragment 的生命周期方法是由托管Activity而不是操作系统调用的。Activity 中生命周期方法都是 protected，而 Fragment 都是 public，也能印证了这一点，因为 Activity 需要调用 Fragment 那些方法并管理它。</p>
+<h3 id="加载-Fragment"><a href="#加载-Fragment" class="headerlink" title="加载 Fragment"></a>加载 Fragment</h3><ul>
+<li><strong>静态加载</strong></li>
+<li><strong>动态加载</strong></li>
+</ul>
+<ol>
+<li>静态加载<br> 在 Activity 的布局文件内声明片段<br> 下边代码是含有两个 Fragment 的 Activity 布局</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:orientation</span>=<span class="string">"horizontal"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">fragment</span> <span class="attr">android:name</span>=<span class="string">"com.example.news.ArticleListFragment"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:id</span>=<span class="string">"@+id/list"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_weight</span>=<span class="string">"1"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">"0dp"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">fragment</span> <span class="attr">android:name</span>=<span class="string">"com.example.news.ArticleReaderFragment"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:id</span>=<span class="string">"@+id/viewer"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_weight</span>=<span class="string">"2"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">"0dp"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>其中 fragment 中的 android:name 属性要指定 fragment 对应的具体包名路径，当系统创建此 Activity 布局时，会实例化在布局中指定的每个 fragment，并为每个 fragment 调用 onCreateView()方法，以检索每个 fragment 的布局。系统会直接插入 fragment 返回的 View 来替代 fragment 元素。
+
+并且在 Activity 活动里可以直接使用 findViewById() 方法获取 fragment 对应布局里的控件。同样在 fragment 里可以直接使用 getActivity()方法获得绑定的主 Activity 实例，并调用 Activity 里的方法或其他 fragment 实例。</code></pre><ol start="2">
+<li>动态加载<br> 通过编程方式将 fragment 添加到某个activity布局里现有的 ViewGroup （例如 LinearLayout 或 FrameLayout）里。<br> 要想在 Avtivity 中执行 Fragment 事务 (如添加、删除或替换 Fragment)，必须使用 FragmentTransaction 中的 API。可以使用下面这样从 Activity 中获取一个 FragmentTransaction。</li>
+</ol>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">FragmentManager  fragmentManager</span> = getFragmentManager();</span><br><span class="line"><span class="attribute">FragmentTransaction fragmentTransaction</span> = fragmentManager.beginTransaction();</span><br></pre></td></tr></table></figure>
+
+<pre><code>然后可以使用 add()方法添加一个 fragment ，指定要添加的 fragment 和插入到哪个视图。例如</code></pre><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ExampleFragment  exampleFragment = new ExampleFragment()<span class="comment">;</span></span><br><span class="line">fragmentTransaction.<span class="keyword">add(R.id.frame_layout,exampleFragment);</span></span><br><span class="line"><span class="keyword">fragmentTransaction.commit();</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>add 方法中第一个参数是一个activity 对应布局文件中的 ViewGroup，即应该放置 fragment 的位置，由资源 ID 指定，第二个参数是加入的 fragment ，一旦通过 fragmentTransaction 做了更改，最后必须使用 commit 方法以使更改生效。</code></pre><h3 id="添加没有-UI-的-fragment"><a href="#添加没有-UI-的-fragment" class="headerlink" title="添加没有 UI 的 fragment"></a>添加没有 UI 的 fragment</h3><pre><code>上边展示了如何向您的 Activity 添加 fragment 以提供 UI。不过，还可以使用 fragment 为 Activity 提供后台行为，而不显示额外 UI。
+
+要想添加没有 UI 的片段，请使用 add(Fragment, String) 从 Activity 添加片段（为片段提供一个唯一的字符串“标记”，而不是视图 ID）。 这会添加片段，但由于它并不与 Activity 布局中的视图关联，因此不会收到对onCreateView() 的调用。因此，不需要实现该方法。</code></pre><h3 id="执行-Fragment-事务"><a href="#执行-Fragment-事务" class="headerlink" title="执行 Fragment 事务"></a>执行 Fragment 事务</h3><pre><code>在 Activity 中使用 Fragment 可以很方便的进行添加 add、替换 replace、移除 remove 等操作，这样提交给 Activity 的每组更改都可以称为事务。像上边动态添加 fragment 那样，使用 FragmentTransaction 里的 API 就可以执行一项事务。同时也可以将此事务保存到 Activity 管理的返回栈中，从而用户可以回退到 fragment 改变之前的状态（类似于 activity 回退到上一个页面）。
+
+下边的例子演示了如何替换一个 fragment，并把替换之前的状态保存到 Activity 的返回栈中。</code></pre><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> Fragment <span class="keyword">new</span><span class="type">Fragment</span> = <span class="keyword">new</span> <span class="type">ExampleFragment</span>();</span><br><span class="line"> FragmentTransaction mTransaction =  getFragmentManager().beginTransaction();</span><br><span class="line"><span class="comment">//用新的 fragment 替换原来fragment 所在位置的布局，并且把此事务添加到返回栈中。</span></span><br><span class="line"> mTransaction.replace(R.id.frame_layout,<span class="keyword">new</span><span class="type">Fragment</span>);</span><br><span class="line"> mTransaction.addToBackStack(<span class="literal">null</span>);</span><br><span class="line"> mTransaction.commit();</span><br></pre></td></tr></table></figure>
+
+<pre><code>如果在执行移除 fragment 的事务时没有调用 addToBackStack()，则事务提交时该 fragment 会被销毁，用户将无法回退到该 fragment 。 不过，如果在删除 fragment 时调用了 addToBackStack()，则系统会停止该 fragment，并在用户按返回键时将其恢复。</code></pre><h3 id="Fragment-与-Activity-通信"><a href="#Fragment-与-Activity-通信" class="headerlink" title="Fragment 与 Activity 通信"></a>Fragment 与 Activity 通信</h3><pre><code>上边说过，在 fragment 中可以调用 getActivity() 获取 activity 的实例并调用 activity 里的方法和布局，同样在 activity 里也可以通过 findFragmentById()（对于在 activity 提供 fragment 布局的） 或 findFragmentByTag() （对于在 activity 提供或者不提供 fragment 布局的）方法获取 fragment 的实例，例如在 activity 中从 FragmentManager 获取对 Fragment 的引用来调用 fragment 中的方法：</code></pre><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Fragment fragment</span> = getFragmentManager.findFragmentById(R.id.fragment_container);</span><br></pre></td></tr></table></figure>
+
+<pre><code>使用 FragmentManager 还可以执行的操作包括：</code></pre><ul>
+<li>通过 findFragmentById 或 findFragmentByTag 获取 activity 中存在的 fragment 的实例</li>
+<li>通过 popBackStack （模拟用户点击返回按钮操作）将 fragment 从返回栈中弹出</li>
+<li>通过 addOnBackStackChangedListener() 注册一个监听返回栈改变的监听器</li>
+<li>像上边生成 fragmentTransaction 的方法，可以使用 fragmentManager 生成一个 fragmentTransaction 来执行某些事务，比如添加、替换、移除、addToBackStack（）等。</li>
+</ul>
+<p><a href="https://www.jianshu.com/p/70d7bfae18f3" title="Fragment" target="_blank" rel="noopener">https://www.jianshu.com/p/70d7bfae18f3</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/01/09/Recyclerview/" class="archive-article-date">
-  	<time datetime="2021-01-09T11:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-09</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/01/09/Recyclerview/">打造自己的RecyclerView适配器和可添加头部尾部的RecyclerView</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -193,206 +250,105 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2021/03/04/Android_Fragment/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/01/08/Proxy/" class="archive-article-date">
-  	<time datetime="2021-01-08T03:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-08</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/loki0210.github.io/2021/03/02/Android_View_create/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android View绘制的三大流程</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/01/08/Proxy/">Hook机制之动态代理</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/01/05/cmake2so/" class="archive-article-date">
-  	<time datetime="2021-01-05T10:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/01/05/cmake2so/">AndroidStudio编译libjpeg-turbo生成so库</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/01/04/IPC/" class="archive-article-date">
-  	<time datetime="2021-01-04T03:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/01/04/IPC/">Android进程间的通信实验</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/01/02/changeSkin/" class="archive-article-date">
-  	<time datetime="2021-01-02T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/01/02/changeSkin/">打造自己的换肤框架</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/loki0210.github.io/archives/2021/">&laquo; Prev</a><a class="page-number" href="/loki0210.github.io/archives/2021/">1</a><span class="page-number current">2</span>
-    </nav>
   
 
 
@@ -416,8 +372,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
