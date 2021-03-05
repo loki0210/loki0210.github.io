@@ -20,8 +20,8 @@
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/002.png">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/003.png">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/004.png">
-<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/005.png">
-<meta property="og:updated_time" content="2021-03-04T10:24:04.312Z">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/fragment/005.jpg">
+<meta property="og:updated_time" content="2021-03-05T02:55:38.386Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fragment生命周期">
 <meta name="twitter:description" content="Fragment 概要Fragment表示 Activity 中的行为或用户界面部分。您可以将多个片段(片段就是指 Fragment )组合在一个 Activity 中来构建多窗格 UI，以及在多个 Activity 中重复使用某个片段。您可以将片段视为 Activity 的模块化组成部分，它具有自己的生命周期，能接收自己的输入事件，并且您可以在 Activity 运行时添加或移除片段（有点像您可">
@@ -189,7 +189,7 @@
 **onDetach()** 当Fragment 和 Activity 取消关联时调用。
 
 可以看下几种操作情况下Fragment 的生命周期变化</code></pre><p><img src="/assets/img/fragment/003.png" alt></p>
-<pre><code>管理 Fragment 生命周期和 Activity 生命周期很相似，同时 Activity 的生命周期对 Fragment 的生命周期也有一定的影响，如下图所示</code></pre><p><img src="/assets/img/fragment/004.png" alt><br>    用下图（来源）来表示 Activity 和 Fragment 的生命周期变化的先后过程是:<br><img src="/assets/img/fragment/005.png" alt><br>    Fragment 生命周期与 Activity 生命周期的一个关键区别就在于，Fragment 的生命周期方法是由托管Activity而不是操作系统调用的。Activity 中生命周期方法都是 protected，而 Fragment 都是 public，也能印证了这一点，因为 Activity 需要调用 Fragment 那些方法并管理它。</p>
+<pre><code>管理 Fragment 生命周期和 Activity 生命周期很相似，同时 Activity 的生命周期对 Fragment 的生命周期也有一定的影响，如下图所示</code></pre><p><img src="/assets/img/fragment/004.png" alt><br>    用下图（来源）来表示 Activity 和 Fragment 的生命周期变化的先后过程是:<br><img src="/assets/img/fragment/005.jpg" alt><br>    Fragment 生命周期与 Activity 生命周期的一个关键区别就在于，Fragment 的生命周期方法是由托管Activity而不是操作系统调用的。Activity 中生命周期方法都是 protected，而 Fragment 都是 public，也能印证了这一点，因为 Activity 需要调用 Fragment 那些方法并管理它。</p>
 <h3 id="加载-Fragment"><a href="#加载-Fragment" class="headerlink" title="加载 Fragment"></a>加载 Fragment</h3><ul>
 <li><strong>静态加载</strong></li>
 <li><strong>动态加载</strong></li>
