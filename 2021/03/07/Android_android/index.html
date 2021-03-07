@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
   <title>Android基础 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android 基础一、Android 基本常识  写10个简单的linux命令 mkdir 创建文件夹 rmdir 删除文件夹 rm 删除文件 mv 移动文件 cp 拷贝文件 cat 查看文件 tail 查看文件尾部 more 分页查看文件 cd 切换当前目录 ls 列出文件清单 reboot 重启 date 显示日期 cal 显示日历 ps 查看系统进程相当于 windows 的任务管理器 i">
+  <meta name="description" content="Android 基础一、Android 基本常识  写10个简单的linux命令">
 <meta name="keywords" content="IT,Android,Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android基础">
 <meta property="og:url" content="http://blog.findwork.xyz/2021/03/07/Android_android/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="Android 基础一、Android 基本常识  写10个简单的linux命令 mkdir 创建文件夹 rmdir 删除文件夹 rm 删除文件 mv 移动文件 cp 拷贝文件 cat 查看文件 tail 查看文件尾部 more 分页查看文件 cd 切换当前目录 ls 列出文件清单 reboot 重启 date 显示日期 cal 显示日历 ps 查看系统进程相当于 windows 的任务管理器 i">
+<meta property="og:description" content="Android 基础一、Android 基本常识  写10个简单的linux命令">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/android/001.png">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/android/002.png">
@@ -26,10 +26,10 @@
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/android/008.png">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/android/009.png">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/android/010.png">
-<meta property="og:updated_time" content="2021-03-07T08:14:36.072Z">
+<meta property="og:updated_time" content="2021-03-07T08:32:04.484Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android基础">
-<meta name="twitter:description" content="Android 基础一、Android 基本常识  写10个简单的linux命令 mkdir 创建文件夹 rmdir 删除文件夹 rm 删除文件 mv 移动文件 cp 拷贝文件 cat 查看文件 tail 查看文件尾部 more 分页查看文件 cd 切换当前目录 ls 列出文件清单 reboot 重启 date 显示日期 cal 显示日历 ps 查看系统进程相当于 windows 的任务管理器 i">
+<meta name="twitter:description" content="Android 基础一、Android 基本常识  写10个简单的linux命令">
 <meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/android/001.png">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
@@ -178,18 +178,30 @@
       
         <h3 id="Android-基础"><a href="#Android-基础" class="headerlink" title="Android 基础"></a>Android 基础</h3><p>一、Android 基本常识</p>
 <ol>
-<li>写10个简单的linux命令<br> mkdir 创建文件夹<br> rmdir 删除文件夹<br> rm 删除文件<br> mv 移动文件<br> cp 拷贝文件<br> cat 查看文件<br> tail 查看文件尾部<br> more 分页查看文件<br> cd 切换当前目录<br> ls 列出文件清单<br> reboot 重启<br> date 显示日期<br> cal 显示日历<br> ps 查看系统进程相当于 windows 的任务管理器<br> ifconfig 配置网络</li>
-<li>什么是 ANR 如何避免它？<br> 在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应<br> （ANR：ApplicationNotResponding）对话框。用户可以选择让程序继续运行，但是，他们在使用你的应用程序时，<br> 并不希望每次都要处理这个对话框。因此，在程序里对响应性能的设计很重要，这样，系统不会显示ANR给用户。<br> 不同的组件发生ANR的时间不一样，主线程（Activity、Service）是5秒，BroadCastReceiver是10秒。<br> 解决方案：将所有耗时操作，比如访问网络，Socket通信，查询大量SQL语句，复杂逻辑计算等都放在子线程中去，<br> 然后通过handler.sendMessage、runonUITread、AsyncTask等方式更新UI。无论如何都要确保用户界面操作的流畅度。<br> 如果耗时操作需要让用户等待，那么可以在界面上显示进度条。</li>
-<li>Android 的四大组件都需要在清单文件中注册吗？<br> Activity、Service、ContentProvider如果要使用则必须在AndroidManifest.xml中进行注册，<br> 而BroadcastReceiver则有两种注册方式，静态注册和动态注册。其中静态注册就是指在AndroidManifest.xml中进行注册，而动态注册时通过代码注册。</li>
-<li>sp 频繁操作有什么后果？sp 能存多少数据？<br> Sp的底层是由xml来实现的，操作sp的过程就是xml的序列化和解析的过程。Xml是存储在磁盘上的，因此考虑到需要I/O速度问题，<br> sp不适宜频繁操作。同时序列化xml是就是将内存中的数据写到xml文件中，由于dvm的内存是很有限的，因此单个sp文件不建议太大，<br> 具体多大是没有一个具体的要求的，但是我们知道DVM堆内存也就是16M，因此数据大小肯定不能超过这个数字的。<br> 其实sp设置的目的就是为了保存用户的偏好和配置信息的，因此不要保存太多的数据。</li>
+<li><p>写10个简单的linux命令</p>
+<a id="more"></a>
+<p> mkdir 创建文件夹<br> rmdir 删除文件夹<br> rm 删除文件<br> mv 移动文件<br> cp 拷贝文件<br> cat 查看文件<br> tail 查看文件尾部<br> more 分页查看文件<br> cd 切换当前目录<br> ls 列出文件清单<br> reboot 重启<br> date 显示日期<br> cal 显示日历<br> ps 查看系统进程相当于 windows 的任务管理器<br> ifconfig 配置网络</p>
+</li>
+<li><p>什么是 ANR 如何避免它？</p>
+<p> 在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应<br> （ANR：ApplicationNotResponding）对话框。用户可以选择让程序继续运行，但是，他们在使用你的应用程序时，<br> 并不希望每次都要处理这个对话框。因此，在程序里对响应性能的设计很重要，这样，系统不会显示ANR给用户。<br> 不同的组件发生ANR的时间不一样，主线程（Activity、Service）是5秒，BroadCastReceiver是10秒。<br> 解决方案：将所有耗时操作，比如访问网络，Socket通信，查询大量SQL语句，复杂逻辑计算等都放在子线程中去，<br> 然后通过handler.sendMessage、runonUITread、AsyncTask等方式更新UI。无论如何都要确保用户界面操作的流畅度。<br> 如果耗时操作需要让用户等待，那么可以在界面上显示进度条。</p>
+</li>
+<li><p>Android 的四大组件都需要在清单文件中注册吗？</p>
+<p> Activity、Service、ContentProvider如果要使用则必须在AndroidManifest.xml中进行注册，<br> 而BroadcastReceiver则有两种注册方式，静态注册和动态注册。其中静态注册就是指在AndroidManifest.xml中进行注册，而动态注册时通过代码注册。</p>
+</li>
+<li><p>sp 频繁操作有什么后果？sp 能存多少数据？</p>
+<p> Sp的底层是由xml来实现的，操作sp的过程就是xml的序列化和解析的过程。Xml是存储在磁盘上的，因此考虑到需要I/O速度问题，<br> sp不适宜频繁操作。同时序列化xml是就是将内存中的数据写到xml文件中，由于dvm的内存是很有限的，因此单个sp文件不建议太大，<br> 具体多大是没有一个具体的要求的，但是我们知道DVM堆内存也就是16M，因此数据大小肯定不能超过这个数字的。<br> 其实sp设置的目的就是为了保存用户的偏好和配置信息的，因此不要保存太多的数据。</p>
+</li>
 </ol>
 <p>二、Activity</p>
 <ol>
-<li><p>什么是 Activity?<br> 四大组件之一,通常一个用户交互界面对应一个activity。activity是Context的子类,同时实现了window.callback和keyevent.callback,<br> 可以处理与窗体用户交互的事件。常见的Activity类型有FragmentActivitiy，ListActivity，TabAcitivty等。<br> 如果界面有共同的特点或者功能的时候,还会自己定义一个BaseActivity。</p>
+<li><p>什么是 Activity?</p>
+<p> 四大组件之一,通常一个用户交互界面对应一个activity。activity是Context的子类,同时实现了window.callback和keyevent.callback,<br> 可以处理与窗体用户交互的事件。常见的Activity类型有FragmentActivitiy，ListActivity，TabAcitivty等。<br> 如果界面有共同的特点或者功能的时候,还会自己定义一个BaseActivity。</p>
 </li>
-<li><p>请描述一下 Activity 生命周期<br> Activity从创建到销毁有多种状态，从一种状态到另一种状态时会激发相应的回调方法，<br> 这些回调方法包括：onCreateonStartonResumeonPauseonStoponDestroy其实这些方法都是两两对应的，<br> onCreate创建与onDestroy销毁；onStart可见与onStop不可见；onResume可编辑（即焦点）与onPause；这6个方法是相对应的，<br> 那么就只剩下一个onRestart方法了，这个方法在什么时候调用呢？<br> 答案就是：在Activity被onStop后，但是没有被onDestroy，在再次启动此Activity时就调用onRestart（而不再调用onCreate）方法；<br> 如果被onDestroy了，则是调用onCreate方法。</p>
+<li><p>请描述一下 Activity 生命周期</p>
+<p> Activity从创建到销毁有多种状态，从一种状态到另一种状态时会激发相应的回调方法，<br> 这些回调方法包括：onCreateonStartonResumeonPauseonStoponDestroy其实这些方法都是两两对应的，<br> onCreate创建与onDestroy销毁；onStart可见与onStop不可见；onResume可编辑（即焦点）与onPause；这6个方法是相对应的，<br> 那么就只剩下一个onRestart方法了，这个方法在什么时候调用呢？<br> 答案就是：在Activity被onStop后，但是没有被onDestroy，在再次启动此Activity时就调用onRestart（而不再调用onCreate）方法；<br> 如果被onDestroy了，则是调用onCreate方法。</p>
 </li>
-<li><p>Activity 的状态都有哪些？<br> a) foreground activity<br> b) visible activity<br> c) background activity<br> d) empty process</p>
+<li><p>Activity 的状态都有哪些？</p>
+<p> a) foreground activity<br> b) visible activity<br> c) background activity<br> d) empty process</p>
 </li>
 <li><p>如何保存 Activity 的状态？</p>
 <p> Activity的状态通常情况下系统会自动保存的，只有当我们需要保存额外的数据时才需要使用到这样的功能。<br> 一般来说,调用onPause()和onStop()方法后的activity实例仍然存在于内存中,activity的所有信息和状态数据不会消失,<br> 当activity重新回到前台之后,所有的改变都会得到保留。但是当系统内存不足时,调用onPause()和onStop()方法后的activity可能会被系统摧毁,<br> 此时内存中就不会存有该activity的实例对象了。如果之后这个activity重新回到前台,之前所作的改变就会消失。为了避免此种情况的发生,<br> 我们可以覆写onSaveInstanceState()方法。onSaveInstanceState()方法接受一个Bundle类型的参数,开发者可以将状态数据存储到这个Bundle对象中,<br> 这样即使activity被系统摧毁,当用户重新启动这个activity而调用它的onCreate()方法时,上述的Bundle对象会作为实参传递给onCreate()方法,<br> 开发者可以从Bundle对象中取出保存的数据,然后利用这些数据将activity恢复到被摧毁之前的状态。<br> 需要注意的是,onSaveInstanceState()方法并不是一定会被调用的,因为有些场景是不需要保存状态数据的.<br> 比如用户按下BACK键退出activity时,用户显然想要关闭这个activity,此时是没有必要保存数据以供下次恢复的,<br> 也就是onSaveInstanceState()方法不会被调用.如果调用onSaveInstanceState()方法,调用将发生在onPause()或onStop()方法之前。</p>
@@ -198,15 +210,29 @@
 <figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onSaveInstanceState</span><span class="params">(Bundle outState)</span> </span>&#123;</span><br><span class="line"><span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line"><span class="keyword">super</span>.onSaveInstanceState(outState);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ol start="5">
-<li><p>两个Activity之间跳转时必然会执行的是哪几个方法？（重要）<br> 一般情况下比如说有两个activity,分别叫A,B,当在A里面激活B组件的时候,<br> A会调用onPause()方法,然后B调用onCreate(),onStart(),onResume()。<br> 这个时候B覆盖了窗体,A会调用onStop()方法.如果B是个透明的,或者是对话框的样式,就不会调用A的onStop()方法。<br> 如下图，打开一个MainActivity，然后点击MainActivity中的按钮跳转到SecondActivity的日志。<br><img src="/assets/img/android/001.png" alt></p>
+<li><p>两个Activity之间跳转时必然会执行的是哪几个方法？（重要）</p>
+<p> 一般情况下比如说有两个activity,分别叫A,B,当在A里面激活B组件的时候,<br> A会调用onPause()方法,然后B调用onCreate(),onStart(),onResume()。<br> 这个时候B覆盖了窗体,A会调用onStop()方法.如果B是个透明的,或者是对话框的样式,就不会调用A的onStop()方法。<br> 如下图，打开一个MainActivity，然后点击MainActivity中的按钮跳转到SecondActivity的日志。</p>
 </li>
-<li><p>横竖屏切换时 Activity 的生命周期<br> 此时的生命周期跟清单文件里的配置有关系。<br> 1、不设置 Activity 的 android:configChanges 时，切屏会重新调用各个生命周期<br> 默认首先销毁当前 activity，然后重新加载。<br> 如下图，当横竖屏切换时先执行 onPause/onStop 方法<br><img src="/assets/img/android/002.png" alt></p>
-<p> 2、设置 Activity 的 android:configChanges=”orientation|keyboardHidden|screenSize”时，切屏不会重新调<br> 用各个生命周期，只会执行 onConfigurationChanged 方法。<br> 通常在游戏开发, 屏幕的朝向都是写死的。</p>
+</ol>
+<p><img src="/assets/img/android/001.png" alt></p>
+<ol start="6">
+<li><p>横竖屏切换时 Activity 的生命周期</p>
+<p> 此时的生命周期跟清单文件里的配置有关系。<br> 1、不设置 Activity 的 android:configChanges 时，切屏会重新调用各个生命周期<br> 默认首先销毁当前 activity，然后重新加载。<br> 如下图，当横竖屏切换时先执行 onPause/onStop 方法</p>
 </li>
-<li><p>如何将一个 Activity 设置成窗口的样式？<br> 只需要给我们的 Activity 配置如下属性即可。</p>
+</ol>
+<p><img src="/assets/img/android/002.png" alt></p>
+<pre><code>2、设置 Activity 的 android:configChanges=&quot;orientation|keyboardHidden|screenSize&quot;时，切屏不会重新调
+用各个生命周期，只会执行 onConfigurationChanged 方法。
+通常在游戏开发, 屏幕的朝向都是写死的。</code></pre><ol start="7">
+<li><p>如何将一个 Activity 设置成窗口的样式？</p>
+<p> 只需要给我们的 Activity 配置如下属性即可。</p>
+</li>
+</ol>
 <figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">android:</span>theme=<span class="string">"@android:style/Theme.Dialog"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>请描述一下 Activity 的启动模式都有哪些以及各自的特点<br> 启动模式（launchMode）在多个 Activity 跳转的过程中扮演着重要的角色，它可以决定是否生成新的 Activity 实例，<br> 是否重用已存在的 Activity 实例，是否和其他 Activity 实例公用一个 task 里。这里简单介绍一下 task 的概念，task 是<br> 一个具有栈结构的对象，一个 task 可以管理多个 Activity，启动一个应用，也就创建一个与之对应的 task。<br> Activity 一共有以下四种 launchMode：</p>
+
+<ol start="8">
+<li><p>请描述一下 Activity 的启动模式都有哪些以及各自的特点</p>
+<p> 启动模式（launchMode）在多个 Activity 跳转的过程中扮演着重要的角色，它可以决定是否生成新的 Activity 实例，<br> 是否重用已存在的 Activity 实例，是否和其他 Activity 实例公用一个 task 里。这里简单介绍一下 task 的概念，task 是<br> 一个具有栈结构的对象，一个 task 可以管理多个 Activity，启动一个应用，也就创建一个与之对应的 task。<br> Activity 一共有以下四种 launchMode：</p>
 <ol>
 <li>standard</li>
 <li>singleTop</li>
