@@ -6,19 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Archives | Zihuatanejo&#39;s Blog</title>
+  <title>如何从html的一个动作打开app并跳转到指定的Activity | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/archives/index.html">
+  <meta name="description" content="格式就Android平台而言，URI主要分三个部分：scheme,authorityandpath。其中authority又分为host和port。1scheme://host:port/path">
+<meta name="keywords" content="IT,Android,Java,面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何从html的一个动作打开app并跳转到指定的Activity">
+<meta property="og:url" content="http://blog.findwork.xyz/2021/03/09/Android_html/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="格式就Android平台而言，URI主要分三个部分：scheme,authorityandpath。其中authority又分为host和port。1scheme://host:port/path">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/android/011.png">
+<meta property="og:updated_time" content="2021-03-09T10:40:07.273Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="如何从html的一个动作打开app并跳转到指定的Activity">
+<meta name="twitter:description" content="格式就Android平台而言，URI主要分三个部分：scheme,authorityandpath。其中authority又分为host和port。1scheme://host:port/path">
+<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/android/011.png">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -144,36 +147,43 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Android_html" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      如何从html的一个动作打开app并跳转到指定的Activity
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/09/Android_html/" class="archive-article-date">
+
+        
+        <a href="/loki0210.github.io/2021/03/09/Android_html/" class="archive-article-date">
   	<time datetime="2021-03-09T09:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/09/Android_html/">如何从html的一个动作打开app并跳转到指定的Activity</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h3><pre><code>就Android平台而言，URI主要分三个部分：scheme,authorityandpath。其中authority又分为host和port。</code></pre><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">scheme:</span><span class="comment">//host:port/path</span></span><br></pre></td></tr></table></figure>
 
-        <div class="article-info info-on-right">
-          
+<a id="more"></a>
+
+<h3 id="举个实际的例子："><a href="#举个实际的例子：" class="headerlink" title="举个实际的例子："></a>举个实际的例子：</h3><p><img src="/assets/img/android/011.png" alt></p>
+<h3 id="写一个简单的网页"><a href="#写一个简单的网页" class="headerlink" title="写一个简单的网页"></a>写一个简单的网页</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span><span class="params">&lt;a href="znn://aa.bb:<span class="number">80</span>/test?p=<span class="number">12</span><span class="variable">&amp;d</span>=<span class="number">1</span>"&gt;</span>test<span class="params">&lt;/a&gt;</span> <span class="comment">//html 中的代码</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="AndroidManifest-xml"><a href="#AndroidManifest-xml" class="headerlink" title="AndroidManifest.xml"></a>AndroidManifest.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span> //activity 中 intent-filter 的配置</span><br><span class="line"> <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.VIEW"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.DEFAULT"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.BROWSABLE"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">data</span> <span class="attr">android:scheme</span>=<span class="string">"znn"</span>/&gt;</span> //要和标签中一致</span><br><span class="line"><span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Activity-中的代码"><a href="#Activity-中的代码" class="headerlink" title="Activity 中的代码"></a>Activity 中的代码</h3><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Intent intent = getIntent();</span><br><span class="line"><span class="keyword">String</span> scheme = intent.getScheme();<span class="comment">// 得到传过来的 scheme</span></span><br><span class="line">Uri uri = intent.getData();System.out.<span class="built_in">println</span>(<span class="string">"scheme:"</span>+scheme);<span class="comment">// scheme:znn</span></span><br><span class="line"><span class="keyword">if</span>(uri!=<span class="keyword">null</span>)&#123;</span><br><span class="line">    <span class="comment">// 获取 host 的值</span></span><br><span class="line">    <span class="keyword">String</span> host = uri.getHost();</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"host:"</span> + host); <span class="comment">// host:aa.bb</span></span><br><span class="line">    <span class="comment">// 获取 host</span></span><br><span class="line">    <span class="keyword">String</span> dataString = intent.getDataString();</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"dataString:"</span> + dataString); <span class="comment">// dataString：znn://aa.bb:80/test?p=12&amp;d=1</span></span><br><span class="line">    <span class="comment">// 获取参数值 d</span></span><br><span class="line">    <span class="keyword">String</span> id = uri.getQueryParameter(<span class="string">"d"</span>);</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"id:"</span> + id); <span class="comment">// id：1</span></span><br><span class="line">    <span class="comment">// 获取 path 值：</span></span><br><span class="line">    <span class="keyword">String</span> path = uri.getPath();</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"path:"</span> + id); <span class="comment">// path:test</span></span><br><span class="line">    <span class="comment">// 获取所有的参数值</span></span><br><span class="line">    <span class="keyword">String</span> queryString = uri.getQuery();</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"queryString:"</span> + queryString);<span class="comment">// queryString：p=12&amp;d=1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -197,356 +207,105 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2021/03/09/Android_html/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/08/Android_java2/" class="archive-article-date">
-  	<time datetime="2021-03-08T09:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/loki0210.github.io/2021/03/08/Android_java2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">设计模式-代理模式(和装饰模式的真正区别)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/08/Android_java2/">设计模式-代理模式(和装饰模式的真正区别)</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/08/Android_java_1/" class="archive-article-date">
-  	<time datetime="2021-03-08T09:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/08/Android_java_1/">Java语言有哪些特点？</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/08/Android_java_base/" class="archive-article-date">
-  	<time datetime="2021-03-08T08:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/08/Android_java_base/">静态属性和静态方法是否可以被继承？是否可以被重写？以及原因？</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/07/Android_android/" class="archive-article-date">
-  	<time datetime="2021-03-07T08:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/07/Android_android/">Android基础</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/06/Android_Java/" class="archive-article-date">
-  	<time datetime="2021-03-06T08:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/06/Android_Java/">Android_Java基础</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/06/Android_SVGA/" class="archive-article-date">
-  	<time datetime="2021-03-06T02:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/06/Android_SVGA/">Android中SVGA的使用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/04/Android_Fragment/" class="archive-article-date">
-  	<time datetime="2021-03-04T10:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/04/Android_Fragment/">Fragment生命周期</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/loki0210.github.io/archives/page/2/">2</a><a class="page-number" href="/loki0210.github.io/archives/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/loki0210.github.io/archives/page/7/">7</a><a class="extend next" rel="next" href="/loki0210.github.io/archives/page/2/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -570,8 +329,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
