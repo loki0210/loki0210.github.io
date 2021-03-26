@@ -8,21 +8,21 @@
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
   <title>Android 布局之FrameLayout | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。layout_gravity可以使用如下">
+  <meta name="description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。">
 <meta name="keywords" content="IT,Android,Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android 布局之FrameLayout">
 <meta property="og:url" content="http://blog.findwork.xyz/2021/03/26/Android_FrameLayout/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。layout_gravity可以使用如下">
+<meta property="og:description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/framelayout/001.jpg">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/framelayout/002.jpg">
 <meta property="og:image" content="http://blog.findwork.xyz/assets/img/framelayout/003.jpg">
-<meta property="og:updated_time" content="2021-03-26T13:43:35.188Z">
+<meta property="og:updated_time" content="2021-03-26T13:49:54.536Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 布局之FrameLayout">
-<meta name="twitter:description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。layout_gravity可以使用如下">
+<meta name="twitter:description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。">
 <meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/framelayout/001.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
@@ -169,7 +169,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="1-FrameLayout简介"><a href="#1-FrameLayout简介" class="headerlink" title="1 .FrameLayout简介"></a>1 .FrameLayout简介</h3><p>在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。<br>layout_gravity可以使用如下取值：</p>
+        <h3 id="1-FrameLayout简介"><a href="#1-FrameLayout简介" class="headerlink" title="1 .FrameLayout简介"></a>1 .FrameLayout简介</h3><p>在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。</p>
+<a id="more"></a>
+<p>layout_gravity可以使用如下取值：</p>
 <p>top ：将对象放在其容器的顶部，不改变其大小.</p>
 <p>bottom：将对象放在其容器的底部，不改变其大小.</p>
 <p>left：将对象放在其容器的左侧，不改变其大小.</p>
@@ -199,13 +201,18 @@
 <li><strong>android:foregroundGravity:</strong>设置前景图像显示的位置</li>
 </ul>
 <p>前景图像:永远处于帧布局最上面,直接面对用户的图像,就是不会被覆盖的图片。</p>
-<p>可能有的小伙伴对这个解释比较模糊，那么我们来用实际操作让大家直观的感受一下到底是什么意思吧<br><img src="/assets/img/framelayout/001.jpg" alt></p>
-<p>上图中可以看到background顾名思义就是设置背景，那么前景是什么，相信小伙伴们已经有点概念了，让我们继续往下看吧<br><img src="/assets/img/framelayout/002.jpg" alt></p>
+<p>可能有的小伙伴对这个解释比较模糊，那么我们来用实际操作让大家直观的感受一下到底是什么意思吧</p>
+<div align="center"><img src="/assets/img/framelayout/001.jpg" width="30%" height="30%"></div>
+
+<p>上图中可以看到background顾名思义就是设置背景，那么前景是什么，相信小伙伴们已经有点概念了，让我们继续往下看吧</p>
+<div align="center"><img src="/assets/img/framelayout/002.jpg" width="30%" height="30%"></div>
+
 <p>相信小伙伴们看完上图已经彻底明白了什么是前景图像，同样的代码，只是将background变成foreground，可以明确的看出图1中HelloWord依然可以看到，但是在图2中，已经被挡住。我们可以这样简单的去理解，foreground其实就是一本书的封面，它把书中的内容全部遮盖住了。<br>作者：下码看花</p>
 <h3 id="3-FrameLayout如何设置其子视图-例如TextView-的位置？"><a href="#3-FrameLayout如何设置其子视图-例如TextView-的位置？" class="headerlink" title="3. FrameLayout如何设置其子视图(例如TextView)的位置？"></a>3. FrameLayout如何设置其子视图(例如TextView)的位置？</h3><p>通过layout_gravity设定值，再配合layout_marginTop，layout_marginLeft来设置位置。</p>
 <p>举例，有4个TextView：第一层为公司，第二层为办公室，第三层为工位，第四层是程序猿。若不设置TextView的位置，则此四个文字都将默显示在左上角，并且公司在最下面，程序猿在最上面。要实现图中四幅图的位置效果，则分别对应以下设置：</p>
 <p>（1）第一层公司 :android: layout_gravity=“center”<br>（2） 第二层办公室 :android: layout_gravity = “center” android:layout_marginTop=”-150dp” (注意：此处是负数，因为 android:layout_gravity = “center” 表示水平和垂直方向上居中，基准线为视图水平和垂直方向的中点，因为办公室在基准线的上方向(负方向)，所以为负数)<br>（3）第三层工位 ：android:layout_gravity=“top” android:layout_marginTop=“40dp” android:layout_marginLeft=”40dp’ (注意：android:layout_gravity=“top” 表示垂直方向顶端对齐，而水平方向是默认左对齐)<br>（4）第四层程序猿 : android:layout_gravity=“center” android:layout_marginTop=“80dp” (对应第二层办公室的分析，就很容易理解，程序猿在基准线下方向（正方向），所以为负数。并且注意：此处的基准线不是屏幕的最上方，而是水平和垂直方向各自的中心线)</p>
-<p>最终效果图为：<br><img src="/assets/img/framelayout/003.jpg" alt></p>
+<p>最终效果图为：</p>
+<div align="center"><img src="/assets/img/framelayout/003.jpg" width="30%" height="30%"></div>
 
       
 
