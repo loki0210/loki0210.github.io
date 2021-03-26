@@ -146,6 +146,124 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android_FrameLayout" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/loki0210.github.io/2021/03/26/Android_FrameLayout/">Android 布局之FrameLayout</a>
+    </h1>
+  
+
+        
+        <a href="/loki0210.github.io/2021/03/26/Android_FrameLayout/" class="archive-article-date">
+  	<time datetime="2021-03-26T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-FrameLayout简介"><a href="#1-FrameLayout简介" class="headerlink" title="1 .FrameLayout简介"></a>1 .FrameLayout简介</h3><p>在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。<br>layout_gravity可以使用如下取值：</p>
+<p>top ：将对象放在其容器的顶部，不改变其大小.</p>
+<p>bottom：将对象放在其容器的底部，不改变其大小.</p>
+<p>left：将对象放在其容器的左侧，不改变其大小.</p>
+<p>right：将对象放在其容器的右侧，不改变其大小.</p>
+<p>center_vertical：将对象纵向居中，不改变其大小.</p>
+<p> 垂直对齐方式：垂直方向上居中对齐。</p>
+<p>fill_vertical：必要的时候增加对象的纵向大小，以完全充满其容器. </p>
+<p>垂直方向填充</p>
+<p>center_horizontal：将对象横向居中，不改变其大小. </p>
+<p>水平对齐方式：水平方向上居中对齐</p>
+<p>fill_horizontal：必要的时候增加对象的横向大小，以完全充满其容器. </p>
+<p>水平方向填充：center</p>
+<p>将对象横纵居中，不改变其大小.</p>
+<p>fill：必要的时候增加对象的横纵向大小，以完全充满其容器.</p>
+<p>clip_vertical：附加选项，用于按照容器的边来剪切对象的顶部和/或底部的内容. 剪切基于其纵向对齐设置：顶部对齐时，剪切底部；底部对齐时剪切顶部；除此之外剪切顶部和底部.</p>
+<p>垂直方向裁剪</p>
+<p>clip_horizontal</p>
+<p>附加选项，用于按照容器的边来剪切对象的左侧和/或右侧的内容. 剪切基于其横向对齐设置：左侧对齐时，剪切右侧；右侧对齐时剪切左侧；除此之外剪切左侧和右侧.</p>
+<p>水平方向裁剪</p>
+<p>注意: 区分“android:gravity”和“android:layout_gravity”。</p>
+<p>android:gravity  ：是对控件本身来说的，是用来设置“控件自身的内容”应该显示在“控件自身体积”的什么位置,默认值是左侧。</p>
+<p>android:layout_gravity：是相对于控件的父元素来说的，设置该控件在它的父元素的什么位置</p>
+<h3 id="2-常用属性"><a href="#2-常用属性" class="headerlink" title="2. 常用属性"></a>2. 常用属性</h3><p>FrameLayout的常用属性很少就两个</p>
+<p>两个属性:</p>
+<ul>
+<li><strong>android:foreground:</strong>设置改帧布局容器的前景图像</li>
+<li><strong>android:foregroundGravity:</strong>设置前景图像显示的位置</li>
+</ul>
+<p>前景图像:永远处于帧布局最上面,直接面对用户的图像,就是不会被覆盖的图片。</p>
+<p>可能有的小伙伴对这个解释比较模糊，那么我们来用实际操作让大家直观的感受一下到底是什么意思吧<br><img src="/assets/img/framelayout/001.jpg" alt></p>
+<p>上图中可以看到background顾名思义就是设置背景，那么前景是什么，相信小伙伴们已经有点概念了，让我们继续往下看吧<br><img src="/assets/img/framelayout/002.jpg" alt></p>
+<p>相信小伙伴们看完上图已经彻底明白了什么是前景图像，同样的代码，只是将background变成foreground，可以明确的看出图1中HelloWord依然可以看到，但是在图2中，已经被挡住。我们可以这样简单的去理解，foreground其实就是一本书的封面，它把书中的内容全部遮盖住了。<br>作者：下码看花</p>
+<h3 id="3-FrameLayout如何设置其子视图-例如TextView-的位置？"><a href="#3-FrameLayout如何设置其子视图-例如TextView-的位置？" class="headerlink" title="3. FrameLayout如何设置其子视图(例如TextView)的位置？"></a>3. FrameLayout如何设置其子视图(例如TextView)的位置？</h3><p>通过layout_gravity设定值，再配合layout_marginTop，layout_marginLeft来设置位置。</p>
+<p>举例，有4个TextView：第一层为公司，第二层为办公室，第三层为工位，第四层是程序猿。若不设置TextView的位置，则此四个文字都将默显示在左上角，并且公司在最下面，程序猿在最上面。要实现图中四幅图的位置效果，则分别对应以下设置：</p>
+<p>（1）第一层公司 :android: layout_gravity=“center”<br>（2） 第二层办公室 :android: layout_gravity = “center” android:layout_marginTop=”-150dp” (注意：此处是负数，因为 android:layout_gravity = “center” 表示水平和垂直方向上居中，基准线为视图水平和垂直方向的中点，因为办公室在基准线的上方向(负方向)，所以为负数)<br>（3）第三层工位 ：android:layout_gravity=“top” android:layout_marginTop=“40dp” android:layout_marginLeft=”40dp’ (注意：android:layout_gravity=“top” 表示垂直方向顶端对齐，而水平方向是默认左对齐)<br>（4）第四层程序猿 : android:layout_gravity=“center” android:layout_marginTop=“80dp” (对应第二层办公室的分析，就很容易理解，程序猿在基准线下方向（正方向），所以为负数。并且注意：此处的基准线不是屏幕的最上方，而是水平和垂直方向各自的中心线)</p>
+<p>最终效果图为：<br><img src="/assets/img/framelayout/003.jpg" alt></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/loki0210.github.io/2021/03/26/Android_FrameLayout/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Android_token" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -909,94 +1027,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/loki0210.github.io/2021/03/08/Android_java_1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Android_java_base" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/loki0210.github.io/2021/03/08/Android_java_base/">静态属性和静态方法是否可以被继承？是否可以被重写？以及原因？</a>
-    </h1>
-  
-
-        
-        <a href="/loki0210.github.io/2021/03/08/Android_java_base/" class="archive-article-date">
-  	<time datetime="2021-03-08T08:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>静态属性、静态方法可以被继承、重写，只是没表现出多态性而已。</p>
-        
-          <a class="article-more-a" href="/loki0210.github.io/2021/03/08/Android_java_base/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/loki0210.github.io/2021/03/08/Android_java_base/">展开全文 >></a>
         </p>
       
 
