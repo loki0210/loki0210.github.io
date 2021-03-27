@@ -6,19 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Tag: Android | Zihuatanejo&#39;s Blog</title>
+  <title>中级Android面试总结之Android篇 | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/tags/Android/page/5/index.html">
+  <meta name="description" content="Android启动启动模式 standard 标准模式 singleTop 栈顶复用模式 （例如：推送点击消息界面） singleTask 栈内复用模式 （例如：首页） singleInstance 单例模式 （单独位于一个任务栈中，例如：拨打电话界面）">
+<meta name="keywords" content="IT,Android,Java,面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中级Android面试总结之Android篇">
+<meta property="og:url" content="http://blog.findwork.xyz/2021/03/27/Android_offer/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="Android启动启动模式 standard 标准模式 singleTop 栈顶复用模式 （例如：推送点击消息界面） singleTask 栈内复用模式 （例如：首页） singleInstance 单例模式 （单独位于一个任务栈中，例如：拨打电话界面）">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/offer/001.jpg">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/offer/002.png">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/offer/003.jpg">
+<meta property="og:updated_time" content="2021-03-27T03:14:12.443Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="中级Android面试总结之Android篇">
+<meta name="twitter:description" content="Android启动启动模式 standard 标准模式 singleTop 栈顶复用模式 （例如：推送点击消息界面） singleTask 栈内复用模式 （例如：首页） singleInstance 单例模式 （单独位于一个任务栈中，例如：拨打电话界面）">
+<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/offer/001.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -144,36 +149,277 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Android_offer" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      中级Android面试总结之Android篇
+    </h1>
+  
+
+        
+        <a href="/loki0210.github.io/2021/03/27/Android_offer/" class="archive-article-date">
+  	<time datetime="2021-03-27T04:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-27</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h2><h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><h4 id="启动模式"><a href="#启动模式" class="headerlink" title="启动模式"></a>启动模式</h4><ol>
+<li>standard 标准模式</li>
+<li>singleTop 栈顶复用模式 （例如：推送点击消息界面）</li>
+<li>singleTask 栈内复用模式 （例如：首页）</li>
+<li>singleInstance 单例模式 （单独位于一个任务栈中，例如：拨打电话界面）<a id="more"></a>
+<h4 id="App启动流程"><a href="#App启动流程" class="headerlink" title="App启动流程"></a>App启动流程</h4></li>
+</ol>
+<p><a href="https://mp.weixin.qq.com/s/Q6bDLQdEBzaRUUe7oYAXkg" title="启动流程参考文章" target="_blank" rel="noopener">启动流程参考文章</a></p>
+<p>启动流程<br><img src="/assets/img/offer/001.jpg" alt><br>app启动交互逻辑</p>
+<p><img src="/assets/img/offer/002.png" alt></p>
+<p>在Android 层 第一步就是 fork Zygote 进程（</p>
+<ol>
+<li>创建服务端Socket，为后续创建进程通信做准备 </li>
+<li>加载虚拟机</li>
+<li>fork了System Server进程，负责启动和管理Java Framework层，包括ActivityManagerService，PackageManagerService，WindowManagerService、binder线程池等 ）。</li>
+</ol>
+<p>   wanandroid 有一个经典的问题 ： Activity启动流程中，大部分都是用Binder通讯，为啥跟Zygote通信的时候要用socket呢？</p>
+<ol>
+<li>ServiceManager （初始化binder线程池的地方）不能保证在zygote起来的时候已经初始化好，所以无法使用Binder。</li>
+<li>Binder工作依赖于多线程，但是fork的时候是不允许存在多线程的，多线程情况下进程fork容易造成死锁，所以就不用Binder了。</li>
+</ol>
+<h4 id="多线程fork为什么会死锁"><a href="#多线程fork为什么会死锁" class="headerlink" title="多线程fork为什么会死锁"></a>多线程fork为什么会死锁</h4><ol>
+<li><p>线程里的doit()先执行.</p>
+</li>
+<li><p>doit执行的时候会给互斥体变量mutex加锁.</p>
+</li>
+<li><p>mutex变量的内容会原样拷贝到fork出来的子进程中(在此之前,mutex变量的内容已经被线程改写成锁定状态).</p>
+</li>
+<li><p>子进程再次调用doit的时候,在锁定互斥体mutex的时候会发现它已经被加锁,所以就一直等待,直到拥有该互斥体的进程释放它(实际上没有人拥有这个mutex锁).</p>
+</li>
+<li><p>线程的doit执行完成之前会把自己的mutex释放,但这是的mutex和子进程里的mutex已经是两份内存.所以即使释放了mutex锁也不会对子进程里的mutex造成什么影响.</p>
+</li>
+</ol>
+<h4 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h4><p>直观的说，Binder是一个类，实现了IBinder接口。<br>从IPC（进程间通信）角度来说，Binder是Android中一种跨进程通信方式。<br>还可以理解为一种虚拟的物理设备，它的设备驱动是/dev/binder。<br>从Android FrameWork角度来说，Binder是ServiceManager连接各种Manager（ActivityManager，WindowManager等等）和响应ManagerService的桥梁。<br>从Android应用层来说，Binder是客户端和服务端进行通信的媒介。</p>
+<p>以AIDL为例子，客户端在请求服务端通信的时候，并不是直接和服务端的某个对象联系，而是用到了服务端的一个代理对象，通过对这个代理对象操作，然后代理类会把方法对应的code、传输的序列化数据、需要返回的序列化数据交给底层，也就是Binder驱动。然后Binder驱动把对应的数据交给服务器端，等结果计算好之后，再由Binder驱动把数据返回给客户端。</p>
+<p>如果想要更加详细的资源 -&gt;<a href="https://blog.csdn.net/universus/article/details/6211589" target="_blank" rel="noopener">Binder设计与实现</a></p>
+<h4 id="ServiceManager"><a href="#ServiceManager" class="headerlink" title="ServiceManager"></a>ServiceManager</h4><p>ServiceManager其实是为了管理系统服务而设置的一种机制，每个服务注册在ServiceManager中，由ServiceManager统一管理，我们可以通过服务名在ServiceManager中查询对应的服务代理，从而完成调用系统服务的功能。所以ServiceManager有点类似于DNS，可以把服务名称和具体的服务记录在案，供客户端来查找。</p>
+<p><img src="/assets/img/offer/003.jpg" alt><br>ServiceManager本身也运行在一个单独的线程，本身也是一个服务端，客户端其实是先通过跨进程获取到ServiceManager的代理对象，然后通过ServiceManager代理对象再去找到对应的服务。所以每个APP程序都可以通过binder机制在自己的进程空间中创建一个ServiceManager代理对象。<br>  所以通过ServiceManager查找系统服务并调用方法的过程是进行了两次跨进程通信。</p>
+<h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><ul>
+<li>Serializable ： Java 序列化方式，适用于存储和网络传输，serialVersionUID 用于确定反序列化和类版本是否一致，不一致时反序列化回失败</li>
+<li>Parcelable ：Android 序列化方式，适用于组件通信数据传递，性能高，</li>
+</ul>
+<p>java中的序列化方式Serializable效率比较低，主要有以下原因：</p>
+<ol>
+<li>Serializable在序列化过程中会创建大量的临时变量，这样就会造成大量的GC。</li>
+<li>Serializable使用了大量反射，而反射操作耗时。</li>
+<li>Serializable使用了大量的IO操作，也影响了耗时。<br>所以Android就像重新设计了IPC方式Binder一样，重新设计了一种序列化方式，结合Binder的方式，对上述三点进行了优化，一定程度上提高了序列化和反序列化的效率。</li>
+</ol>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><h4 id="IPC-进程通讯方式"><a href="#IPC-进程通讯方式" class="headerlink" title="IPC 进程通讯方式"></a>IPC 进程通讯方式</h4><ul>
+<li>Intent 、Bundle ： 要求传递数据能被序列化，实现 Parcelable、Serializable ，适用于四大组件通信。</li>
+<li>文件共享 ：适用于交换简单的数据实时性不高的场景。</li>
+<li>AIDL：AIDL 接口实质上是系统提供给我们可以方便实现 BInder 的工具</li>
+<li>Messenger：基于 AIDL 实现，服务端串行处理，主要用于传递消息，适用于低并发一对多通信</li>
+<li>ContentProvider：基于 Binder 实现，适用于一对多进程间数据共享（通讯录 短信 等）</li>
+<li>Socket：TCP、UDP，适用于网络数据交换</li>
+</ul>
+<h4 id="进程保活"><a href="#进程保活" class="headerlink" title="进程保活"></a>进程保活</h4><p>进程被杀原因：1.切到后台内存不足时被杀；2.切到后台厂商省电机制杀死；3.用户主动清理</p>
+<p>保活方式：</p>
+<ol>
+<li>Activity 提权：挂一个 1像素 Activity 将进程优先级提高到前台进程</li>
+<li>Service 提权：启动一个前台服务（API&gt;18会有正在运行通知栏）</li>
+<li>广播拉活 （监听 开机 等系统广播）</li>
+<li>Service 拉活</li>
+<li>JobScheduler 定时任务拉活 （android 高版本不行）</li>
+<li>双进程拉活</li>
+<li>监听其他大厂 广播 （tx baidu 全家桶互相拉）</li>
+</ol>
+<h4 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h4><p><a href="https://www.jianshu.com/p/4f6d20076922" target="_blank" rel="noopener">Hook android 使用</a><br>Hook 的选择点：静态变量和单例，因为一旦创建对象，它们不容易变化，非常容易定位。<br>Hook 过程：</p>
+<p>寻找 Hook 点，原则是静态变量或者单例对象，尽量 Hook public 的对象和方法。<br>选择合适的代理方式，如果是接口可以用动态代理。<br>偷梁换柱——用代理对象替换原始对象。</p>
+<p>多数插件化 也使用的 Hook技术</p>
+<h3 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h3><ul>
+<li>构造单例的时候尽量别用Activity的引用；</li>
+<li>静态引用时注意应用对象的置空或者少用静态引用；</li>
+<li>使用静态内部类+软引用代替非静态内部类；</li>
+<li>及时取消广播或者观察者注册；耗时任务、属性动画在Activity销毁时记得cancel；</li>
+<li>文件流、Cursor等资源及时关闭；</li>
+<li>Activity销毁时WebView的移除和销毁。</li>
+</ul>
+<h3 id="ANR"><a href="#ANR" class="headerlink" title="ANR"></a>ANR</h3><p><a href="https://juejin.cn/post/6940061649348853796" target="_blank" rel="noopener">参考文章 今日头条技术团队</a></p>
+<h4 id="ANR原理"><a href="#ANR原理" class="headerlink" title="ANR原理"></a>ANR原理</h4><p>ANR 全称 Applicatipon No Response；Android 设计 ANR 的用意，是系统通过与之交互的组件(Activity，Service，Receiver，Provider)以及用户交互(InputEvent)进行超时监控，以判断应用进程(主线程)是否存在卡死或响应过慢的问题，通俗来说就是很多系统中看门狗(watchdog)的设计思想。</p>
+<p>  以有序广播为例（因为无序广播没有超时限制），在客户端进程中，Binder 线程接收到 AMS 服务发送过来的广播消息之后，会将此消息进行封装成一个 Message，然后将 Message 发送到主线程消息队列 (插入到消息队列当前时间节点的位置，也正是基于此类设计导致较多消息调度及时性的问题)</p>
+<p>  正常情况下，很多广播请求都会在客户端及时响应，然后通知到系统 AMS 服务取消本次超时监控。但是在部分业务场景或系统场景异常的情况下，发送的广播未及时调度，没有及时通知到系统服务，便会在系统服务侧触发超时，判定应用进程响应超时。</p>
+<h4 id="避免产生ANR"><a href="#避免产生ANR" class="headerlink" title="避免产生ANR"></a>避免产生ANR</h4><p>不同的组件发生ANR的时间不一样，Activity是阻塞5秒，BroadCastReceiver是阻塞10秒，Service是阻塞20秒</p>
+<p>平时代码中要注意几点：</p>
+<ol>
+<li>避免在主线程各种做耗时操作（访问网络，Socket通信，查询大量SQL 语句，复杂逻辑计算等）</li>
+<li>慎用Thread.wait()或者Thread.sleep()来阻塞主线程。</li>
+<li>Activity的onCreate和onResume回调中尽量避免耗时的代码。BroadcastReceiver中onReceive代码也要尽量减少耗时，建议使用IntentService处理。</li>
+</ol>
+<p><a href="http://blog.findwork.xyz/2021/03/02/Android_ANR/#more">Android ANR</a></p>
+<h3 id="View"><a href="#View" class="headerlink" title="View"></a>View</h3><h4 id="Window-WindowManager-WMS"><a href="#Window-WindowManager-WMS" class="headerlink" title="Window WindowManager WMS"></a>Window WindowManager WMS</h4><ul>
+<li><p>Window ：抽象类 不是实际存在的，而是以 View 的形式存在，通过 PhoneWindow 实现 （PhoneWindow = DecorView = Title + ContentView）</p>
+</li>
+<li><p>WindowManager：外界访问 Window 的入口 管理Window 中的View , 内部通过 Binder 与 WMS IPC 进程交互</p>
+</li>
+<li><p>WMS：管理窗口 Surface 的布局和次序，作为系统级服务单独运行在一个进程</p>
+</li>
+<li><p>SurfaceFlinger：将 WMS 维护的窗口按一定次序混合后显示到屏幕上</p>
+</li>
+</ul>
+<p><a href="https://www.jianshu.com/p/2c723ae92354" target="_blank" rel="noopener">个人源码文章</a></p>
+<h4 id="View-工作流程"><a href="#View-工作流程" class="headerlink" title="View 工作流程"></a>View 工作流程</h4><p>通过 SetContentView()，调用 到PhoneWindow ，后实例DecorView ，通过 LoadXmlResourceParser() 进行IO操作 解析xml文件 通过反射 创建出View，并将View绘制在 DecorView上，这里的绘制则交给了ViewRootImpl 来完成，通过performTraversals() 触发绘制流程，performMeasure 方法获取View的尺寸，performLayout 方法获取View的位置 ，然后通过 performDraw 方法遍历View 进行绘制。</p>
+<h3 id="事件分发"><a href="#事件分发" class="headerlink" title="事件分发"></a>事件分发</h3><p>一个 MotionEvent 产生后，按 Activity -&gt; Window -&gt; DecorView（ViewGroup） -&gt; View 顺序传递，View 传递过程就是事件分发，因为开发过程中存在事件冲突，所以需要熟悉流程：</p>
+<ul>
+<li>dispatchTouchEvent：用于分发事件，只要接受到点击事件就会被调用，返回结果表示是否消耗了当前事件</li>
+<li>onInterceptTouchEvent：用于判断是否拦截事件（只有ViewGroup中存在），当 ViewGroup 确定要拦截事件后，该事件序列都不会再触发调用此 ViewGroup 的 onIntercept</li>
+<li>onTouchEvent：用于处理事件，返回结果表示是否处理了当前事件，未处理则传递给父容器处理。（事件顺序是：OnTouchListener -&gt; OnTouchEvent -&gt; OnClick）</li>
+</ul>
+<h3 id="View-post"><a href="#View-post" class="headerlink" title="View.post"></a>View.post</h3><p><a href="https://blog.csdn.net/scnuxisan225/article/details/49815269" target="_blank" rel="noopener">参考 博客1</a></p>
+<p><a href="https://www.cnblogs.com/dasusu/p/8047172.html" target="_blank" rel="noopener">参考博客2</a></p>
+<p>想要在 onCreate 中获取到View宽高的方法有：</p>
+<ol>
+<li>ViewTreeObserver 监听界面绘制事件，在layout时调用，使用完毕后记得removeListener</li>
+<li>就是View.post</li>
+</ol>
+<p>源码分析：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">post</span><span class="params">(Runnable action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> AttachInfo attachInfo = mAttachInfo;</span><br><span class="line">        <span class="keyword">if</span> (attachInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> attachInfo.mHandler.post(action);</span><br><span class="line">        &#125;</span><br><span class="line">        getRunQueue().post(action);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>View.post(runable) 通过将runable 封装为HandlerAction对象，如果attachInfo为null 则将Runnable事件 添加到等待数组中， attachInfo初始化是在 dispatchAttachedToWindow 方法，置空则是在detachedFromWindow方法中，所以在这两个方法生命周期中，调用View.post方法都是直接让 mAttachInfo.handler 执行。</p>
+<figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ViewRootImpl.<span class="keyword">class</span></span><br><span class="line"></span><br><span class="line">mAttachInfo = <span class="keyword">new</span> View.AttachInfo(mWindowSession, mWindow, display, <span class="keyword">this</span>, mHandler, <span class="keyword">this</span>,</span><br><span class="line">                context);</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> ViewRootHandler mHandler = <span class="keyword">new</span> ViewRootHandler();</span><br></pre></td></tr></table></figure>
+
+<p>通过查找 mAttachInfo.handler 是在主线程中声明的，没有传参则 Looper 为主线程Looper，所以在View.post中可以更新UI。</p>
+<p><strong>但是为什么可以再View.post()中获取控件尺寸呢？</strong><br>android 运行是消息驱动，通过源码 可以看到 ViewRootImpl 中 是先将 TraversalRunnable添加到 Handler 中运行的 之后 才是 View.post()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ViewRootImpl.class</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">TraversalRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            doTraversal();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doTraversal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mTraversalScheduled) &#123;</span><br><span class="line">            mTraversalScheduled = <span class="keyword">false</span>;</span><br><span class="line">            mHandler.getLooper().getQueue().removeSyncBarrier(mTraversalBarrier);</span><br><span class="line">            <span class="comment">// 该方法之后才有 view.post（） </span></span><br><span class="line">            performTraversals();</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，这个时候Handler正在执行着TraversalRunnable这个Runnable，而我们post的Runnable要等待TraversalRunnable执行完才会去执行，而TraversalRunnable这里面又会进行measure,layout和draw流程，所以等到执行我们的Runnable时，此时的View就已经被measure过了，所以获取到的宽高就是measure过后的宽高。</p>
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><ul>
+<li>帧动画 ：AnimationDrawable 实现，在资源文件中存放多张图片，占用内存多，容易OOM</li>
+<li>补间动画 ：作用对象只限于 View 视觉改变，并没有改变View 的 xy 坐标，支持 平移、缩放、旋转、透明度，但是移动后，响应时间的位置还在 原处，补间动画在执行的时候，直接导致了 View 执行 onDraw() 方法。补间动画的核心本质就是在一定的持续时间内，不断改变 Matrix 变换，并且不    断刷新的过程。</li>
+<li>属性动画 ：ObjectAnimator、ValuetAnimator、AnimatorSet 可以是任何View，动画选择也比较多，其中包含 差速器，可以控制动画速度，节奏。类型估值器 可以根据当前属性改变的百分比计算改变后的属性值 。因为ViewGroup 在 getTransformedMotionEvent方法中通过子 View 的 h    asIdentityMatrix() 来判断子 View 是否经过位移之类的属性动画。调用子 View 的 getInverseMatrix() 做「反平移」操作，然后判断处理后的触摸点是否在子 View 的边界范围内。</li>
+</ul>
+<p>提升动画 可以打开 硬件加速，使GPU 承担一部分CPU的工作。</p>
+<h3 id="Android-进程通讯方式"><a href="#Android-进程通讯方式" class="headerlink" title="Android 进程通讯方式"></a>Android 进程通讯方式</h3><ul>
+<li><p>bundle ： 由于Activity，Service，Receiver都是可以通过Intent来携带Bundle传输数据的，所以我们可以在一个进程中通过Intent将携带数据的Bundle发送到另一个进程的组件。(bundle只能传递三种类型，一是键值对的形式，二是键为String类型，三是值为Parcelable类型)</p>
+</li>
+<li><p>ContentProvider ：ContentProvider是Android四大组件之一，以表格的方式来储存数据，提供给外界，即Content Provider可以跨进程访问其他应用程序中的数据</p>
+</li>
+<li><p>文件 ：两个进程可以到同一个文件去交换数据，我们不仅可以保存文本文件，还可以将对象持久化到文件，从另一个文件恢复。要注意的是，当并发读/写时可能会出现并发的问题。</p>
+</li>
+<li><p>Broadcast ：Broadcast可以向android系统中所有应用程序发送广播，而需要跨进程通讯的应用程序可以监听这些广播。</p>
+</li>
+<li><p>AIDL ：AIDL通过定义服务端暴露的接口，以提供给客户端来调用，AIDL使服务器可以并行处理。</p>
+</li>
+<li><p>Messager ：Messenger封装了AIDL之后只能串行运行，所以Messenger一般用作消息传递</p>
+</li>
+<li><p>Socket</p>
+</li>
+</ul>
+<h3 id="Android-线程通信"><a href="#Android-线程通信" class="headerlink" title="Android 线程通信"></a>Android 线程通信</h3><p>Handler 和 AsyncTask （AsyncTask：异步任务，内部封装了Handler）</p>
+<h3 id="Handler线程间通信"><a href="#Handler线程间通信" class="headerlink" title="Handler线程间通信"></a>Handler线程间通信</h3><p>作用：线程之间的消息通信</p>
+<p>流程：主线程默认实现了Looper （调用loop.prepare方法 向sThreadLocal中set一个新的looper对象， looper构造方法中又创建了MsgQueue） 手动创建Handler ，调用 sendMessage 或者 post (runable) 发送Message 到 msgQueue ，如果没有Msg 这添加到表头，有数据则判断when时间 循环next 放到合适的 msg的next 后。Looper.loop不断轮训Msg，将msg取出 并分发到Handler 或者 post提交的 Runable 中处理，并重置Msg 状态位。回到主线程中 重写 Handler 的 handlerMessage 回调的msg 进行主线程绘制逻辑。</p>
+<p>问题：</p>
+<ol>
+<li>Handler 同步屏障机制：通过发送异步消息，在msg.next 中会优先处理异步消息，达到优先级的作用</li>
+<li>Looper.loop 为什么不会卡死：为了app不挂掉，就要保证主线程一直运行存在，使用死循环代码阻塞在msgQueue.next()中的nativePollOnce()方法里 ，主线程就会挂起休眠释放cpu，线程就不会退出。Looper死循环之前，在ActivityThread.main()中就会创建一个 Binder 线程    （ApplicationThread），接收系统服务AMS发送来的事件。当系统有消息产生（其实系统每 16ms 会发送一个刷新 UI 消息唤醒）会通过epoll机制 向pipe管道写端写入数据 就会发送消息给 looper 接收到消息后处理事件，保证主线程的一直存活。只有在主线程中处理超时才会让app崩溃 也    就是ANR。</li>
+<li>Messaage复用： 将使用完的Message清除附带的数据后, 添加到复用池中 ,当我们需要使用它时,直接在复用池中取出对象使用,而不需要重新new创建对象。复用池本质还是Message 为node 的单链表结构。所以推荐使用Message.obation获取 对象。</li>
+</ol>
+<h3 id="Android-和WebView-通信"><a href="#Android-和WebView-通信" class="headerlink" title="Android 和WebView 通信"></a>Android 和WebView 通信</h3><ol>
+<li>js调用android ：</li>
+</ol>
+<p>// myObj 为在js中使用的对象名称 JavaScriptInterfaces 是我们自定义的一个类</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webView.<span class="keyword">addJavascriptInterface(new </span><span class="keyword">JavaScriptInterfaces(), </span><span class="string">"myObj"</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>myObj.xx() //js方法</p>
+<ol start="2">
+<li>android 调用js<br>无参数</li>
+</ol>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mWebView.loadUrl(<span class="string">"javascript:wave()"</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>有参数</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">webView.evaluateJavascript(<span class="built_in">String</span>.format(<span class="string">"javascript:callH5Re('测试数据')"</span>), <span class="literal">new</span> ValueCallback&lt;<span class="built_in">String</span>&gt;() &#123;</span><br><span class="line">   @Override</span><br><span class="line">   <span class="keyword">public</span> <span class="literal">void</span> onReceiveValue(<span class="built_in">String</span> value) &#123;</span><br><span class="line">       <span class="keyword">Log</span>.e(<span class="string">"Test"</span>, <span class="string">"onReceiveValue: "</span>+value );</span><br><span class="line">   &#125; &#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="app优化-（项目中处理的一些难点）"><a href="#app优化-（项目中处理的一些难点）" class="headerlink" title="app优化 （项目中处理的一些难点）"></a>app优化 （项目中处理的一些难点）</h3><p>主要分为 启动优化，布局优化 ，打包优化 等</p>
+<h4 id="启动优化"><a href="#启动优化" class="headerlink" title="启动优化"></a>启动优化</h4><ul>
+<li>闪屏页 优化，设置theme 默认欢迎背景</li>
+<li>懒加载 第三方库，不要都放在application 中初始化</li>
+<li>如果项目中有 webview ，可以提前在app空闲时间加载 webview 的内核，如果多处使用 可以创建缓存池，缓存webview，</li>
+<li>如果android 5.0- 在applicaton 的 attchbaseContext() 中加载MultiDex.install 会更加耗时，可以采用 子线程（子线程加载 需要担心ANR 和ContentProvider 未加载报错的问题）或者单独开一个进程B，进程B开启子线程运行MultiDex.install ，让applicaton 进入while 循环    等待B进程加载结果。<br>MultiDex 优化，apk打包分为 android 5.0 + 使用 ART虚拟机 不用担心</li>
+</ul>
+<h4 id="布局UI优化"><a href="#布局UI优化" class="headerlink" title="布局UI优化"></a>布局UI优化</h4><p>看过布局绘制源码流程后，可以知道 setContextView中 在ViewRootImpl 中使用 pull 的方法（这里可以扩展xml读取方式 SAX ：逐行解析、dom：将整个文件加载到内存 然后解析，不推荐、pull：类似于 SAX 进行了android平台的优化，更加轻量级 方便）迭代读取 xml标签，然后对view 进行 measure，layout 和draw 的时候都存在耗时。通常优化方式有：</p>
+<ol>
+<li>减少UI层级、使用merge、Viewstub标签 优化重复的布局</li>
+<li>优化 layout ，尽量多使用ConstraintLayout，因为 relalayout 和 linearlayout 比重的情况下都存在多次测量</li>
+<li>recyclerView 缓存 ( 可扩展 说明 rv的缓存原理 )</li>
+<li>比较极端的 将 measure 和 layout 放在子线程，在主线程进行draw。或者 子线程中 加载view 进行IO读取xml,通过Handler 回调主线程 加载view(比如android 原生类 AsyncLayoutInflate )</li>
+<li>将xml直接通过 第三方工具（原理 APT 注解 翻译xml）直接将xml 转为 java代码</li>
+</ol>
+<p><a href="https://www.jianshu.com/p/8ca35e86d476" target="_blank" rel="noopener">更多UI优化文章</a></p>
+<h4 id="打包优化"><a href="#打包优化" class="headerlink" title="打包优化"></a>打包优化</h4><p>Analyze APK 后可以发现代码 和 资源其实是 app包的主要内存</p>
+<ol>
+<li>res 文件夹下 分辨率下的图片 国内基本提供 xxhdpi 或者 xhdpi 即可，android 会分析手机分辨率到对应分辨率文件夹下加载资源</li>
+<li>res中的 png 图片 都可以转为 webg 或者 svg格式的 ，如果不能转 则可以通过 png压缩在减少内存</li>
+<li>通过在 build.gradle 中配置 minifyEnabled true（混淆）shrinkResources true （移除无用资源）</li>
+<li>Assests 中的 mp4 /3 可以在需要使用的时候从服务器上下载下来，字体文件 使用字体提取工具FontZip 删除不用的文字格式，毕竟几千个中文app中怎么可能都使用</li>
+<li>lib 包如果 适配机型大多为高通 RAM ，可以单独引用abiFilters “armeabi-v7a”</li>
+<li>build文件中 resConfigs “zh” 剔除掉 官方中或者第三方库中的 外国文字资源</li>
+</ol>
+<h3 id="第三方库-源码总结"><a href="#第三方库-源码总结" class="headerlink" title="第三方库 源码总结"></a>第三方库 源码总结</h3><h4 id="LeakCanary-原理"><a href="#LeakCanary-原理" class="headerlink" title="LeakCanary 原理"></a>LeakCanary 原理</h4><p>通过 registerActivityLifecycleCallbacks 监听Activity或者Fragment 销毁时候的生命周期（如果不想那个对象被监控则通过 AndroidExcludedRefs 枚举，避免被检测）</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> watch(<span class="keyword">Object</span> watchedReference, <span class="keyword">String</span> referenceName) &#123;</span><br><span class="line">   <span class="keyword">if</span> (<span class="keyword">this</span> == DISABLED) &#123;</span><br><span class="line">     <span class="keyword">return</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   checkNotNull(watchedReference, <span class="string">"watchedReference"</span>);</span><br><span class="line">   checkNotNull(referenceName, <span class="string">"referenceName"</span>);</span><br><span class="line">   <span class="keyword">final</span> <span class="keyword">long</span> watchStartNanoTime = System.nanoTime();</span><br><span class="line">   <span class="keyword">String</span> <span class="built_in">key</span> = UUID.randomUUID().toString();</span><br><span class="line">   retainedKeys.<span class="built_in">add</span>(<span class="built_in">key</span>);</span><br><span class="line">   <span class="keyword">final</span> KeyedWeakReference reference =</span><br><span class="line">       <span class="keyword">new</span> KeyedWeakReference(watchedReference, <span class="built_in">key</span>, referenceName, queue);</span><br><span class="line"></span><br><span class="line">   ensureGoneAsync(watchStartNanoTime, reference);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后通过弱引用和引用队列监控对象是否被回收（弱引用和引用队列ReferenceQueue联合使用时，如果弱引用持有的对象被垃圾回收，Java虚拟机就会把这个弱引用加入到与之关联的引用队列中。即 KeyedWeakReference持有的Activity对象如果被垃圾回收，该对象就会加入到引用队列queue）</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">waitForIdle</span><span class="params">(<span class="keyword">final</span> Retryable retryable, <span class="keyword">final</span> <span class="keyword">int</span> failedAttempts)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// This needs to be called from the main thread.</span></span><br><span class="line">    Looper.myQueue().addIdleHandler(<span class="keyword">new</span> MessageQueue.IdleHandler() &#123;</span><br><span class="line">      <span class="meta">@Override</span> <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">queueIdle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        postToBackgroundWithDelay(retryable, failedAttempts);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>IdleHandler，就是当主线程空闲的时候，如果设置了这个东西，就会执行它的queueIdle()方法，所以这个方法就是在onDestory以后，一旦主线程空闲了，就会执行一个延时五秒的子线程任务，任务：检测到未被回收则主动 gc ，然后继续监控，如果还是没有回收掉，就证明是内存泄漏了。 通过抓取 dump文件，在使用 第三方 HAHA 库 分析文件，获取到到达泄露点最近的线路，通过 启动另一个进程的 DisplayLeakService 发送通知 进行消息的展示。</p>
+<h4 id="OkHttp"><a href="#OkHttp" class="headerlink" title="OkHttp"></a>OkHttp</h4><p><a href="https://www.jianshu.com/p/5bb1709f3729" target="_blank" rel="noopener">参考博客</a><br><a href="https://www.jianshu.com/p/7d82bf7672d3" target="_blank" rel="noopener">参考博客2</a><br>同步和异步 网络请求使用方法</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 同步get请求</span></span><br><span class="line">OkHttpClient okHttpClient=<span class="keyword">new</span> OkHttpClient();</span><br><span class="line"><span class="keyword">final</span> Request request=<span class="keyword">new</span> Request.Builder().url(<span class="string">"xxx"</span>).get().build();</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">Call</span> <span class="keyword">call</span> = okHttpClient.newCall(request);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    Response response = <span class="keyword">call</span>.execute();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//异步get请求 </span></span><br><span class="line">OkHttpClient okHttpClient=<span class="keyword">new</span> OkHttpClient();</span><br><span class="line"><span class="keyword">final</span> Request request=<span class="keyword">new</span> Request.Builder().url(<span class="string">"xxx"</span>).get().build();</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">Call</span> <span class="keyword">call</span> = okHttpClient.newCall(request);</span><br><span class="line"><span class="keyword">call</span>.enqueue(<span class="keyword">new</span> Callback() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onFailure(<span class="keyword">Call</span> <span class="keyword">call</span>, IOException e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onResponse(<span class="keyword">Call</span> <span class="keyword">call</span>, Response response) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 异步post 请求</span></span><br><span class="line">OkHttpClient okHttpClient1 = <span class="keyword">new</span> OkHttpClient();</span><br><span class="line">RequestBody requestBody = <span class="keyword">new</span> FormBody.Builder()</span><br><span class="line">        .add(<span class="string">"xxx"</span>, <span class="string">"xxx"</span>).build();</span><br><span class="line">Request request1 = <span class="keyword">new</span> Request.Builder().url(<span class="string">"xxx"</span>).post(requestBody).build();</span><br><span class="line">okHttpClient1.newCall(request1).enqueue(<span class="keyword">new</span> Callback() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onFailure(<span class="keyword">Call</span> <span class="keyword">call</span>, IOException e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onResponse(<span class="keyword">Call</span> <span class="keyword">call</span>, Response response) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>同步请求流程：</strong><br>通过OkHttpClient new生成call实例 Realcall<br>Dispatcher.executed() 中 通过添加realcall到runningSyncCalls队列中<br>通过 getResponseWithInterceptorChain() 对request层层拦截，生成Response<br>通过Dispatcher.finished()，把call实例从队列中移除，返回最终的response</p>
+<p><strong>异步请求流程：</strong><br>生成一个AsyncCall(responseCallback)实例(实现了Runnable)<br>AsyncCall通过调用Dispatcher.enqueue()，并判断maxRequests （最大请求数）maxRequestsPerHost(最大host请求数)是否满足条件，如果满足就把AsyncCall添加到runningAsyncCalls中，并放入线程池中执行；如果条件不满足，就添加到等待就绪的异步队列，当那些满足的条件的执行时 ，在Dispatcher.finifshed(this)中的promoteCalls();方法中 对等待就绪的异步队列进行遍历，生成对应的AsyncCall实例，并添加到runningAsyncCalls中，最后放入到线程池中执行，一直到所有请求都结束。</p>
+<h4 id="责任链模式-和-拦截器"><a href="#责任链模式-和-拦截器" class="headerlink" title="责任链模式 和 拦截器"></a>责任链模式 和 拦截器</h4><p><strong>责任链</strong><br>源码跟进 execute() 进入到 getResponseWithInterceptorChain() 方法</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Response getResponseWithInterceptorChain() throws IOException &#123;</span><br><span class="line">    <span class="comment">//责任链 模式</span></span><br><span class="line">    List&lt;Interceptor&gt; interceptors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    interceptors.addAll(<span class="keyword">client</span>.interceptors());</span><br><span class="line">    interceptors.add(retryAndFollowUpInterceptor);</span><br><span class="line">    interceptors.add(<span class="keyword">new</span> BridgeInterceptor(<span class="keyword">client</span>.cookieJar()));</span><br><span class="line">    interceptors.add(<span class="keyword">new</span> CacheInterceptor(<span class="keyword">client</span>.internalCache()));</span><br><span class="line">    interceptors.add(<span class="keyword">new</span> ConnectInterceptor(<span class="keyword">client</span>));</span><br><span class="line">    <span class="keyword">if</span> (!forWebSocket) &#123;</span><br><span class="line">      interceptors.addAll(<span class="keyword">client</span>.networkInterceptors());</span><br><span class="line">    &#125;</span><br><span class="line">    interceptors.add(<span class="keyword">new</span> CallServerInterceptor(forWebSocket));</span><br><span class="line">    Interceptor.Chain chain = <span class="keyword">new</span> RealInterceptorChain(interceptors, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="number">0</span>,</span><br><span class="line">        originalRequest, <span class="keyword">this</span>, eventListener, <span class="keyword">client</span>.connectTimeoutMillis(),</span><br><span class="line">        <span class="keyword">client</span>.readTimeoutMillis(), <span class="keyword">client</span>.writeTimeoutMillis());</span><br><span class="line">    <span class="keyword">return</span> chain.proceed(originalRequest);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>chain.proceed() 方法核心代码。每个拦截器 intercept()方法中的chain，都在上一个 chain实例的 chain.proceed()中被初始化，并传递了拦截器List与 index，调用interceptor.intercept(next)，直接最后一个 chain实例执行即停止。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//递归循环下一个 拦截器</span></span><br><span class="line">    RealInterceptorChain <span class="keyword">next</span> = <span class="keyword">new</span> RealInterceptorChain(interceptors, streamAllocation, httpCodec,</span><br><span class="line">        connection, index + <span class="number">1</span>, request, <span class="keyword">call</span>, eventListener, connectTimeout, readTimeout,</span><br><span class="line">        writeTimeout);</span><br><span class="line">    Interceptor interceptor = interceptors.get(index);</span><br><span class="line">    Response response = interceptor.intercept(<span class="keyword">next</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override <span class="keyword">public</span> Response intercept(Chain chain) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    Request request = chain.request();</span><br><span class="line">    RealInterceptorChain realChain = (RealInterceptorChain) chain;</span><br><span class="line">    <span class="keyword">Call</span> <span class="keyword">call</span> = realChain.<span class="keyword">call</span>();</span><br><span class="line">    EventListener eventListener = realChain.eventListener();</span><br><span class="line">    StreamAllocation streamAllocation = <span class="keyword">new</span> StreamAllocation(client.connectionPool(),</span><br><span class="line">        createAddress(request.url()), <span class="keyword">call</span>, eventListener, callStackTrace);</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">// 循环中 再次调用了 chain 对象中的 proceed 方法，达到递归循环。</span></span><br><span class="line">        response = realChain.proceed(request, streamAllocation, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">        releaseConnection = <span class="keyword">false</span>;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>拦截器</strong></p>
+<ol>
+<li>RetryAndFollowUpInterceptor ：重连并跟踪 拦截器。</li>
+<li>BridgeInterceptor : 将用户请求构建为网络请求（hander cooker content-type 等） 并发起请求 。</li>
+<li>CacheInterceptor ： 缓存拦截器 负责从缓存中返回响应和把网络请求响应写入缓存。</li>
+<li>ConnectInterceptor ： 与服务端 建立连接，并且获得通向服务端的输入和输出流对象。</li>
+</ol>
+<p><strong>OkHttp 流程</strong></p>
+<ol>
+<li>采用责任链方式的拦截器,实现分成处理网络请求,可更好的扩展自定义拦截器（采用GZIP压缩，支持http缓存）</li>
+<li>采用线程池(thread pool)和连接池(Socket pool)解决多并发问题,同时连接池支持多路复用(http2才支持,可以让一个Socket同时发送多个网络请求,内部自动维持顺序.相比http只能一个一个发送,更能减少创建开销))</li>
+<li>底层采用socket和服务器进行连接.采用okio实现高效的io流读写</li>
+</ol>
+<h4 id="ButterKnife"><a href="#ButterKnife" class="headerlink" title="ButterKnife"></a>ButterKnife</h4><p><a href="https://blog.csdn.net/xu_1215/article/details/80761862" target="_blank" rel="noopener">参考文章</a></p>
+<p>butterKnife 使用的是 APT 技术 也就是编译时注解，不同于运行时注解（在运行过程中通过反射动态地获取相关类，方法，参数等信息，效率低耗时等缺点），编译时注解 则是在代码编译过程中对注解进行处理（annotationProcessor技术），通过注解获取相关类，方法，参数等信息，然后在项目中生成代码，运行时调用，其实和直接手写代码一样，没有性能问题，只有编辑时效率问题。<br>ButterKnife在Bind方法中 获取到DecorView，然后通过Activity和DecorView对象获取xx_ViewBinding类的构造对象，然后通过构造方法反射实例化了这个类 Constructor。<br>在编写完demo之后，需要先build一下项目，之后可以在build/generated/source/apt/debug/包名/下面找到 对应的xx_ViewBinding类，查看bk 帮我们做的事情，</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># xx_ViewBinding.java</span><br><span class="line"></span><br><span class="line">@UiThread</span><br><span class="line">  <span class="keyword">public</span> ViewActivity_ViewBinding(ViewActivity target, View <span class="keyword">source</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.target = target;</span><br><span class="line"></span><br><span class="line">    target.view = Utils.findRequiredView(<span class="keyword">source</span>, R.id.view, <span class="string">"field 'view'"</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"># Utils.java</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> View findRequiredView(View <span class="keyword">source</span>, @IdRes <span class="keyword">int</span> id, String who) &#123;</span><br><span class="line">    View view = <span class="keyword">source</span>.findViewById(id);</span><br><span class="line">    <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line">    String name = getResourceEntryName(<span class="keyword">source</span>, id);</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Required view ...."</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过上述上述代码 可以看到 注解也是帮我们完成了 findviewbyid 的工作。</p>
+<p><strong>butterknife 实现流程</strong></p>
+<ol>
+<li>扫描Java代码中所有的ButterKnife注解</li>
+<li>发现注解， ButterKnifeProcessor会帮你生成一个Java类，名字&lt;类名&gt;$$ViewBinding.java，这个新生成的类实现了Unbinder接口，类中的各个view 声明和添加事件都添加到Map中，遍历每个注解对应通过JavaPoet生成的代码。</li>
+</ol>
+<p><strong>未来</strong><br>Gradle插件升级到5.0版本之后ButterKnife将无法再被使用，R文件中的 id将添加final标识符，虽然 jake大神通过生成R2文件的方式，尝试避开版本升级带来的影响。但是随着官方ViewBinding等技术的出现，<br>  我们这里说下 被final修饰的基础类型和String类型为什么不能被反射？</p>
+<p>答：由于JVM 内联优化的机制，编译器将指定的函数体插入并取代每一处调用该函数的地方（就是在方法编译前已经进行了赋值），从而节省了每次调用函数带来的额外时间开支。</p>
+<p>作者：小肥羊冲冲冲<br>链接：<a href="https://www.jianshu.com/p/9f13f5774c08" target="_blank" rel="noopener">https://www.jianshu.com/p/9f13f5774c08</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/24/BuilderDialog/" class="archive-article-date">
-  	<time datetime="2020-12-24T08:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/24/BuilderDialog/">Builder模式创建万能Dialog</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -189,340 +435,122 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
         		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/21/kotlin2/" class="archive-article-date">
-  	<time datetime="2020-12-21T08:12:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/21/kotlin2/">Kotlin小课堂</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">kotlin</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2021/03/27/Android_offer/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/21/BaseActivity/" class="archive-article-date">
-  	<time datetime="2020-12-21T07:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-21</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/loki0210.github.io/2021/03/27/Android_offer_java/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          中级Android面试总结之网络、Java基础篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="/loki0210.github.io/2021/03/26/Android_FrameLayout/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android 布局之FrameLayout</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/21/BaseActivity/">BaseActivity和BaseFragment</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/21/AndroidUtils/" class="archive-article-date">
-  	<time datetime="2020-12-21T05:45:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/21/AndroidUtils/">常用Utis</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/15/IOC/" class="archive-article-date">
-  	<time datetime="2020-12-15T11:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/15/IOC/">IOC注解框架</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/12/12/kotlin/" class="archive-article-date">
-  	<time datetime="2020-12-12T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/12/12/kotlin/">Kotlin小课堂</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">kotlin</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/11/28/dp2px/" class="archive-article-date">
-  	<time datetime="2020-11-28T03:13:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-28</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/11/28/dp2px/">dp与px的转换</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2020/03/08/shape/" class="archive-article-date">
-  	<time datetime="2020-03-08T01:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2020/03/08/shape/">Android GradientDrawable(shape标签定义) 静态使用和动态使用(圆角，渐变实现)</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/loki0210.github.io/tags/Android/page/4/">&laquo; Prev</a><a class="page-number" href="/loki0210.github.io/tags/Android/">1</a><span class="space">&hellip;</span><a class="page-number" href="/loki0210.github.io/tags/Android/page/3/">3</a><a class="page-number" href="/loki0210.github.io/tags/Android/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/loki0210.github.io/tags/Android/page/6/">6</a><a class="page-number" href="/loki0210.github.io/tags/Android/page/7/">7</a><a class="extend next" rel="next" href="/loki0210.github.io/tags/Android/page/6/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -546,9 +574,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: false,
