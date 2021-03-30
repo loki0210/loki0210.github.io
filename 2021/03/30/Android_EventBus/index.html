@@ -6,19 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://blog.findwork.xyz">
-  <title>Tag: Android | Zihuatanejo&#39;s Blog</title>
+  <title>组件之间的通信—EventBus | Zihuatanejo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="游民">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zihuatanejo&#39;s Blog">
-<meta property="og:url" content="http://blog.findwork.xyz/tags/Android/index.html">
+  <meta name="description" content="前言EventBus可以很容易地实现组件与组件之间的通信，无论跨线程与否，简单的注册与监听，就可以让我们轻松实现。">
+<meta name="keywords" content="IT,Android,Java,面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="组件之间的通信—EventBus">
+<meta property="og:url" content="http://blog.findwork.xyz/2021/03/30/Android_EventBus/index.html">
 <meta property="og:site_name" content="Zihuatanejo&#39;s Blog">
-<meta property="og:description" content="游民">
+<meta property="og:description" content="前言EventBus可以很容易地实现组件与组件之间的通信，无论跨线程与否，简单的注册与监听，就可以让我们轻松实现。">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.findwork.xyz/assets/img/eventbus/001.png">
+<meta property="og:updated_time" content="2021-03-30T13:47:29.604Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zihuatanejo&#39;s Blog">
-<meta name="twitter:description" content="游民">
+<meta name="twitter:title" content="组件之间的通信—EventBus">
+<meta name="twitter:description" content="前言EventBus可以很容易地实现组件与组件之间的通信，无论跨线程与否，简单的注册与监听，就可以让我们轻松实现。">
+<meta name="twitter:image" content="http://blog.findwork.xyz/assets/img/eventbus/001.png">
   
     <link rel="alternative" href="/atom.xml" title="Zihuatanejo&#39;s Blog" type="application/atom+xml">
   
@@ -152,36 +155,106 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Android_EventBus" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      组件之间的通信—EventBus
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/loki0210.github.io/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/30/Android_EventBus/" class="archive-article-date">
+
+        
+        <a href="/loki0210.github.io/2021/03/30/Android_EventBus/" class="archive-article-date">
   	<time datetime="2021-03-30T11:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-30</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/30/Android_EventBus/">组件之间的通信—EventBus</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>EventBus可以很容易地实现组件与组件之间的通信，无论跨线程与否，简单的注册与监听，就可以让我们轻松实现。</p>
+<a id="more"></a>
 
-        <div class="article-info info-on-right">
-          
+<p>EventBus是一个Android和Java的开源库，使用发布者/订阅者模式进行松散耦合。EventBus使中央通信能够仅用几行代码解耦类——简化代码，减少依赖项，并加快应用程序开发。<br><img src="/assets/img/eventbus/001.png" alt></p>
+<h3 id="使用EventBus有什么好处？"><a href="#使用EventBus有什么好处？" class="headerlink" title="使用EventBus有什么好处？"></a>使用EventBus有什么好处？</h3><ul>
+<li>简化组件之间的通信</li>
+<li>事件发送方和接收方解耦</li>
+<li>能够很好地使用UI组件（例如Activities, Fragments）和后台线程</li>
+<li>避免复杂且容易出错的依赖关系和生命周期问题</li>
+<li>速度快；专门为高性能而优化</li>
+<li>很小（~60k jar）</li>
+<li>实际安装量超过10,000,000个的应用程序证明了这一点</li>
+<li>具有切换线程、订阅者优先级等高级功能</li>
+</ul>
+<p>EventBus是一款针对Andoid优化的发布/订阅事件总线，主要功能是替Intent,Handler,BroadCast在Fragment，Activity，Service，线程之间传递消息，优点是开销小，代码更优雅，以及将发送者和接收者进行解耦。以观察者模式实现，用于简化程序的组件、线程通信，可以轻易切换线程、开辟线程。<br>在没有接触EventBus之前，也许在Android开发中，组件间的通信或者前后端线程之间的通信都是通过持有引用的回调或者Handler来实现的，但是过多回调势必带来一些副作用，比如：强引用，可能导致内存泄漏；多层回调的代码逻辑可读性差，调试时甚至使人摸不着头脑；直接用匿名内部类去实现很容易就出现多级缩进，长长的屏幕都看不完一行代码；要跨线程必须要用Handler或AsyncTask等等。<br>而EventBus是可以替代回调的。但替代的时候并不是那么简单地在原来调用回调方法的地方调用EventBus的post方法即可。具体的回调应有的步骤如下：</p>
+<ol>
+<li><p>把回调里传的数据抽离成一个消息类Msg，一个回调方法对应一个消息类。</p>
+</li>
+<li><p>在调用回调方法的地方把调用改为EventBus的post方法，参数是上一步中抽取出来的Msg类。</p>
+</li>
+<li><p>把原来实现了的回调方法改为用Subscribe注解标明该在哪类线程运行，并把原参数改为抽取出来的Msg类，在具体实现里再从Msg实例取出对应的数据。</p>
+</li>
+<li><p>在添加回调的代码处改为EventBus的register方法；并在所处的组件销毁时的回调方法（如onDestroy、onDestroyView等，注意要和register方法所处的生命周期对称）内调用EventBus的unregister方法。</p>
+</li>
+</ol>
+<p>我们再来谈谈具体使用吧，这个地址：<a href="https://github.com/greenrobot/EventBus是EventBus的github地址，下载下来，依赖为我们要使用的库，其实使用起来，以上的步骤中诉述了，下面我举几个场景：" target="_blank" rel="noopener">https://github.com/greenrobot/EventBus是EventBus的github地址，下载下来，依赖为我们要使用的库，其实使用起来，以上的步骤中诉述了，下面我举几个场景：</a></p>
+<h4 id="场景一：Activity之间进行传递消息"><a href="#场景一：Activity之间进行传递消息" class="headerlink" title="场景一：Activity之间进行传递消息"></a>场景一：Activity之间进行传递消息</h4><p>两个Activity,从第二个Activity接收返回来的参数，启动的时候用startActivityForResult，在onActivityResult里接收参数可以搞定，但是，从第一个Activity跳到第二个Activity再跳到第三个Activity,甚至跳到第N个Activity，来接收返回的参数，显示在第一个Activity上，你该如何操作呢亲？当然你可以是使用广播，来监听返回的消息，简单的参数你也可以直接使用SharedPreferences,当然了，你也完全可以每次跳转都startActivityForResult，然后在每个Activity里接收参数，直至第一个Activity,也许你会有各种各样的实现的方式，但是用了EventBus，你肯定会爱不释手。</p>
+<p>简单四步走：</p>
+<ol>
+<li>在需要接收参数的Activity中onCreate进行注册：</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        <span class="comment">// 注册成为订阅者</span></span><br><span class="line">        EventBus.getDefault().register(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy()</span><br><span class="line">        <span class="comment">// 解除注册 不再接收事件</span></span><br><span class="line">        EventBus.getDefault().unregister(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>在需要接收参数的Activity中重写回调方法，一定要记住，添加@Subscribe，并且所接收的参数和发送时的参数保持一致：</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过[Subscribe]注解进行注册，并且可以指定[ThreadMode]该方法执行的线程类型</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Subscribe(threadMode = ThreadMode.MAIN)</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">onEvent</span><span class="params">(event: <span class="type">SimpleEvent</span>)</span></span> &#123;</span><br><span class="line">    Log.d(<span class="string">"qqq"</span>, <span class="string">"onEvent: <span class="subst">$&#123;event.message&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>在需要传递信息的地方发送：</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 自定义的事件类</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@property</span> message String 消息</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Qu Yunshuo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 3/29/21 8:05 PM</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleEvent</span></span>(<span class="keyword">val</span> message: String)</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 发布一个事件</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">postEvent</span><span class="params">()</span></span> &#123;</span><br><span class="line">    EventBus.getDefault().post(SimpleEvent(<span class="string">"Hello EventBus!"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>在接收的Activity中进行onDestory中进行反注册：</li>
+</ol>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Overrideprotected</span> <span class="function"><span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;    <span class="keyword">super</span>.onDestroy();    EventBus.getDefault().unregister(<span class="keyword">this</span>);&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="场景二：Activity和Fragment进行互相通信"><a href="#场景二：Activity和Fragment进行互相通信" class="headerlink" title="场景二：Activity和Fragment进行互相通信"></a>场景二：Activity和Fragment进行互相通信</h4><p>两者之间进行通信，我们可以采取接口回调或者注册广播，当然了既然是描述EventBus，EventBus当然这一职责也必须可以胜任，具体的实现逻辑和场景一差不多，无非就是，在需要接收的页面进行注册，重写回调函数，在需要传递的地方进行post传递，具体大家可以自行揣摩。</p>
+<p>也许还有很多场景，在这里就不一一说了，EventBus说的那么好，具体它有什么缺点呢，俗话说，金无足赤人无完人，十全十美也不太现实，EventBus的缺点可以总结如下：1、只要用得一多，那消息类的数量必然是会爆炸性增长。2、调试的时候除非熟悉整块逻辑，不然不跑起来你是没办法了解Subscribe的方法的数据来源。我们需要看清的现实是，其优点是远远大于它的缺点的，我们不能因为几个缺点就抛弃了它。</p>
+<h3 id="补充说明："><a href="#补充说明：" class="headerlink" title="补充说明："></a>补充说明：</h3><p>上面的文章中，介绍了一个回调函数获取参数的方法onEventMainThread，除了这个函数，其实EventBus还有几个，分别是：</p>
+<p>onEvent:如果使用onEvent作为订阅函数，那么该事件在哪个线程发布出来的，onEvent就会在这个线程中运行，也就是说发布事件和接收事件线程在同一个线程。使用这个方法时，在onEvent方法中不能执行耗时操作，如果执行耗时操作容易导致事件分发延迟。</p>
+<p>onEventMainThread:如果使用onEventMainThread作为订阅函数，那么不论事件是在哪个线程中发布出来的，onEventMainThread都会在UI线程中执行，接收事件就会在UI线程中运行，这个在Android中是非常有用的，因为在Android中只能在UI线程中跟新UI，所以在onEvnetMainThread方法中是不能执行耗时操作的。</p>
+<p>onEventBackground:如果使用onEventBackgrond作为订阅函数，那么如果事件是在UI线程中发布出来的，那么onEventBackground就会在子线程中运行，如果事件本来就是子线程中发布出来的，那么onEventBackground函数直接在该子线程中执行。</p>
+<p>onEventAsync：使用这个函数作为订阅函数，那么无论事件在哪个线程发布，都会创建新的子线程在执行onEventAsync.</p>
+<p>这四种订阅函数都是使用onEvent开头的，它们的功能稍有不同,注意两个概念：</p>
+<p>告知观察者事件发生时通过EventBus.post函数实现，这个过程叫做事件的发布，观察者被告知事件发生叫做事件的接收，是通过订阅函数实现的。</p>
+<h3 id="常见封装方式："><a href="#常见封装方式：" class="headerlink" title="常见封装方式："></a>常见封装方式：</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 最常见的方式就是写在基类中，在[onCreate]方法中进行注册，在[onDestroy]方法中进行解除注册</span></span><br><span class="line"><span class="comment"> * 这样实现类就可以自动的完成注册与解除注册，完全不用考虑忘记解除注册这种低级错误🙅</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        EventBus.getDefault().register(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy()</span><br><span class="line">        EventBus.getDefault().unregister(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式简单粗暴有效，但是弊端也很明显，不管子类需不需要注册都会自动帮你注册完，简直快乐的一批，当然这不是我们想要的效果。<br>那其实可以在这种方式上进行优化，比如写一个hook方法，让子类重写决定是否进行初始化，这也是一个不错的方案。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        <span class="comment">// 判断子类是否需要进行注册和解除注册</span></span><br><span class="line">        <span class="keyword">if</span> (isRegisterEventBus()) EventBus.getDefault().register(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy()</span><br><span class="line">        <span class="comment">// 判断子类是否需要进行注册和解除注册</span></span><br><span class="line">        <span class="keyword">if</span> (isRegisterEventBus()) EventBus.getDefault().unregister(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 是否注册EventBus</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Boolean</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">open</span> <span class="function"><span class="keyword">fun</span> <span class="title">isRegisterEventBus</span><span class="params">()</span></span>: <span class="built_in">Boolean</span> = <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这也是一个不错的方案，让子类决定是否进行注册，避免一刀切全部注册的情况，代价只是多重写一个方法。下面介绍另外一种方案，使用自定义注解+反射。</p>
+<h3 id="自定义注解-反射"><a href="#自定义注解-反射" class="headerlink" title="自定义注解+反射"></a>自定义注解+反射</h3><p>整体思路就是我们自定义一个注解，在需要进行注册的类上添加注解，在基类里进行判断当前子类是否使用了该注解从而决定是否进行注册</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 进行标记需要进行注册EventBus</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Qu Yunshuo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 3/29/21 8:33 PM</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target(AnnotationTarget.CLASS)</span></span><br><span class="line"><span class="meta">@kotlin</span>.<span class="keyword">annotation</span>.Retention(AnnotationRetention.RUNTIME)</span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">EventBusRegister</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Activity基类</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Qu Yunshuo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 3/29/21 8:36 PM</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        <span class="comment">// 获取到Class对象判断是否有EventBusRegister注解</span></span><br><span class="line">        <span class="keyword">if</span> (javaClass.isAnnotationPresent(EventBusRegister::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)) </span>&#123;</span><br><span class="line">            EventBus.getDefault().register(<span class="keyword">this</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy()</span><br><span class="line">        <span class="comment">// 获取到Class对象判断是否有EventBusRegister注解</span></span><br><span class="line">        <span class="keyword">if</span> (javaClass.isAnnotationPresent(EventBusRegister::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)) </span>&#123;</span><br><span class="line">            EventBus.getDefault().unregister(<span class="keyword">this</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上是注解和基类的逻辑，十分的简单，需要注册时，只需要在添加该注解就ok</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EventBusRegister</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">BaseActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;...&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>是不是使用起来也是十分的简单，并不是说这种方案是最优的，本文只是介绍通过自定义注解+反射来实现封装EventBus注册的逻辑，get到以后就可以进行举一反三。</p>
+<h3 id="简单封装Utils"><a href="#简单封装Utils" class="headerlink" title="简单封装Utils"></a>简单封装Utils</h3><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"><span class="bullet"> * </span>EventBus工具类</span><br><span class="line"><span class="bullet"> * </span></span><br><span class="line"><span class="bullet"> * </span>@author Qu Yunshuo</span><br><span class="line"><span class="bullet"> * </span>@since 3/29/21 8:42 PM</span><br><span class="line"> */</span><br><span class="line">object EventBusUtils &#123;</span><br><span class="line"></span><br><span class="line"><span class="code">    /**</span></span><br><span class="line"><span class="bullet">     * </span>订阅</span><br><span class="line"><span class="bullet">     * </span>@param subscriber 订阅者</span><br><span class="line"><span class="code">     */</span></span><br><span class="line"><span class="code">    fun register(subscriber: Any) = EventBus.getDefault().register(subscriber)</span></span><br><span class="line"></span><br><span class="line"><span class="code">    /**</span></span><br><span class="line"><span class="bullet">     * </span>解除注册</span><br><span class="line"><span class="bullet">     * </span>@param subscriber 订阅者</span><br><span class="line"><span class="code">     */</span></span><br><span class="line"><span class="code">    fun unRegister(subscriber: Any) = EventBus.getDefault().unregister(subscriber)</span></span><br><span class="line"></span><br><span class="line"><span class="code">    /**</span></span><br><span class="line"><span class="bullet">     * </span>发送普通事件</span><br><span class="line"><span class="bullet">     * </span>@param event 事件</span><br><span class="line"><span class="code">     */</span></span><br><span class="line"><span class="code">    fun postEvent(event: Any) = EventBus.getDefault().post(event)</span></span><br><span class="line"></span><br><span class="line"><span class="code">    /**</span></span><br><span class="line"><span class="bullet">     * </span>发送粘性事件</span><br><span class="line"><span class="bullet">     * </span>@param stickyEvent 粘性事件</span><br><span class="line"><span class="code">     */</span></span><br><span class="line"><span class="code">    fun postStickyEvent(stickyEvent: Any) = EventBus.getDefault().postSticky(stickyEvent)</span></span><br><span class="line"></span><br><span class="line"><span class="code">    /**</span></span><br><span class="line"><span class="bullet">     * </span>手动获取粘性事件</span><br><span class="line"><span class="bullet">     * </span>@param stickyEventType 粘性事件</span><br><span class="line"><span class="bullet">     * </span>@param <span class="xml"><span class="tag">&lt;<span class="name">T</span>&gt;</span></span>             事件泛型</span><br><span class="line"><span class="bullet">     * </span>@return 返回给定事件类型的最近粘性事件</span><br><span class="line"><span class="code">     */</span></span><br><span class="line"><span class="code">    fun &lt;T&gt; getStickyEvent(stickyEventType: Class&lt;T&gt;): T = EventBus.getDefault().getStickyEvent(stickyEventType)</span></span><br><span class="line"></span><br><span class="line"><span class="code">    /**</span></span><br><span class="line"><span class="bullet">     * </span>手动删除粘性事件</span><br><span class="line"><span class="bullet">     * </span>@param stickyEventType 粘性事件</span><br><span class="line"><span class="bullet">     * </span>@param <span class="xml"><span class="tag">&lt;<span class="name">T</span>&gt;</span></span>             事件泛型</span><br><span class="line"><span class="bullet">     * </span>@return 返回给定事件类型的最近粘性事件</span><br><span class="line"><span class="code">     */</span></span><br><span class="line"><span class="code">    fun &lt;T&gt; removeStickyEvent(stickyEventType: Class&lt;T&gt;): T = EventBus.getDefault().removeStickyEvent(stickyEventType)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -205,360 +278,105 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://blog.findwork.xyz/2021/03/30/Android_EventBus/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/29/Android_offer_question/" class="archive-article-date">
-  	<time datetime="2021-03-29T11:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-29</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/loki0210.github.io/2021/03/29/Android_offer_question/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">面试问题收集</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/29/Android_offer_question/">面试问题收集</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/29/Android_Socket/" class="archive-article-date">
-  	<time datetime="2021-03-29T06:44:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/29/Android_Socket/">Android中Socket使用入门</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Kotlin</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/29/Android_CoordinatorLayout/" class="archive-article-date">
-  	<time datetime="2021-03-29T04:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/29/Android_CoordinatorLayout/">使用CoordinatorLayout实现炫酷的效果</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/27/Android_offer_java/" class="archive-article-date">
-  	<time datetime="2021-03-27T04:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/27/Android_offer_java/">中级Android面试总结之网络、Java基础篇</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/27/Android_offer/" class="archive-article-date">
-  	<time datetime="2021-03-27T04:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/27/Android_offer/">中级Android面试总结之Android篇</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/26/Android_FrameLayout/" class="archive-article-date">
-  	<time datetime="2021-03-26T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-26</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/26/Android_FrameLayout/">Android 布局之FrameLayout</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/loki0210.github.io/2021/03/25/Android_token/" class="archive-article-date">
-  	<time datetime="2021-03-25T08:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/loki0210.github.io/2021/03/25/Android_token/">详解APP的Token验证机制</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">IT</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/loki0210.github.io/tags/Android/page/2/">2</a><a class="page-number" href="/loki0210.github.io/tags/Android/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/loki0210.github.io/tags/Android/page/8/">8</a><a class="extend next" rel="next" href="/loki0210.github.io/tags/Android/page/2/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -582,9 +400,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: false,
