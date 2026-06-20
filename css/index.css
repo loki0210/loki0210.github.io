@@ -3895,13 +3895,17 @@ pre .coffeescript .title {
 .trm-content {
   min-width: 0;
 }
-.trm-card {
-  overflow: hidden;
-}
 .trm-publication {
   overflow-wrap: break-word;
   word-wrap: break-word;
   min-width: 0;
+}
+.trm-publication h2::before {
+  box-sizing: border-box;
+}
+.trm-publication pre code {
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 .trm-publication img {
   max-width: 100%;

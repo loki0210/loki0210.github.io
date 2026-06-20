@@ -7,16 +7,16 @@
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#317EFB" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
-<meta name="description" content="前言当我们进行横屏切换后就会重新运行onCreate 方法 ，重新new Fragment 就会产生两个相似的布局 相互覆盖。使用configChanges&#x3D;&quot;orientation|keyboardHidden|screenSize&quot; 就可以不再产生相似布局，解决问题">
+<meta name="description" content="前言当我们进行横屏切换后就会重新运行onCreate 方法 ，重新new Fragment 就会产生两个相似的布局 相互覆盖。使用configChanges&#x3D;”orientation|keyboardHidden|screenSize” 就可以不再产生相似布局，解决问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android ConfigChanges属性">
 <meta property="og:url" content="https://blog.hansong.icu/2021/09/10/Android_ConfigChanges/index.html">
 <meta property="og:site_name" content="Zihuatanejo">
-<meta property="og:description" content="前言当我们进行横屏切换后就会重新运行onCreate 方法 ，重新new Fragment 就会产生两个相似的布局 相互覆盖。使用configChanges&#x3D;&quot;orientation|keyboardHidden|screenSize&quot; 就可以不再产生相似布局，解决问题">
+<meta property="og:description" content="前言当我们进行横屏切换后就会重新运行onCreate 方法 ，重新new Fragment 就会产生两个相似的布局 相互覆盖。使用configChanges&#x3D;”orientation|keyboardHidden|screenSize” 就可以不再产生相似布局，解决问题">
 <meta property="og:locale">
 <meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
 <meta property="article:published_time" content="2021-09-10T07:31:00.000Z">
-<meta property="article:modified_time" content="2021-09-10T07:08:36.691Z">
+<meta property="article:modified_time" content="2026-06-20T13:02:02.790Z">
 <meta property="article:author" content="Zihuatanejo">
 <meta property="article:tag" content="IT">
 <meta property="article:tag" content="Android">
@@ -64,7 +64,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2021-09-10 15:08:36"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-20 21:02:02"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -357,18 +357,13 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><pre><code>当我们进行横屏切换后就会重新运行onCreate 方法 ，重新new Fragment 就会产生两个相似的布局 相互覆盖。使用configChanges=&quot;orientation|keyboardHidden|screenSize&quot; 就可以不再产生相似布局，解决问题
-</code></pre>
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>当我们进行横屏切换后就会重新运行onCreate 方法 ，重新new Fragment 就会产生两个相似的布局 相互覆盖。使用configChanges&#x3D;”orientation|keyboardHidden|screenSize” 就可以不再产生相似布局，解决问题</p>
 <span id="more"></span>
 
-<h3 id="系统语言改变"><a href="#系统语言改变" class="headerlink" title="系统语言改变"></a>系统语言改变</h3><pre><code>系统语言改变后，activity会调用onDestory()重启，然后重启onCreate()，因此一些体验非常不好。
-解决办法：在activity中配置：
-</code></pre>
+<h3 id="系统语言改变"><a href="#系统语言改变" class="headerlink" title="系统语言改变"></a>系统语言改变</h3><p>系统语言改变后，activity会调用onDestory()重启，然后重启onCreate()，因此一些体验非常不好。<br>解决办法：在activity中配置：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android:configChanges=<span class="string">&quot;locale|layoutDirection|keyboard&quot;</span></span><br></pre></td></tr></table></figure>
 
-<pre><code>对于这种配置，对于不同的ROM可能出出现不同的结果，还有以下奇怪的办法：
-比如创建BaseActivity，在BaseActivity的onCreate中监听系统语言是否发生改变，然后通过eventBus去通知其他activity更换语言。
-</code></pre>
+<p>对于这种配置，对于不同的ROM可能出出现不同的结果，还有以下奇怪的办法：<br>比如创建BaseActivity，在BaseActivity的onCreate中监听系统语言是否发生改变，然后通过eventBus去通知其他activity更换语言。</p>
 <p><img src="/assets/img/configChanges/android_config_changes.webp"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 
 </article>

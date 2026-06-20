@@ -15,7 +15,7 @@
 <meta property="og:description" content="前言应用的冷启动总是无法避免的，也就是说冷启动时用户总要经历一个启动等待时间。开发人员唯一能做的就是在 Application 和 第一个 Activity 中，减少 onCreate() 方法的工作量，从而缩短冷启动的时间。像应用中嵌入的一些第三方 SDK，都建议在 Application 中做一些初始化工作，开发人员不妨采取懒加载的形式移除这部分代码，而在真正需要用到第三方 SDK 时再进行初">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-09-09T07:31:00.000Z">
-<meta property="article:modified_time" content="2021-09-10T06:44:26.016Z">
+<meta property="article:modified_time" content="2026-06-20T13:02:02.812Z">
 <meta property="article:author" content="Zihuatanejo">
 <meta property="article:tag" content="IT">
 <meta property="article:tag" content="Android">
@@ -62,7 +62,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2021-09-10 14:44:26"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-20 21:02:02"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -355,15 +355,11 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><pre><code>应用的冷启动总是无法避免的，也就是说冷启动时用户总要经历一个启动等待时间。开发人员唯一能做的就是在 Application 和 第一个 Activity 中，减少 onCreate() 方法的工作量，从而缩短冷启动的时间。像应用中嵌入的一些第三方 SDK，都建议在 Application 中做一些初始化工作，开发人员不妨采取懒加载的形式移除这部分代码，而在真正需要用到第三方 SDK 时再进行初始化。
-</code></pre>
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>应用的冷启动总是无法避免的，也就是说冷启动时用户总要经历一个启动等待时间。开发人员唯一能做的就是在 Application 和 第一个 Activity 中，减少 onCreate() 方法的工作量，从而缩短冷启动的时间。像应用中嵌入的一些第三方 SDK，都建议在 Application 中做一些初始化工作，开发人员不妨采取懒加载的形式移除这部分代码，而在真正需要用到第三方 SDK 时再进行初始化。</p>
 <span id="more"></span>
 
-<pre><code>我们可以通过主题中的 windowBackground 属性，自定义应用启动时的窗口背景
-</code></pre>
-<h3 id="1-在res-drawable下创建一个launch-screen-xml文件-并写下下面的内容"><a href="#1-在res-drawable下创建一个launch-screen-xml文件-并写下下面的内容" class="headerlink" title="1.在res&#x2F;drawable下创建一个launch_screen.xml文件,并写下下面的内容"></a>1.在res&#x2F;drawable下创建一个launch_screen.xml文件,并写下下面的内容</h3><pre><code>其中@drawable/ic_app_logo是一张图片，来自drawable文件夹下
-其中@color/background_material_light,来自colors.xml文件
-</code></pre>
+<p>我们可以通过主题中的 windowBackground 属性，自定义应用启动时的窗口背景</p>
+<h3 id="1-在res-drawable下创建一个launch-screen-xml文件-并写下下面的内容"><a href="#1-在res-drawable下创建一个launch-screen-xml文件-并写下下面的内容" class="headerlink" title="1.在res&#x2F;drawable下创建一个launch_screen.xml文件,并写下下面的内容"></a>1.在res&#x2F;drawable下创建一个launch_screen.xml文件,并写下下面的内容</h3><p>其中@drawable&#x2F;ic_app_logo是一张图片，来自drawable文件夹下<br>其中@color&#x2F;background_material_light,来自colors.xml文件</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">layer-list</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">color</span> <span class="attr">android:color</span>=<span class="string">&quot;@color/background_material_light&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bitmap</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:gravity</span>=<span class="string">&quot;center&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:src</span>=<span class="string">&quot;@drawable/ic_app_logo&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:tileMode</span>=<span class="string">&quot;disabled&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">layer-list</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="2-在styles-xml文件下创建SplashTheme的主题，引入bg-splash"><a href="#2-在styles-xml文件下创建SplashTheme的主题，引入bg-splash" class="headerlink" title="2. 在styles.xml文件下创建SplashTheme的主题，引入bg_splash"></a>2. 在styles.xml文件下创建SplashTheme的主题，引入bg_splash</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Base application theme. --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">&quot;AppTheme&quot;</span> <span class="attr">parent</span>=<span class="string">&quot;Theme.AppCompat.Light.NoActionBar&quot;</span>&gt;</span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">        <span class="comment">&lt;!-- Customize your theme here. --&gt;</span></span></span><br><span class="line"><span class="language-xml">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">&quot;SplashTheme&quot;</span> <span class="attr">parent</span>=<span class="string">&quot;Theme.AppCompat.NoActionBar&quot;</span>&gt;</span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">&quot;android:windowBackground&quot;</span>&gt;</span>@drawable/launch_screen<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -381,31 +377,23 @@
 <li><p>WaitTime : 应用进程的创建过程 + TotalTime .</p>
 </li>
 </ol>
-<h2 id="Application-优化"><a href="#Application-优化" class="headerlink" title="Application 优化"></a>Application 优化</h2><pre><code>Application 作为 应用程序的整个初始化配置入口，时常担负着它不应该有的负担~
-有很多第三方组件（包括App应用本身）都在 Application 中抢占先机，完成初始化操作。
-但是在 Application 中完成繁重的初始化操作和复杂的逻辑就会影响到应用的启动性能
-通常，有机会优化这些工作以实现性能改进，这些常见问题包括：
-</code></pre>
+<h2 id="Application-优化"><a href="#Application-优化" class="headerlink" title="Application 优化"></a>Application 优化</h2><p>Application 作为 应用程序的整个初始化配置入口，时常担负着它不应该有的负担~<br>有很多第三方组件（包括App应用本身）都在 Application 中抢占先机，完成初始化操作。<br>但是在 Application 中完成繁重的初始化操作和复杂的逻辑就会影响到应用的启动性能<br>通常，有机会优化这些工作以实现性能改进，这些常见问题包括：</p>
 <ul>
 <li>复杂繁琐的布局初始化</li>
 <li>阻塞主线程 UI 绘制的操作，如 I&#x2F;O 读写或者是网络访问.</li>
 <li>Bitmap 大图片或者 VectorDrawable加载</li>
-<li>其它占用主线程的操作<br>  我们可以根据这些组件的轻重缓急之分，对初始化做一下分类 ：</li>
+<li>其它占用主线程的操作<br>我们可以根据这些组件的轻重缓急之分，对初始化做一下分类 ：</li>
 </ul>
 <ol>
-<li><p>必要的组件一定要在主线程中立即初始化(入口 Activity 可能立即会用到)</p>
-</li>
-<li><p>组件一定要在主线程中初始化，但是可以延迟初始化。</p>
-</li>
-<li><p>组件可以在子线程中初始化。</p>
-<p> 放在子线程的组件初始化建议延迟初始化 ，这样就可以了解是否会对项目造成影响！<br> 所以对于上面的分析，我们可以在项目中 Application 的加载组件进行如下优化 ：</p>
-<p> 将Bugly，x5内核初始化，SP的读写，友盟等组件放到子线程中初始化。（子线程初始化不能影响到组件的使用）</p>
-</li>
+<li>必要的组件一定要在主线程中立即初始化(入口 Activity 可能立即会用到)</li>
+<li>组件一定要在主线程中初始化，但是可以延迟初始化。</li>
+<li>组件可以在子线程中初始化。</li>
 </ol>
+<p>放在子线程的组件初始化建议延迟初始化 ，这样就可以了解是否会对项目造成影响！<br>所以对于上面的分析，我们可以在项目中 Application 的加载组件进行如下优化 ：</p>
+<p>将Bugly，x5内核初始化，SP的读写，友盟等组件放到子线程中初始化。（子线程初始化不能影响到组件的使用）</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//设置线程的优先级，不与主线程抢资源</span></span><br><span class="line">        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">        <span class="comment">//子线程初始化第三方组件</span></span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);<span class="comment">//建议延迟初始化，可以发现是否影响其它功能，或者是崩溃！</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure>
 
-<pre><code>将需要在主线程中初始化但是可以不用立即完成的动作延迟加载（原本是想在入口 Activity 中进行此项操作，不过组件的初始化放在 Application 中统一管理为妙.）
-</code></pre>
+<p>将需要在主线程中初始化但是可以不用立即完成的动作延迟加载（原本是想在入口 Activity 中进行此项操作，不过组件的初始化放在 Application 中统一管理为妙.）</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">handler.postDelayed(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//延迟初始化组件</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/59a2ca7df681">如何统计Android App启动时间</a> </p>
 <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OWImTj_4Ml1nmpN2v9mRAw">Android 性能优化—— 启动优化提升60%</a></p>

@@ -15,7 +15,7 @@
 <meta property="og:description" content="写在前面 MVP在实现代码简洁的同时，额外增加了大量的接口、类，不方便进行管理，于是就出现了Contract将Model、View、Presenter 进行约束管理，方便后期类的查找、维护。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-10-23T07:19:54.000Z">
-<meta property="article:modified_time" content="2021-01-02T02:39:53.719Z">
+<meta property="article:modified_time" content="2026-06-20T13:02:02.799Z">
 <meta property="article:author" content="Zihuatanejo">
 <meta property="article:tag" content="IT">
 <meta property="article:tag" content="Android">
@@ -62,7 +62,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2021-01-02 10:39:53"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-20 21:02:02"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -364,109 +364,36 @@
 * Contract类管理相关模块方法
  */
 class LoginContract &#123;
-interface Presenter : BasePresenter &#123;
-    fun login(username: String, password: String)
-	&#125;
-
-interface View &#123;
-    fun onUserNameError()
-    fun onPasswordError()
-    fun onStartLogin()
-    fun onLoginInSuccess()
-    fun onLoginInFailed()
-	&#125;
-&#125;
 </code></pre>
+<p>interface Presenter : BasePresenter {<br>        fun login(username: String, password: String)<br>	}</p>
+<p>interface View {<br>        fun onUserNameError()<br>        fun onPasswordError()<br>        fun onStartLogin()<br>        fun onLoginInSuccess()<br>        fun onLoginInFailed()<br>	}<br>	}</p>
 <h4 id="2-创建BaseActivity"><a href="#2-创建BaseActivity" class="headerlink" title="2.创建BaseActivity"></a>2.创建BaseActivity</h4><pre><code>abstract class BaseActivity : AppCompatActivity() &#123;
-val progressDialog by lazy &#123;
-    ProgressDialog(this)
-	&#125;
-//隐藏软键盘
-val inputMethodManager by lazy &#123;
-    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-	&#125;
-
-override fun onCreate(savedInstanceState: Bundle?) &#123;
-    super.onCreate(savedInstanceState)
-    setContentView(getLayoutResId())
-    init()
-	&#125;
-
-open fun init() &#123;
-
-	&#125;
-
-abstract fun getLayoutResId(): Int
-
-fun showProgress(message: String) &#123;
-    progressDialog.setMessage(message)
-    progressDialog.show()
-	&#125;
-
-fun dismissProgress() &#123;
-    progressDialog.dismiss()
-	&#125;
-
-//隐藏软键盘
-fun hideSoftKeyboard() &#123;
-    inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
-	&#125;
-
-//在Ui线程弹出toast
-protected fun MyToast(message: String) &#123;
-    runOnUiThread &#123; toast(message) &#125;
-	&#125;
-//跳转后finish原来的
-inline fun &lt;reified T : BaseActivity&gt; startActivityAndFinish() &#123;
-    startActivity&lt;T&gt;()
-    finish()
-	&#125;
-&#125;
 </code></pre>
+<p>val progressDialog by lazy {<br>        ProgressDialog(this)<br>	}<br>&#x2F;&#x2F;隐藏软键盘<br>val inputMethodManager by lazy {<br>        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager<br>	}</p>
+<p>override fun onCreate(savedInstanceState: Bundle?) {<br>        super.onCreate(savedInstanceState)<br>        setContentView(getLayoutResId())<br>        init()<br>	}</p>
+<p>open fun init() {</p>
+<pre><code>&#125;
+</code></pre>
+<p>abstract fun getLayoutResId(): Int</p>
+<p>fun showProgress(message: String) {<br>        progressDialog.setMessage(message)<br>        progressDialog.show()<br>	}</p>
+<p>fun dismissProgress() {<br>        progressDialog.dismiss()<br>	}</p>
+<p>&#x2F;&#x2F;隐藏软键盘<br>fun hideSoftKeyboard() {<br>        inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)<br>	}</p>
+<p>&#x2F;&#x2F;在Ui线程弹出toast<br>protected fun MyToast(message: String) {<br>        runOnUiThread { toast(message) }<br>	}<br>&#x2F;&#x2F;跳转后finish原来的<br>inline fun <reified T : BaseActivity> startActivityAndFinish() {<br>        startActivity<T>()<br>        finish()<br>	}<br>	}</p>
 <h4 id="3-创建BasePresenter"><a href="#3-创建BasePresenter" class="headerlink" title="3.创建BasePresenter"></a>3.创建BasePresenter</h4><pre><code>interface BasePresenter &#123;
-//创建伴生对象
-companion object &#123;
-    val handler by lazy &#123;
-        Handler(Looper.getMainLooper())
-    &#125;
-	 &#125;
-// 用以子线程通知主线程
-fun uiThread(f: () -&gt; Unit) &#123;
-    handler.post &#123; f() &#125;
-	&#125;
-&#125;
 </code></pre>
+<p>&#x2F;&#x2F;创建伴生对象<br>companion object {<br>        val handler by lazy {<br>            Handler(Looper.getMainLooper())<br>        }<br>   	 }<br>&#x2F;&#x2F; 用以子线程通知主线程<br>fun uiThread(f: () -&gt; Unit) {<br>        handler.post { f() }<br>	}<br>	}</p>
 <h4 id="4-创建LoginPresenter"><a href="#4-创建LoginPresenter" class="headerlink" title="4.创建LoginPresenter"></a>4.创建LoginPresenter</h4><pre><code>class LoginPresenter(val view: LoginContract.View) : LoginContract.Presenter &#123;
-override fun login(username: String, password: String) &#123;
-    if (username.isValidUserName()) &#123;
-        if (password.isValidPassword()) &#123;
-            //密码合法
-            view.onStartLogin()
-            loginEaseMob(username, password)
-       	 &#125; else view.onPasswordError()
-    	&#125; else view.onUserNameError()
-	&#125;
-
-private fun loginEaseMob(username: String, password: String) &#123;
-    EMClient.getInstance().login(username, password, object : EMCallBackAdapter() &#123;
-        //在子线程回调的
-        override fun onSuccess() &#123;
-            EMClient.getInstance().groupManager().loadAllGroups()
-            EMClient.getInstance().chatManager().loadAllConversations()
-            //在主线程中通知主线程
-            uiThread &#123;
-                view.onLoginInSuccess()
-            &#125;
-        &#125;
-
-        override fun onError(p0: Int, p1: String?) &#123;
+</code></pre>
+<p>override fun login(username: String, password: String) {<br>        if (username.isValidUserName()) {<br>            if (password.isValidPassword()) {<br>                &#x2F;&#x2F;密码合法<br>                view.onStartLogin()<br>                loginEaseMob(username, password)<br>           	 } else view.onPasswordError()<br>        	} else view.onUserNameError()<br>	}</p>
+<p>private fun loginEaseMob(username: String, password: String) {<br>        EMClient.getInstance().login(username, password, object : EMCallBackAdapter() {<br>            &#x2F;&#x2F;在子线程回调的<br>            override fun onSuccess() {<br>                EMClient.getInstance().groupManager().loadAllGroups()<br>                EMClient.getInstance().chatManager().loadAllConversations()<br>                &#x2F;&#x2F;在主线程中通知主线程<br>                uiThread {<br>                    view.onLoginInSuccess()<br>                }<br>            }</p>
+<pre><code>        override fun onError(p0: Int, p1: String?) &#123;
             uiThread &#123;
                 view.onLoginInFailed()
             &#125;
        	 &#125;
 
     	&#125;)
-	&#125;
+&#125;
 &#125;
 </code></pre>
 <h4 id="5-创建LoginActivity"><a href="#5-创建LoginActivity" class="headerlink" title="5.创建LoginActivity"></a>5.创建LoginActivity</h4><pre><code>class LoginActivity : BaseActivity(), LoginContract.View &#123;
