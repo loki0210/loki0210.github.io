@@ -3889,14 +3889,35 @@ pre .coffeescript .title {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
+.trm-page-content {
+  min-width: 0;
+  overflow: hidden;
+}
+.trm-content {
+  min-width: 0;
+  overflow: hidden;
+}
 .trm-card {
   overflow: hidden;
 }
 .trm-publication {
   overflow-wrap: break-word;
   word-wrap: break-word;
+  min-width: 0;
 }
 .trm-publication img {
   max-width: 100%;
   height: auto;
+}
+.trm-publication table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+figure.highlight {
+  max-width: 100%;
+  overflow: hidden;
+}
+.highlight .code {
+  overflow-x: auto;
 }
