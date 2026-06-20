@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Android ANR（应用无响应） | Hansong Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="前言在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应（ANR：Application Not Responding）对话框。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android ANR（应用无响应）">
+<meta property="og:url" content="https://blog.hansong.icu/2021/03/02/Android_ANR/index.html">
+<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:description" content="前言在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应（ANR：Application Not Responding）对话框。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.hansong.icu/assets/img/anr/001.jpg">
+<meta property="article:published_time" content="2021-03-02T02:00:00.000Z">
+<meta property="article:modified_time" content="2021-03-02T02:30:42.119Z">
+<meta property="article:author" content="hansong">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.hansong.icu/assets/img/anr/001.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hansong Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android_ANR" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/02/Android_ANR/" class="article-date">
+  <time class="dt-published" datetime="2021-03-02T02:00:00.000Z" itemprop="datePublished">2021-03-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Android ANR（应用无响应）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><pre><code>在Android上，如果你的应用程序有一段时间响应不够灵敏，系统会向用户显示一个对话框，这个对话框称作应用程序无响应（ANR：Application Not Responding）对话框。
+</code></pre>
+<span id="more"></span>
+
+<h3 id="ANR原因"><a href="#ANR原因" class="headerlink" title="ANR原因"></a>ANR原因</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Android系统中，ActivityManagerService(简称AMS)和WindowManagerService(简称WMS)会检测App的响应时间，如果App在特定时间无法相应屏幕触摸或键盘输入时间，或者特定事件没有处理完毕，就会出现ANR。</span><br></pre></td></tr></table></figure>
+<pre><code>ANR问题本质是一个性能问题。ANR机制实际上对应用程序主线程的限制，要求主线程在限定的时间内处理完一些最常见的操作(启动服务、处理广播、处理输入)， 如果处理超时，则认为主线程已经失去了响应其他操作的能力。主线程中的耗时操作，譬如密集CPU运算、大量IO、复杂界面布局等，都会降低应用程序的响应能力。
+</code></pre>
+<h3 id="ANR出现场景"><a href="#ANR出现场景" class="headerlink" title="ANR出现场景"></a>ANR出现场景</h3><pre><code>发生ANR时会调用AppNotRespondingDialog.show()方法弹出对话框提示用户，该对话框的依次调用关系如下图所示：
+</code></pre>
+<p><img src="/assets/img/anr/001.jpg"></p>
+<pre><code>AppErrors.appNotResponding()，该方法是最终弹出ANR对话框的唯一入口，调用该方法的场景才会有ANR提示，也可以认为在主线程中执行无论再耗时的任务，只要最终不调用该方法，都不会有ANR提示，也不会有ANR相关日志及报告；通过调用关系可以看出哪些场景会导致ANR，有以下四种场景：
+</code></pre>
+<ul>
+<li>InputDispatching Timeout：5秒内无法响应屏幕触摸事件或键盘输入事件。</li>
+<li>BroadcastQueue Timeout ：在执行前台广播（BroadcastReceiver）的onReceive()函数时10秒没有处理完成，后台为60秒。</li>
+<li>Service Timeout ：前台服务20秒内，后台服务在200秒内没有执行完毕。</li>
+<li>ContentProvider Timeout ：ContentProvider的publish在10s内没进行完。</li>
+</ul>
+<h3 id="ANR原因-1"><a href="#ANR原因-1" class="headerlink" title="ANR原因"></a>ANR原因</h3><ul>
+<li>主线程慢代码</li>
+<li>主线程IO</li>
+<li>锁竞争</li>
+<li>死锁</li>
+</ul>
+<h3 id="如何避免ANR"><a href="#如何避免ANR" class="headerlink" title="如何避免ANR"></a>如何避免ANR</h3><ol>
+<li>UI线程尽量只做跟UI相关的工作;</li>
+<li>耗时的工作（比如数据库操作，I&#x2F;O，连接网络或者别的有可能阻碍UI线程的操作）把它放入单独的线程处理;</li>
+<li>尽量用Handler来处理UI thread和别的thread之间的交互;</li>
+<li>实在绕不开主线程，可以尝试通过Handler延迟加载;</li>
+<li>广播中如果有耗时操作，建议放在IntentService中去执行，或者通过goAsync() + HandlerThread分发执行。</li>
+</ol>
+<h3 id="分析ANR的重点"><a href="#分析ANR的重点" class="headerlink" title="分析ANR的重点"></a>分析ANR的重点</h3><ol>
+<li>cpu占用率方面：<br> 可以通过分析各进程的CPU时间占用率，来判断是否为某些进程长期占用CPU导致该进程无法获取到足够的CPU处理时间，而导致ANR重点关注下CPU的负载，各个进程总的CPU时间占用率，用户CPU时间占用率，核心态CPU时间占用率，以及iowait CPU时间占用率。</li>
+<li>内存方面<br> 主要看当前应用native和dalvik层内存使用情况，结合系统给每个应用分配的最大内存来分析。</li>
+</ol>
+<h3 id="Android-N-各种ANR的时间"><a href="#Android-N-各种ANR的时间" class="headerlink" title="Android N 各种ANR的时间"></a>Android N 各种ANR的时间</h3><h4 id="Service-Timeout"><a href="#Service-Timeout" class="headerlink" title="Service Timeout"></a>Service Timeout</h4><pre><code>文件：ActiveServices.java
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// How long we wait for a service to finish executing.</span><br><span class="line">static final int SERVICE_TIMEOUT = 20*1000; // 前台</span><br><span class="line"></span><br><span class="line">// How long we wait for a service to finish executing.</span><br><span class="line">static final int SERVICE_BACKGROUND_TIMEOUT = SERVICE_TIMEOUT * 10; // 后台</span><br></pre></td></tr></table></figure>
+
+<h4 id="broadcast-Timeout"><a href="#broadcast-Timeout" class="headerlink" title="broadcast Timeout"></a>broadcast Timeout</h4><pre><code>文件：ActivityManagerService.java
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// How long we allow a receiver to run before giving up on it.</span><br><span class="line">   static final int BROADCAST_FG_TIMEOUT = 10*1000;  // 前台</span><br><span class="line">   static final int BROADCAST_BG_TIMEOUT = 60*1000;  // 后台</span><br></pre></td></tr></table></figure>
+
+<h4 id="InputDispatching-Timeout"><a href="#InputDispatching-Timeout" class="headerlink" title="InputDispatching Timeout"></a>InputDispatching Timeout</h4><pre><code>文件：ActivityManagerService.java
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// How long we wait until we timeout on key dispatching.</span><br><span class="line">    static final int KEY_DISPATCHING_TIMEOUT = 5*1000;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ContentProvider-Timeout"><a href="#ContentProvider-Timeout" class="headerlink" title="ContentProvider Timeout"></a>ContentProvider Timeout</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// How long we wait for an attached process to publish its content providers</span><br><span class="line">    // before we decide it must be hung.</span><br><span class="line">    static final int CONTENT_PROVIDER_PUBLISH_TIMEOUT = 10*1000;</span><br></pre></td></tr></table></figure>
+
+<pre><code>这个时间的统计区间是在System_Server进程调用startProcessLocked之后会调用AMS.attachApplicationLocked，以这为起点，一直到provider进程installProvider以及publishContentProviders，调用到AMS.publishContentProviders为止。超过了这个时间就会系统就会杀掉Provider进程
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.hansong.icu/2021/03/02/Android_ANR/" data-id="cmqm6vepu0004kkh7d8je10sc" data-title="Android ANR（应用无响应）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/02/Android_Animation/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Android三种动画详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/02/19/scrapy_py/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Scrapy的入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 hansong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Android View绘制的三大流程 | Hansong Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="前言一个View从构造到显示，需要经历以下步骤：	1、创建View对象(构造）	2、确定View占的空间尺寸(measure)	3、确定了空间尺寸，就需要确定摆放在哪个位置(layout)	4、确认了摆放位置，就需要确定在上面展示些什么东西(draw)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android View绘制的三大流程">
+<meta property="og:url" content="https://blog.hansong.icu/2021/03/02/Android_View_create/index.html">
+<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:description" content="前言一个View从构造到显示，需要经历以下步骤：	1、创建View对象(构造）	2、确定View占的空间尺寸(measure)	3、确定了空间尺寸，就需要确定摆放在哪个位置(layout)	4、确认了摆放位置，就需要确定在上面展示些什么东西(draw)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-02T12:00:00.000Z">
+<meta property="article:modified_time" content="2021-03-02T13:15:07.314Z">
+<meta property="article:author" content="hansong">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hansong Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android_View_create" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/02/Android_View_create/" class="article-date">
+  <time class="dt-published" datetime="2021-03-02T12:00:00.000Z" itemprop="datePublished">2021-03-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Android View绘制的三大流程
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一个View从构造到显示，需要经历以下步骤：<br>	1、创建View对象(构造）<br>	2、确定View占的空间尺寸(measure)<br>	3、确定了空间尺寸，就需要确定摆放在哪个位置(layout)<br>	4、确认了摆放位置，就需要确定在上面展示些什么东西(draw)</p>
+<span id="more"></span>
+
+<h3 id="requestLayout"><a href="#requestLayout" class="headerlink" title="requestLayout"></a>requestLayout</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">ViewRootImpl.java</span><br><span class="line">    public void requestLayout() &#123;</span><br><span class="line">        if (!mHandlingLayoutInLayoutRequest) &#123;</span><br><span class="line">            //检查是否是主线程，如果不是则直接抛出异常，ViewRootImpl创建的时候生成一个主线程引用</span><br><span class="line">            //用当前线程和引用比较，如果是同一个则是主线程</span><br><span class="line">            //这也是为什么在子线程对View进行更新、绘制会报错的原因</span><br><span class="line">            checkThread();</span><br><span class="line">            //用来标记需要进行layout</span><br><span class="line">            mLayoutRequested = true;</span><br><span class="line">            //绘制请求</span><br><span class="line">            scheduleTraversals();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    void scheduleTraversals() &#123;</span><br><span class="line">        if (!mTraversalScheduled) &#123;</span><br><span class="line">            //标记一次绘制请求，用来屏蔽短时间内的重复请求</span><br><span class="line">            mTraversalScheduled = true;</span><br><span class="line">            //往主线程Looper队列里放同步屏障消息，用来控制异步消息的执行</span><br><span class="line">            mTraversalBarrier = mHandler.getLooper().getQueue().postSyncBarrier();</span><br><span class="line">            //放入mChoreographer队列里</span><br><span class="line">            //主要是将mTraversalRunnable放入队列</span><br><span class="line">            mChoreographer.postCallback(</span><br><span class="line">                    Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);</span><br><span class="line">            //省略</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里引入了Choreographer类，该类是ViewRootImpl构造时候创建的，通过ThreadLocal方式获取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Choreographer.java</span><br><span class="line">    private static final ThreadLocal&lt;Choreographer&gt; sThreadInstance =</span><br><span class="line">            new ThreadLocal&lt;Choreographer&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                protected Choreographer initialValue() &#123;</span><br><span class="line">                    //ViewRootImpl在主线程构造，这里获取的是主线程的looper</span><br><span class="line">                    Looper looper = Looper.myLooper();</span><br><span class="line">                    //构造Choreographer对象</span><br><span class="line">                    Choreographer choreographer = new Choreographer(looper, VSYNC_SOURCE_APP);</span><br><span class="line">                    return choreographer;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">    private Choreographer(Looper looper, int vsyncSource) &#123;</span><br><span class="line">        //记录looper</span><br><span class="line">        mLooper = looper;</span><br><span class="line">        //定义Handler接收message</span><br><span class="line">        mHandler = new FrameHandler(looper);</span><br><span class="line">        //定义DisplayEventReceiver子类，用来接送底层刷新信号</span><br><span class="line">        mDisplayEventReceiver = USE_VSYNC</span><br><span class="line">                ? new FrameDisplayEventReceiver(looper, vsyncSource)</span><br><span class="line">                : null;;</span><br><span class="line">        //内部队列，用来维护各种请求，比如Traversal callback</span><br><span class="line">        mCallbackQueues = new CallbackQueue[CALLBACK_LAST + 1];</span><br><span class="line">        for (int i = 0; i &lt;= CALLBACK_LAST; i++) &#123;</span><br><span class="line">            mCallbackQueues[i] = new CallbackQueue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>放入队列：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Choreographer.java</span><br><span class="line">    private void postCallbackDelayedInternal(int callbackType,</span><br><span class="line">                                             Object action, Object token, long delayMillis) &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            final long now = SystemClock.uptimeMillis();</span><br><span class="line">            final long dueTime = now + delayMillis;</span><br><span class="line">            //放入队列</span><br><span class="line">            mCallbackQueues[callbackType].addCallbackLocked(dueTime, action, token);</span><br><span class="line"></span><br><span class="line">            if (dueTime &lt;= now) &#123;</span><br><span class="line">                //立即执行</span><br><span class="line">                scheduleFrameLocked(now);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                //异步执行</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后调用到DisplayEventReceiver scheduleVsync方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DisplayEventReceiver.java</span><br><span class="line">    public void scheduleVsync() &#123;</span><br><span class="line">        if (mReceiverPtr == 0) &#123;</span><br><span class="line">            Log.w(TAG, &quot;Attempted to schedule a vertical sync pulse but the display event &quot;</span><br><span class="line">                    + &quot;receiver has already been disposed.&quot;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            //native 方法，注册同步脉冲信号事件，告诉底层我需要刷新信号了，记得你的刷新时间到了，给我发送信号</span><br><span class="line">            //底层每16ms刷新一次，如果上层没有注册同步脉冲信号事件，则底层刷新的时候不会通知上层。</span><br><span class="line">            nativeScheduleVsync(mReceiverPtr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，到这里requestLayout()已经完成了，就等待底层的刷新信号了。<br>秉着在哪里注册，就在哪里接收的原则，来看看DisplayEventReceiver类，找到了dispatchVsync方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DisplayEventReceiver.java</span><br><span class="line">    // Called from native code.</span><br><span class="line">    @SuppressWarnings(&quot;unused&quot;)</span><br><span class="line">    @UnsupportedAppUsage</span><br><span class="line">    private void dispatchVsync(long timestampNanos, long physicalDisplayId, int frame) &#123;</span><br><span class="line">        //由DisplayEventReceiver子类FrameDisplayEventReceiver重写</span><br><span class="line">        onVsync(timestampNanos, physicalDisplayId, frame);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>DisplayEventReceiver 是抽象类，其子类是FrameDisplayEventReceiver</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">FrameDisplayEventReceiver.java</span><br><span class="line">    public void onVsync(long timestampNanos, long physicalDisplayId, int frame) &#123;</span><br><span class="line">        //省略</span><br><span class="line">        //构造Message，并使用this，也就是回调自身run方法</span><br><span class="line">        Message msg = Message.obtain(mHandler, this);</span><br><span class="line">        //设置为异步消息，遇到屏障消息优先执行异步消息</span><br><span class="line">        //确保刷新信号能能够及时执行，也就是view绘制优先级是最高的</span><br><span class="line">        msg.setAsynchronous(true);</span><br><span class="line">        //发送消息</span><br><span class="line">        mHandler.sendMessageAtTime(msg, timestampNanos / TimeUtils.NANOS_PER_MS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        mHavePendingVsync = false;</span><br><span class="line">        //执行刷新消息</span><br><span class="line">        //最终是取出mCallbackQueues里的方法执行</span><br><span class="line">        doFrame(mTimestampNanos, mFrame);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>doFrame里取出的方法在什么时候放入的呢？就是之前</p>
+<pre><code>mChoreographer.postCallback(
+Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);
+</code></pre>
+<p>放入的。因此doFrame最后会回调mTraversalRunnable run方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ViewRootImpl.java</span><br><span class="line">    final class TraversalRunnable implements Runnable &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            doTraversal();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void doTraversal() &#123;</span><br><span class="line">        //没有取消绘制的话则开始绘制</span><br><span class="line">        if (mTraversalScheduled) &#123;</span><br><span class="line">            mTraversalScheduled = false;</span><br><span class="line">            //移除同步屏障</span><br><span class="line">            mHandler.getLooper().getQueue().removeSyncBarrier(mTraversalBarrier);</span><br><span class="line"></span><br><span class="line">            //真正开始执行measure、layout、draw等方法</span><br><span class="line">            performTraversals();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>兜兜转转又回到了ViewRootImpl里。<br>requestLayout总结为：</p>
+<pre><code>1、将绘制请求添加到待执行队列，并发送消息给底层，表示自己有内容需要刷新。这时候reqeustLayout已经执行完毕了。
+2、底层间隔时间刷新时，检测到上层的注册信号，因此发送给上层表示我这边已经刷新了，你赶紧换换你的界面吧。
+3、收到底层信号时，发送到主线程looper队列里，并标记我这是要告诉别人这是界面刷新的信号哦，耽搁不得，赶紧优先执行。
+4、执行第一步的请求，进行view三大绘制流程。
+</code></pre>
+<p>这里有两个问题需要注意一下，还记得代码里提及的一些标记，过滤短时间内的重复请求。</p>
+<pre><code>1、mTraversalScheduled 标记，如果这次绘制请求没有被回调执行之前，那么下次请求将忽略，比如短时间内重复的requestLayout。
+2、mFrameScheduled 标记，如果底层的刷新信号没有来之前，再次发送给底层的信号将被忽略。
+</code></pre>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e260b7890a3" title="Android ">Android</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.hansong.icu/2021/03/02/Android_View_create/" data-id="cmqm6veqg000vkkh7h42p696z" data-title="Android View绘制的三大流程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/04/Android_Fragment/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Fragment生命周期
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/02/Android_download_demo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Android下载进度条demo</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 hansong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

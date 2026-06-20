@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>BaseActivity和BaseFragment | Hansong Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="写在前面抽象出常用方法，方便使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BaseActivity和BaseFragment">
+<meta property="og:url" content="https://blog.hansong.icu/2020/12/21/BaseActivity/index.html">
+<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:description" content="写在前面抽象出常用方法，方便使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-21T07:40:00.000Z">
+<meta property="article:modified_time" content="2021-01-02T02:37:40.078Z">
+<meta property="article:author" content="hansong">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hansong Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-BaseActivity" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/21/BaseActivity/" class="article-date">
+  <time class="dt-published" datetime="2020-12-21T07:40:00.000Z" itemprop="datePublished">2020-12-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      BaseActivity和BaseFragment
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><pre><code>抽象出常用方法，方便使用
+</code></pre>
+<span id="more"></span>
+
+<h3 id="BaseActivity"><a href="#BaseActivity" class="headerlink" title="BaseActivity"></a>BaseActivity</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><span class="line">public abstract class BaseActivity extends AppCompatActivity &#123;</span><br><span class="line">	private LoadingDialog dialog;</span><br><span class="line">    private Handler handler = new Handler();</span><br><span class="line">    private long lastClickTime;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        //设置布局layout</span><br><span class="line">        setContentView();</span><br><span class="line">        //一些特定的方法，子类都会使用的</span><br><span class="line">        ViewUtils.inject(this);</span><br><span class="line">        //初始化title</span><br><span class="line">        initTitle();</span><br><span class="line">        //初始化界面</span><br><span class="line">        initView();</span><br><span class="line">        //初始化数据</span><br><span class="line">        initData();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 初始化数据</span><br><span class="line">     */</span><br><span class="line">    protected abstract void initData();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 初始化界面</span><br><span class="line">     */</span><br><span class="line">    protected abstract void initView();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 初始化title</span><br><span class="line">     */</span><br><span class="line">    protected abstract void initTitle();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置布局layout</span><br><span class="line">     */</span><br><span class="line">    protected abstract void setContentView();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 启动activity</span><br><span class="line">     *</span><br><span class="line">     * @param clazz = activity</span><br><span class="line">     */</span><br><span class="line">    protected void startActivity(Class&lt;?&gt; clazz) &#123;</span><br><span class="line">        startActivity(new Intent(this, clazz));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @param viewId =R.id.xx</span><br><span class="line">     * @param &lt;T&gt;    view</span><br><span class="line">     * @return findViewById</span><br><span class="line">     */</span><br><span class="line">    protected &lt;T extends View&gt; T viewById(int viewId) &#123;</span><br><span class="line">        return findViewById(viewId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">     * 记录dialog 显示创建时间</span><br><span class="line">     */</span><br><span class="line">    private long dialogCreateTime;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 显示加载 dialog</span><br><span class="line">     */</span><br><span class="line">    public void showLoadingDialog(String msg) &#123;</span><br><span class="line">        boolean isShow = dialog == null || (dialog.getDialog() != null &amp;&amp; !dialog.getDialog().isShowing());</span><br><span class="line">        if (isShow) &#123;</span><br><span class="line">            dialogCreateTime = System.currentTimeMillis();</span><br><span class="line">            dialog = new LoadingDialog();</span><br><span class="line">            dialog.setLoadingInformation(msg);</span><br><span class="line">            dialog.show(getSupportFragmentManager(), &quot;loading_dialog&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 显示加载 dialog</span><br><span class="line">     */</span><br><span class="line">    public void showLoadingDialog(int msgResId) &#123;</span><br><span class="line">        showLoadingDialog(getString(msgResId));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 取消加载dialog</span><br><span class="line">     */</span><br><span class="line">    public void dismissLoadingDialog() &#123;</span><br><span class="line">        dismissLoadingDialog(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 取消加载dialog. 因为延迟， 所以要延时完成之后， 再在 runnable 中执行逻辑.</span><br><span class="line">     * &lt;p&gt;</span><br><span class="line">     * 延迟关闭时间是因为接口有时返回太快。</span><br><span class="line">     */</span><br><span class="line">    public void dismissLoadingDialog(final Runnable runnable) &#123;</span><br><span class="line">        if (dialog != null &amp;&amp; dialog.getDialog() != null &amp;&amp; dialog.getDialog().isShowing()) &#123;</span><br><span class="line">            // 由于可能请求接口太快，则导致加载页面一闪问题， 所有再次做判断，</span><br><span class="line">            // 如果时间太快（小于 500ms）， 则会延时 1s，再做关闭。</span><br><span class="line">            if (System.currentTimeMillis() - dialogCreateTime &lt; 10) &#123;</span><br><span class="line">                handler.postDelayed(() -&gt; &#123;</span><br><span class="line">                    if (runnable != null) &#123;</span><br><span class="line">                        runnable.run();</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (dialog != null) &#123;</span><br><span class="line">                        dialog.dismiss();</span><br><span class="line">                        dialog = null;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;, 500);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                dialog.dismiss();</span><br><span class="line">                dialog = null;</span><br><span class="line">                if (runnable != null) &#123;</span><br><span class="line">                    runnable.run();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 为防止多次重复点击</span><br><span class="line">     *</span><br><span class="line">     * @return false</span><br><span class="line">     */</span><br><span class="line">    public synchronized boolean isFastClick() &#123;</span><br><span class="line">        long time = System.currentTimeMillis();</span><br><span class="line">        if (time - lastClickTime &lt; 500) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        lastClickTime = time;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected void onClick(View v, int id) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onClick(View v) &#123;</span><br><span class="line">        onClick(v, v.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="BaseFragment"><a href="#BaseFragment" class="headerlink" title="BaseFragment"></a>BaseFragment</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br></pre></td><td class="code"><pre><span class="line">public abstract class BaseFragment extends Fragment implements View.OnClickListener &#123;</span><br><span class="line">    private LoadingDialog dialog;</span><br><span class="line">    private Handler handler = new Handler();</span><br><span class="line">    private long lastClickTime;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    @Override</span><br><span class="line">    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        int layoutResId = getLayoutResId();</span><br><span class="line">        if (layoutResId &lt;= 0) &#123;</span><br><span class="line">            return super.onCreateView(inflater, container, savedInstanceState);</span><br><span class="line">        &#125;</span><br><span class="line">        View view = inflater.inflate(layoutResId, container, false);</span><br><span class="line">        onCreateView();</span><br><span class="line">        return view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onViewCreated(view, savedInstanceState);</span><br><span class="line">        onInitView(savedInstanceState, getActivity().getIntent());</span><br><span class="line">        onInitViewModel();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onClick(View v) &#123;</span><br><span class="line">        onClick(v, v.getId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 通过 id 查询当前布局的 View 控件。</span><br><span class="line">     *</span><br><span class="line">     * @param id  控件 id</span><br><span class="line">     * @param &lt;T&gt; 控件类型</span><br><span class="line">     * @return 返回对应的控件</span><br><span class="line">     */</span><br><span class="line">    public &lt;T extends View&gt; T findView(int id) &#123;</span><br><span class="line">        return findView(id, false);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 通过 id 查询当前布局的 View 控件。并是否对此控件设置点击监听</span><br><span class="line">     *</span><br><span class="line">     * @param id      控件 id</span><br><span class="line">     * @param isClick 是否设置点击点击监听</span><br><span class="line">     * @param &lt;T&gt;     控件类型</span><br><span class="line">     * @return 返回对应的控件</span><br><span class="line">     */</span><br><span class="line">    public &lt;T extends View&gt; T findView(int id, boolean isClick) &#123;</span><br><span class="line">        View viewById = getView().findViewById(id);</span><br><span class="line">        if (isClick) &#123;</span><br><span class="line">            viewById.setOnClickListener(this);</span><br><span class="line">        &#125;</span><br><span class="line">        return (T) viewById;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 通过 id 查询当前布局的 View 控件。并是否对此控件设置点击监听</span><br><span class="line">     *</span><br><span class="line">     * @param view    当前的布局</span><br><span class="line">     * @param id      控件 id</span><br><span class="line">     * @param isClick 是否设置点击点击监听</span><br><span class="line">     * @param &lt;T&gt;     控件类型</span><br><span class="line">     * @return 返回对应的控件</span><br><span class="line">     */</span><br><span class="line">    public &lt;T extends View&gt; T findView(View view, int id, boolean isClick) &#123;</span><br><span class="line">        View viewById = view.findViewById(id);</span><br><span class="line">        if (isClick) &#123;</span><br><span class="line">            viewById.setOnClickListener(this);</span><br><span class="line">        &#125;</span><br><span class="line">        return (T) viewById;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void showToast(String text) &#123;</span><br><span class="line">        //toast</span><br><span class="line">        ToastUtils.showToast(text);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void showToast(int resId) &#123;</span><br><span class="line">        showToast(getString(resId));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置布局资源id</span><br><span class="line">     *</span><br><span class="line">     * @return 设置布局资源id</span><br><span class="line">     */</span><br><span class="line">    protected abstract int getLayoutResId();</span><br><span class="line">    /**</span><br><span class="line">     * 初始化 view</span><br><span class="line">     *</span><br><span class="line">     * @param savedInstanceState</span><br><span class="line">     * @param intent</span><br><span class="line">     */</span><br><span class="line">    protected abstract void onInitView(Bundle savedInstanceState, Intent intent);</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 点击监听，当通过&#123;@link #findView(int, boolean)&#125; 方法， 当设置为true ， 设置点击监听时， 则会通过此</span><br><span class="line">     * 方法进行监听回调。</span><br><span class="line">     *</span><br><span class="line">     * @param v  监听的 view 控件</span><br><span class="line">     * @param id 控件的 ID</span><br><span class="line">     */</span><br><span class="line">    protected void onClick(View v, int id) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    protected void onInitViewModel() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 为防止多次重复点击</span><br><span class="line">     *</span><br><span class="line">     * @return false</span><br><span class="line">     */</span><br><span class="line">    public synchronized boolean isFastClick() &#123;</span><br><span class="line">        long time = System.currentTimeMillis();</span><br><span class="line">        if (time - lastClickTime &lt; 500) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        lastClickTime = time;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private long dialogCreateTime;</span><br><span class="line">    /**</span><br><span class="line">     * 显示加载 dialog</span><br><span class="line">     *</span><br><span class="line">     * @param msg</span><br><span class="line">     */</span><br><span class="line">    public void showLoadingDialog(String msg) &#123;</span><br><span class="line">        FragmentManager fragmentManager = getFragmentManager();</span><br><span class="line">        if (fragmentManager == null) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        if (dialog == null || (dialog.getDialog() != null &amp;&amp; !dialog.getDialog().isShowing())) &#123;</span><br><span class="line">            dialogCreateTime = System.currentTimeMillis();</span><br><span class="line">            dialog = new LoadingDialog();</span><br><span class="line">            dialog.setLoadingInformation(msg);</span><br><span class="line">            dialog.show(fragmentManager, &quot;loading_dialog&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 显示加载 dialog</span><br><span class="line">     */</span><br><span class="line">    public void showLoadingDialog(int msgResId) &#123;</span><br><span class="line">        showLoadingDialog(getString(msgResId));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 取消加载dialog</span><br><span class="line">     */</span><br><span class="line">    public void dismissLoadingDialog() &#123;</span><br><span class="line">        dismissLoadingDialog(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 取消加载dialog. 因为延迟， 所以要延时完成之后， 再在 runnable 中执行逻辑.</span><br><span class="line">     * &lt;p&gt;</span><br><span class="line">     * 延迟关闭时间是因为接口有时返回太快。</span><br><span class="line">     */</span><br><span class="line">    public void dismissLoadingDialog(final Runnable runnable) &#123;</span><br><span class="line">        if (dialog != null &amp;&amp; dialog.getDialog() != null &amp;&amp; dialog.getDialog().isShowing()) &#123;</span><br><span class="line">            // 由于可能请求接口太快，则导致加载页面一闪问题， 所有再次做判断，</span><br><span class="line">            // 如果时间太快（小于 500ms）， 则会延时 1s，再做关闭。</span><br><span class="line">            if (System.currentTimeMillis() - dialogCreateTime &lt; 10) &#123;</span><br><span class="line">                handler.postDelayed(new Runnable() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void run() &#123;</span><br><span class="line">                        if (runnable != null) &#123;</span><br><span class="line">                            runnable.run();</span><br><span class="line">                        &#125;</span><br><span class="line">                        if (dialog != null) &#123;</span><br><span class="line">                            dialog.dismissAllowingStateLoss();</span><br><span class="line">                            dialog = null;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;, 1000);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                dialog.dismiss();</span><br><span class="line">                dialog = null;</span><br><span class="line">                if (runnable != null) &#123;</span><br><span class="line">                    runnable.run();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onCreateView() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建加载dialog"><a href="#创建加载dialog" class="headerlink" title="创建加载dialog"></a>创建加载dialog</h3><ul>
+<li>创建common_dialog_loading.xml</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;androidx.cardview.widget.CardView xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</span><br><span class="line">    xmlns:wheel=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">    android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">    wheel:cardBackgroundColor=&quot;#FFFFFF&quot;</span><br><span class="line">    wheel:cardCornerRadius=&quot;7dp&quot;</span><br><span class="line">    wheel:cardElevation=&quot;4dp&quot;</span><br><span class="line">    wheel:cardUseCompatPadding=&quot;true&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;LinearLayout</span><br><span class="line">        android:layout_width=&quot;110dp&quot;</span><br><span class="line">        android:layout_height=&quot;110dp&quot;</span><br><span class="line">        android:gravity=&quot;center&quot;</span><br><span class="line">        android:orientation=&quot;vertical&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;ProgressBar</span><br><span class="line">            android:layout_width=&quot;25dp&quot;</span><br><span class="line">            android:layout_height=&quot;25dp&quot; /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:id=&quot;@+id/common_dialog_tv_information&quot;</span><br><span class="line">            android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:textColor=&quot;#333333&quot;</span><br><span class="line">            tools:text=&quot;Loading...&quot; /&gt;</span><br><span class="line">    &lt;/LinearLayout&gt;</span><br><span class="line">&lt;/androidx.cardview.widget.CardView&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="创建LoadingDialog"><a href="#创建LoadingDialog" class="headerlink" title="创建LoadingDialog"></a>创建LoadingDialog</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 简易可设置提示信息的加载对话框</span><br><span class="line"> */</span><br><span class="line">public class LoadingDialog extends DialogFragment &#123;</span><br><span class="line">    private TextView contentTv;</span><br><span class="line">    private String loadingInfo;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onStart() &#123;</span><br><span class="line">        super.onStart();</span><br><span class="line">        //透明化背景</span><br><span class="line">        Window window = getDialog().getWindow();</span><br><span class="line">        //背景色</span><br><span class="line">        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    @Override</span><br><span class="line">    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        View contentView = inflater.inflate(R.layout.common_dialog_loading, container, false);</span><br><span class="line">        contentTv = contentView.findViewById(R.id.common_dialog_tv_information);</span><br><span class="line">        if(TextUtils.isEmpty(loadingInfo))&#123;</span><br><span class="line">            contentTv.setVisibility(View.GONE);</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            contentTv.setText(loadingInfo);</span><br><span class="line">        &#125;</span><br><span class="line">        setCancelable(false);</span><br><span class="line"></span><br><span class="line">        Dialog dialog = getDialog();</span><br><span class="line">        if(dialog != null)&#123;</span><br><span class="line">            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);</span><br><span class="line">        &#125;</span><br><span class="line">        return contentView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置加载时提示</span><br><span class="line">     *</span><br><span class="line">     * @param info</span><br><span class="line">     */</span><br><span class="line">    public void setLoadingInformation(String info) &#123;</span><br><span class="line">        loadingInfo = info;</span><br><span class="line">        if(!TextUtils.isEmpty(loadingInfo) &amp;&amp; contentTv != null)&#123;</span><br><span class="line">            contentTv.setText(info);</span><br><span class="line">            contentTv.setVisibility(View.VISIBLE);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.hansong.icu/2020/12/21/BaseActivity/" data-id="cmqm6verv003zkkh74zaldyxb" data-title="BaseActivity和BaseFragment" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/12/21/kotlin2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Kotlin小课堂
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/12/21/AndroidUtils/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">常用Utis</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 hansong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Builder模式创建万能Dialog | Hansong Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="资源准备，先创建dialogTheme和dialogAnimation 在res&#x2F;values&#x2F;styles.xml中创建  123456789101112131415161718&lt;style name&#x3D;&quot;dialog&quot; parent&#x3D;&quot;Theme.AppCompat.Dialog&quot;&gt;    &lt;item name&#x3D;&amp;qu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Builder模式创建万能Dialog">
+<meta property="og:url" content="https://blog.hansong.icu/2020/12/24/BuilderDialog/index.html">
+<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:description" content="资源准备，先创建dialogTheme和dialogAnimation 在res&#x2F;values&#x2F;styles.xml中创建  123456789101112131415161718&lt;style name&#x3D;&quot;dialog&quot; parent&#x3D;&quot;Theme.AppCompat.Dialog&quot;&gt;    &lt;item name&#x3D;&amp;qu">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-24T08:51:00.000Z">
+<meta property="article:modified_time" content="2021-01-02T02:36:51.460Z">
+<meta property="article:author" content="hansong">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hansong Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-BuilderDialog" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/24/BuilderDialog/" class="article-date">
+  <time class="dt-published" datetime="2020-12-24T08:51:00.000Z" itemprop="datePublished">2020-12-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Builder模式创建万能Dialog
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="资源准备，先创建dialogTheme和dialogAnimation"><a href="#资源准备，先创建dialogTheme和dialogAnimation" class="headerlink" title="资源准备，先创建dialogTheme和dialogAnimation"></a>资源准备，先创建dialogTheme和dialogAnimation</h3><ul>
+<li>在res&#x2F;values&#x2F;styles.xml中创建</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;style name=&quot;dialog&quot; parent=&quot;Theme.AppCompat.Dialog&quot;&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowFrame&quot;&gt;@null&lt;/item&gt;</span><br><span class="line">    &lt;!--边框--&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowIsFloating&quot;&gt;true&lt;/item&gt;</span><br><span class="line">    &lt;!--是否浮现在activity之上--&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowIsTranslucent&quot;&gt;true&lt;/item&gt;</span><br><span class="line">    &lt;!--无标题--&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowBackground&quot;&gt;@android:color/transparent&lt;/item&gt;</span><br><span class="line">    &lt;!--背景透明--&gt;</span><br><span class="line">    &lt;item name=&quot;android:backgroundDimEnabled&quot;&gt;true&lt;/item&gt;</span><br><span class="line">    &lt;!--模糊--&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowNoTitle&quot;&gt;true&lt;/item&gt;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br><span class="line">&lt;style name=&quot;dialog_from_bottom_anim&quot;&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowEnterAnimation&quot;&gt;@anim/dialog_from_bottom_anim_in&lt;/item&gt;</span><br><span class="line">    &lt;item name=&quot;android:windowExitAnimation&quot;&gt;@anim/dialog_from_bottom_anim_out&lt;/item&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<ul>
+<li>在res&#x2F;anim&#x2F;中创建<br>  in</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;set xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</span><br><span class="line">    &lt;translate</span><br><span class="line">        android:duration=&quot;400&quot;</span><br><span class="line">        android:fromXDelta=&quot;0&quot;</span><br><span class="line">        android:fromYDelta=&quot;1000&quot;</span><br><span class="line">        android:toXDelta=&quot;0&quot;</span><br><span class="line">        android:toYDelta=&quot;0&quot; /&gt;</span><br><span class="line">&lt;/set&gt;</span><br></pre></td></tr></table></figure>
+<pre><code>out
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;set xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</span><br><span class="line">    &lt;translate</span><br><span class="line">        android:duration=&quot;400&quot;</span><br><span class="line">        android:fromXDelta=&quot;0&quot;</span><br><span class="line">        android:fromYDelta=&quot;0&quot;</span><br><span class="line">        android:toXDelta=&quot;0&quot;</span><br><span class="line">        android:toYDelta=&quot;1000&quot; /&gt;</span><br><span class="line">&lt;/set&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="创建MyAlertDialog-class"><a href="#创建MyAlertDialog-class" class="headerlink" title="创建MyAlertDialog.class"></a>创建MyAlertDialog.class</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br></pre></td><td class="code"><pre><span class="line">public class MyAlertDialog extends Dialog &#123;</span><br><span class="line">    private final MyAlertController mAlert;</span><br><span class="line"></span><br><span class="line">    public MyAlertDialog(@NonNull Context context, int themeResId) &#123;</span><br><span class="line">        super(context, themeResId);</span><br><span class="line">        mAlert = new MyAlertController(this, getWindow());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class Builder &#123;</span><br><span class="line">        public final MyAlertController.AlertParams P;</span><br><span class="line">        public Builder(Context context) &#123;</span><br><span class="line">            this(context, R.style.dialog);</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder(Context context, int themeResId) &#123;</span><br><span class="line">            P = new MyAlertController.AlertParams(context, themeResId);</span><br><span class="line">        &#125;</span><br><span class="line">        public MyAlertDialog create() &#123;</span><br><span class="line">            final MyAlertDialog dialog = new MyAlertDialog(P.mContext, P.mThemResId);</span><br><span class="line">            P.apply(dialog.mAlert);</span><br><span class="line">            dialog.setCancelable(P.mCancelable);</span><br><span class="line">            if (P.mCancelable) &#123;</span><br><span class="line">                dialog.setCanceledOnTouchOutside(true);</span><br><span class="line">            &#125;</span><br><span class="line">            dialog.setOnCancelListener(P.mOnCancelListener);</span><br><span class="line">            dialog.setOnDismissListener(P.mOnDismissListener);</span><br><span class="line">            if (P.mOnKeyListener != null) &#123;</span><br><span class="line">                dialog.setOnKeyListener(P.mOnKeyListener);</span><br><span class="line">            &#125;</span><br><span class="line">            return dialog;</span><br><span class="line">        &#125;</span><br><span class="line">        public MyAlertDialog show() &#123;</span><br><span class="line">            final MyAlertDialog dialog = create();</span><br><span class="line">            dialog.show();</span><br><span class="line">            return dialog;</span><br><span class="line">        &#125;</span><br><span class="line">        /**</span><br><span class="line">         * 设置布局</span><br><span class="line">         *</span><br><span class="line">         * @param view v</span><br><span class="line">         * @return b</span><br><span class="line">         */</span><br><span class="line">        public Builder setContentView(View view) &#123;</span><br><span class="line">            P.mView = view;</span><br><span class="line">            P.mViewLayoutResId = 0;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setContentView(int resId) &#123;</span><br><span class="line">            P.mView = null;</span><br><span class="line">            P.mViewLayoutResId = resId;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setCancelable(boolean cancelable) &#123;</span><br><span class="line">            P.mCancelable = cancelable;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setOnCancelListener(OnCancelListener onCancelListener) &#123;</span><br><span class="line">            P.mOnCancelListener = onCancelListener;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setOnDismissListener(OnDismissListener dismissListener) &#123;</span><br><span class="line">            P.mOnDismissListener = dismissListener;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setOnKeyListener(OnKeyListener keyListener) &#123;</span><br><span class="line">            P.mOnKeyListener = keyListener;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        /**</span><br><span class="line">         * 设置文本</span><br><span class="line">         */</span><br><span class="line">        public Builder setText(int viewId, CharSequence text) &#123;</span><br><span class="line">            P.mTextArray.put(viewId, text);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        /**</span><br><span class="line">         * 设置点击事件</span><br><span class="line">         */</span><br><span class="line">        public Builder setOnclickListener(int view, View.OnClickListener listener) &#123;</span><br><span class="line">            P.mClickArray.put(view, listener);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        /**</span><br><span class="line">         * 设置其他的参数</span><br><span class="line">         */</span><br><span class="line">        public Builder fullWidth() &#123;</span><br><span class="line">            P.mWidth = ViewGroup.LayoutParams.MATCH_PARENT;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        /**</span><br><span class="line">         * 是否有动画</span><br><span class="line">         *</span><br><span class="line">         * @param isAnimation b</span><br><span class="line">         * @return b</span><br><span class="line">         */</span><br><span class="line">        public Builder fromBottom(boolean isAnimation) &#123;</span><br><span class="line">            if (isAnimation) &#123;</span><br><span class="line">                P.mAnimation = R.style.dialog_from_bottom_anim;</span><br><span class="line">            &#125;</span><br><span class="line">            P.mGravity = Gravity.BOTTOM;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        /**</span><br><span class="line">         * 设置宽高</span><br><span class="line">         *</span><br><span class="line">         * @param width i</span><br><span class="line">         * @param height i</span><br><span class="line">         * @return b</span><br><span class="line">         */</span><br><span class="line">        public Builder setWidthAndHeight(int width, int height) &#123;</span><br><span class="line">            P.mWidth = width;</span><br><span class="line">            P.mHeight = height;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * 设置默认动画</span><br><span class="line">         *</span><br><span class="line">         * @return b</span><br><span class="line">         */</span><br><span class="line">        public Builder addDefaultAnimation() &#123;</span><br><span class="line">            P.mAnimation = R.style.dialog_from_bottom_anim;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * 添加动画</span><br><span class="line">         *</span><br><span class="line">         * @param styleAnimation i</span><br><span class="line">         * @return b</span><br><span class="line">         */</span><br><span class="line">        public Builder addAnimation(int styleAnimation) &#123;</span><br><span class="line">            P.mAnimation = styleAnimation;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置文本</span><br><span class="line">     *</span><br><span class="line">     * @param viewId i</span><br><span class="line">     * @param valueAt s</span><br><span class="line">     */</span><br><span class="line">    public void setText(int viewId, CharSequence valueAt) &#123;</span><br><span class="line">       mAlert.setText(viewId,valueAt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置点击事件</span><br><span class="line">     *</span><br><span class="line">     * @param viewId i</span><br><span class="line">     * @param listener l</span><br><span class="line">     */</span><br><span class="line">    public void setOnClickListener(int viewId, View.OnClickListener listener) &#123;</span><br><span class="line">        mAlert.setOnClickListener(viewId,listener);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    public  &lt;T extends View&gt; T getView(int viewId) &#123;</span><br><span class="line">        return mAlert.getView(viewId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建MyAlertController-class"><a href="#创建MyAlertController-class" class="headerlink" title="创建MyAlertController.class"></a>创建MyAlertController.class</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line">class MyAlertController &#123;</span><br><span class="line">    private final MyAlertDialog myAlertDialog;</span><br><span class="line">    private final Window mWindow;</span><br><span class="line">    private MyDialogViewHelper viewHelper;</span><br><span class="line"></span><br><span class="line">    public MyAlertController(MyAlertDialog dialog, Window window) &#123;</span><br><span class="line">        this.myAlertDialog = dialog;</span><br><span class="line">        this.mWindow = window;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取dialog</span><br><span class="line">     *</span><br><span class="line">     * @return d</span><br><span class="line">     */</span><br><span class="line">    public MyAlertDialog getMyAlertDialog() &#123;</span><br><span class="line">        return myAlertDialog;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取dialog的window</span><br><span class="line">     *</span><br><span class="line">     * @return w</span><br><span class="line">     */</span><br><span class="line">    public Window getMyWindow() &#123;</span><br><span class="line">        return mWindow;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class AlertParams &#123;</span><br><span class="line">        public Context mContext;</span><br><span class="line">        public int mThemResId;</span><br><span class="line">        //点击空白是否可以取消</span><br><span class="line">        public boolean mCancelable = true;</span><br><span class="line">        //点击监听</span><br><span class="line">        public DialogInterface.OnCancelListener mOnCancelListener;</span><br><span class="line">        //消失监听</span><br><span class="line">        public DialogInterface.OnDismissListener mOnDismissListener;</span><br><span class="line">        //按键监听</span><br><span class="line">        public DialogInterface.OnKeyListener mOnKeyListener;</span><br><span class="line">        //布局</span><br><span class="line">        public View mView;</span><br><span class="line">        //布局layout id</span><br><span class="line">        public int mViewLayoutResId;</span><br><span class="line">        //存放字</span><br><span class="line">        public SparseArray&lt;CharSequence&gt; mTextArray = new SparseArray&lt;&gt;();</span><br><span class="line">        //存放点击事件</span><br><span class="line">        public SparseArray&lt;View.OnClickListener&gt; mClickArray = new SparseArray&lt;&gt;();</span><br><span class="line">        //宽度</span><br><span class="line">        public int mWidth = ViewGroup.LayoutParams.WRAP_CONTENT;</span><br><span class="line">        //高度</span><br><span class="line">        public int mHeight = ViewGroup.LayoutParams.WRAP_CONTENT;</span><br><span class="line">        //动画</span><br><span class="line">        public int mAnimation = 0;</span><br><span class="line">        //位置</span><br><span class="line">        public int mGravity = Gravity.CENTER;</span><br><span class="line"></span><br><span class="line">        public AlertParams(Context context, int themeResId) &#123;</span><br><span class="line">            this.mContext = context;</span><br><span class="line">            this.mThemResId = themeResId;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * 绑定和设置参数</span><br><span class="line">         *</span><br><span class="line">         * @param mAlert c</span><br><span class="line">         */</span><br><span class="line">        public void apply(MyAlertController mAlert) &#123;</span><br><span class="line">            //设置布局 DialogViewHelper</span><br><span class="line">            MyDialogViewHelper viewHelper = null;</span><br><span class="line">            if (mViewLayoutResId != 0) &#123;</span><br><span class="line">                viewHelper = new MyDialogViewHelper(mContext, mViewLayoutResId);</span><br><span class="line">            &#125;</span><br><span class="line">            if (mView != null) &#123;</span><br><span class="line">                viewHelper = new MyDialogViewHelper();</span><br><span class="line">                viewHelper.setContentView(mView);</span><br><span class="line">            &#125;</span><br><span class="line">            if (viewHelper == null) &#123;</span><br><span class="line">                throw new IllegalArgumentException(&quot;请设置布局setContentView()&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            //给dialog设置布局</span><br><span class="line">            mAlert.getMyAlertDialog().setContentView(viewHelper.getContentView());</span><br><span class="line">            //设置controller的辅助类</span><br><span class="line">            mAlert.setViewHelper(viewHelper);</span><br><span class="line">            //设置文本</span><br><span class="line">            int textArraySize = mTextArray.size();</span><br><span class="line">            for (int i = 0; i &lt; textArraySize; i++) &#123;</span><br><span class="line">                viewHelper.setText(mTextArray.keyAt(i), mTextArray.valueAt(i));</span><br><span class="line">            &#125;</span><br><span class="line">            //设置点击事件</span><br><span class="line">            int clickArraySize = mClickArray.size();</span><br><span class="line">            for (int i = 0; i &lt; clickArraySize; i++) &#123;</span><br><span class="line">                viewHelper.setOnClickListener(mClickArray.keyAt(i), mClickArray.valueAt(i));</span><br><span class="line">            &#125;</span><br><span class="line">            //设置自定义的一些效果</span><br><span class="line">            Window window = mAlert.getMyWindow();</span><br><span class="line">            //设置位置</span><br><span class="line">            window.setGravity(mGravity);</span><br><span class="line">            //设置动画</span><br><span class="line">            if (mAnimation != 0) &#123;</span><br><span class="line">                window.setWindowAnimations(mAnimation);</span><br><span class="line">            &#125;</span><br><span class="line">            //设置宽高</span><br><span class="line">            WindowManager.LayoutParams params = window.getAttributes();</span><br><span class="line">            params.width = mWidth;</span><br><span class="line">            params.height = mHeight;</span><br><span class="line">            window.setAttributes(params);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setViewHelper(MyDialogViewHelper viewHelper) &#123;</span><br><span class="line">        this.viewHelper = viewHelper;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置文本</span><br><span class="line">     *</span><br><span class="line">     * @param viewId i</span><br><span class="line">     * @param valueAt s</span><br><span class="line">     */</span><br><span class="line">    public void setText(int viewId, CharSequence valueAt) &#123;</span><br><span class="line">        viewHelper.setText(viewId, valueAt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置点击事件</span><br><span class="line">     *</span><br><span class="line">     * @param viewId i</span><br><span class="line">     * @param listener l</span><br><span class="line">     */</span><br><span class="line">    public void setOnClickListener(int viewId, View.OnClickListener listener) &#123;</span><br><span class="line">        viewHelper.setOnClickListener(viewId, listener);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public &lt;T extends View&gt; T getView(int viewId) &#123;</span><br><span class="line">        return viewHelper.getView(viewId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建MyDialogViewHelper-class"><a href="#创建MyDialogViewHelper-class" class="headerlink" title="创建MyDialogViewHelper.class"></a>创建MyDialogViewHelper.class</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">class MyDialogViewHelper &#123;</span><br><span class="line">    private View mContentView = null;</span><br><span class="line">    /**</span><br><span class="line">     * 防止内存泄露</span><br><span class="line">     */</span><br><span class="line">    private final SparseArray&lt;WeakReference&lt;View&gt;&gt; mViews;</span><br><span class="line"></span><br><span class="line">    public MyDialogViewHelper(Context mContext, int layoutResId) &#123;</span><br><span class="line">        this();</span><br><span class="line">        mContentView = LayoutInflater.from(mContext).inflate(layoutResId, null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public MyDialogViewHelper() &#123;</span><br><span class="line">        mViews = new SparseArray&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setContentView(View mView) &#123;</span><br><span class="line">        this.mContentView = mView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置文本</span><br><span class="line">     *</span><br><span class="line">     * @param viewId  v</span><br><span class="line">     * @param valueAt t</span><br><span class="line">     */</span><br><span class="line">    public void setText(int viewId, CharSequence valueAt) &#123;</span><br><span class="line">        TextView textView = getView(viewId);</span><br><span class="line">        if (textView != null) &#123;</span><br><span class="line">            textView.setText(valueAt);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置点击事件</span><br><span class="line">     *</span><br><span class="line">     * @param viewId   v</span><br><span class="line">     * @param listener l</span><br><span class="line">     */</span><br><span class="line">    public void setOnClickListener(int viewId, View.OnClickListener listener) &#123;</span><br><span class="line">        View view = getView(viewId);</span><br><span class="line">        if (view != null) &#123;</span><br><span class="line">            view.setOnClickListener(listener);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public View getContentView() &#123;</span><br><span class="line">        return mContentView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">    public &lt;T extends View&gt; T getView(int viewId) &#123;</span><br><span class="line">        WeakReference&lt;View&gt; weakReference = mViews.get(viewId);</span><br><span class="line">        View view = null;</span><br><span class="line">        if (weakReference != null) &#123;</span><br><span class="line">            view = weakReference.get();</span><br><span class="line">        &#125;</span><br><span class="line">        if (view == null) &#123;</span><br><span class="line">            view = mContentView.findViewById(viewId);</span><br><span class="line">            if (view != null) &#123;</span><br><span class="line">                mViews.put(viewId, new WeakReference&lt;View&gt;(view));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return (T) view;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MyAlertDialog dialog = new MyAlertDialog.Builder(this)</span><br><span class="line">                .setContentView(R.layout.dialog_xxx)</span><br><span class="line">                .fromBottom(true).fullWidth().show();</span><br><span class="line">        EditText editText = dialog.getView(R.id.edit_query);</span><br><span class="line">        dialog.setOnClickListener(R.id.fasong, new View.OnClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onClick(View v) &#123;</span><br><span class="line">                Toast.makeText(XActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.hansong.icu/2020/12/24/BuilderDialog/" data-id="cmqm6verw0041kkh7f6sn5g43" data-title="Builder模式创建万能Dialog" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/12/25/NavigationBar/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Builder模式创建万能NavigationBar
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/12/21/kotlin2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Kotlin小课堂</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 hansong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

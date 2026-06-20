@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Android 布局之FrameLayout | Hansong Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 布局之FrameLayout">
+<meta property="og:url" content="https://blog.hansong.icu/2021/03/26/Android_FrameLayout/index.html">
+<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:description" content="1 .FrameLayout简介在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.hansong.icu/assets/img/framelayout/001.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/assets/img/framelayout/002.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/assets/img/framelayout/003.jpg">
+<meta property="article:published_time" content="2021-03-26T02:00:00.000Z">
+<meta property="article:modified_time" content="2021-03-26T13:49:54.536Z">
+<meta property="article:author" content="hansong">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.hansong.icu/assets/img/framelayout/001.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hansong Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android_FrameLayout" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/26/Android_FrameLayout/" class="article-date">
+  <time class="dt-published" datetime="2021-03-26T02:00:00.000Z" itemprop="datePublished">2021-03-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Android 布局之FrameLayout
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="1-FrameLayout简介"><a href="#1-FrameLayout简介" class="headerlink" title="1 .FrameLayout简介"></a>1 .FrameLayout简介</h3><p>在FrameLayout中，这个布局直接在屏幕上开辟出一块空白的区域，所有添加到这个布局中的视图都是以层叠的方式显示，而它会把这些试图默认放到这块区域的左上角，第一个添加到布局中视图显示在最底层，最后一个被放在最顶层。上一层的视图会覆盖下一层的视图，因此该布局类似于堆栈布局，这就是FrameLayout为什么被使用较少的原因。</p>
+<span id="more"></span>
+<p>layout_gravity可以使用如下取值：</p>
+<p>top ：将对象放在其容器的顶部，不改变其大小.</p>
+<p>bottom：将对象放在其容器的底部，不改变其大小.</p>
+<p>left：将对象放在其容器的左侧，不改变其大小.</p>
+<p>right：将对象放在其容器的右侧，不改变其大小.</p>
+<p>center_vertical：将对象纵向居中，不改变其大小.</p>
+<p> 垂直对齐方式：垂直方向上居中对齐。</p>
+<p>fill_vertical：必要的时候增加对象的纵向大小，以完全充满其容器. </p>
+<p>垂直方向填充</p>
+<p>center_horizontal：将对象横向居中，不改变其大小. </p>
+<p>水平对齐方式：水平方向上居中对齐</p>
+<p>fill_horizontal：必要的时候增加对象的横向大小，以完全充满其容器. </p>
+<p>水平方向填充：center</p>
+<p>将对象横纵居中，不改变其大小.</p>
+<p>fill：必要的时候增加对象的横纵向大小，以完全充满其容器.</p>
+<p>clip_vertical：附加选项，用于按照容器的边来剪切对象的顶部和&#x2F;或底部的内容. 剪切基于其纵向对齐设置：顶部对齐时，剪切底部；底部对齐时剪切顶部；除此之外剪切顶部和底部.</p>
+<p>垂直方向裁剪</p>
+<p>clip_horizontal</p>
+<p>附加选项，用于按照容器的边来剪切对象的左侧和&#x2F;或右侧的内容. 剪切基于其横向对齐设置：左侧对齐时，剪切右侧；右侧对齐时剪切左侧；除此之外剪切左侧和右侧.</p>
+<p>水平方向裁剪</p>
+<p>注意: 区分“android:gravity”和“android:layout_gravity”。</p>
+<p>android:gravity  ：是对控件本身来说的，是用来设置“控件自身的内容”应该显示在“控件自身体积”的什么位置,默认值是左侧。</p>
+<p>android:layout_gravity：是相对于控件的父元素来说的，设置该控件在它的父元素的什么位置</p>
+<h3 id="2-常用属性"><a href="#2-常用属性" class="headerlink" title="2. 常用属性"></a>2. 常用属性</h3><p>FrameLayout的常用属性很少就两个</p>
+<p>两个属性:</p>
+<ul>
+<li>**android:foreground:**设置改帧布局容器的前景图像</li>
+<li>**android:foregroundGravity:**设置前景图像显示的位置</li>
+</ul>
+<p>前景图像:永远处于帧布局最上面,直接面对用户的图像,就是不会被覆盖的图片。</p>
+<p>可能有的小伙伴对这个解释比较模糊，那么我们来用实际操作让大家直观的感受一下到底是什么意思吧</p>
+<div align=center><img src="/assets/img/framelayout/001.jpg" width="30%" height="30%"></div>
+
+<p>上图中可以看到background顾名思义就是设置背景，那么前景是什么，相信小伙伴们已经有点概念了，让我们继续往下看吧</p>
+<div align=center><img src="/assets/img/framelayout/002.jpg" width="30%" height="30%"></div>
+
+<p>相信小伙伴们看完上图已经彻底明白了什么是前景图像，同样的代码，只是将background变成foreground，可以明确的看出图1中HelloWord依然可以看到，但是在图2中，已经被挡住。我们可以这样简单的去理解，foreground其实就是一本书的封面，它把书中的内容全部遮盖住了。<br>作者：下码看花</p>
+<h3 id="3-FrameLayout如何设置其子视图-例如TextView-的位置？"><a href="#3-FrameLayout如何设置其子视图-例如TextView-的位置？" class="headerlink" title="3. FrameLayout如何设置其子视图(例如TextView)的位置？"></a>3. FrameLayout如何设置其子视图(例如TextView)的位置？</h3><p>通过layout_gravity设定值，再配合layout_marginTop，layout_marginLeft来设置位置。</p>
+<p>举例，有4个TextView：第一层为公司，第二层为办公室，第三层为工位，第四层是程序猿。若不设置TextView的位置，则此四个文字都将默显示在左上角，并且公司在最下面，程序猿在最上面。要实现图中四幅图的位置效果，则分别对应以下设置：</p>
+<p>（1）第一层公司 :android: layout_gravity&#x3D;“center”<br>（2） 第二层办公室 :android: layout_gravity &#x3D; “center” android:layout_marginTop&#x3D;”-150dp” (注意：此处是负数，因为 android:layout_gravity &#x3D; “center” 表示水平和垂直方向上居中，基准线为视图水平和垂直方向的中点，因为办公室在基准线的上方向(负方向)，所以为负数)<br>（3）第三层工位 ：android:layout_gravity&#x3D;“top” android:layout_marginTop&#x3D;“40dp” android:layout_marginLeft&#x3D;”40dp’ (注意：android:layout_gravity&#x3D;“top” 表示垂直方向顶端对齐，而水平方向是默认左对齐)<br>（4）第四层程序猿 : android:layout_gravity&#x3D;“center” android:layout_marginTop&#x3D;“80dp” (对应第二层办公室的分析，就很容易理解，程序猿在基准线下方向（正方向），所以为负数。并且注意：此处的基准线不是屏幕的最上方，而是水平和垂直方向各自的中心线)</p>
+<p>最终效果图为：</p>
+<div align=center><img src="/assets/img/framelayout/003.jpg" width="30%" height="30%"></div>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.hansong.icu/2021/03/26/Android_FrameLayout/" data-id="cmqm6veq8000kkkh7hgac7ovt" data-title="Android 布局之FrameLayout" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/27/Android_offer_java/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          中级Android面试总结之网络、Java基础篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/25/Android_token/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">详解APP的Token验证机制</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 hansong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Android_Java基础 | Hansong Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="一、Java 面向对象思想 继承：继承是从已有类得到继承信息创建新类的过程。提供继承信息的类被称为父类（超类、基类）；得到继承信息的类被称为子类（派生类）。继承让变化中的软件系统有了一定的延续性，同时继承也是封装程序中可变因素的重要手段。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android_Java基础">
+<meta property="og:url" content="https://blog.hansong.icu/2021/03/06/Android_Java/index.html">
+<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:description" content="一、Java 面向对象思想 继承：继承是从已有类得到继承信息创建新类的过程。提供继承信息的类被称为父类（超类、基类）；得到继承信息的类被称为子类（派生类）。继承让变化中的软件系统有了一定的延续性，同时继承也是封装程序中可变因素的重要手段。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.hansong.icu/assets/img/java/001.png">
+<meta property="article:published_time" content="2021-03-06T08:30:00.000Z">
+<meta property="article:modified_time" content="2021-03-07T07:20:22.271Z">
+<meta property="article:author" content="hansong">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.hansong.icu/assets/img/java/001.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hansong Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android_Java" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/06/Android_Java/" class="article-date">
+  <time class="dt-published" datetime="2021-03-06T08:30:00.000Z" itemprop="datePublished">2021-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Android_Java基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="一、Java-面向对象思想"><a href="#一、Java-面向对象思想" class="headerlink" title="一、Java 面向对象思想"></a>一、Java 面向对象思想</h3><ul>
+<li><strong>继承</strong>：继承是从已有类得到继承信息创建新类的过程。提供继承信息的类被称为父类（超类、基类）；得到<br>继承信息的类被称为子类（派生类）。继承让变化中的软件系统有了一定的延续性，同时继承也是封装程序中可变因<br>素的重要手段。</li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li><p><strong>封装</strong>：通常认为封装是把数据和操作数据的方法绑定起来，对数据的访问只能通过已定义的接口。面向对象<br>的本质就是将现实世界描绘成一系列完全自治、封闭的对象。我们在类中编写的方法就是对实现细节的一种封装；我<br>们编写一个类就是对数据和数据操作的封装。可以说，封装就是隐藏一切可隐藏的东西，只向外界提供最简单的编程<br>接口。</p>
+</li>
+<li><p><strong>多态性</strong>：多态性是指允许不同子类型的对象对同一消息作出不同的响应。简单的说就是用同样的对象引用调<br>用同样的方法但是做了不同的事情。多态性分为编译时的多态性和运行时的多态性。如果将对象的方法视为对象向外<br>界提供的服务，那么运行时的多态性可以解释为：当 A 系统访问 B 系统提供的服务时，B 系统有多种提供服务的方式，<br>但一切对 A 系统来说都是透明的。方法重载（overload）实现的是编译时的多态性（也称为前绑定），而方法重写<br>（override）实现的是运行时的多态性（也称为后绑定）。运行时的多态是面向对象最精髓的东西，要实现多态需要<br>做两件事：1. 方法重写（子类继承父类并重写父类中已有的或抽象的方法）；2. 对象造型（用父类型引用引用子类型<br>对象，这样同样的引用调用同样的方法就会根据子类对象的不同而表现出不同的行为）。</p>
+</li>
+<li><p><strong>抽象</strong>：抽象是将一类对象的共同特征总结出来构造类的过程，包括数据抽象和行为抽象两方面。抽象只关注<br>对象有哪些属性和行为，并不关注这些行为的细节是什么。</p>
+</li>
+</ul>
+<h3 id="二、Java-中的多态"><a href="#二、Java-中的多态" class="headerlink" title="二、Java 中的多态"></a>二、Java 中的多态</h3><ol>
+<li>Java 中实现多态的机制是什么？<br> 靠的是父类或接口定义的引用变量可以指向子类或具体实现类的实例对象，而程序调用的方法在运行期才动<br> 态绑定，就是引用变量所指向的具体实例对象的方法，也就是内存里正在运行的那个对象的方法，而不是引用变<br> 量的类型中定义的方法。</li>
+</ol>
+<h3 id="三、Java-的异常处理"><a href="#三、Java-的异常处理" class="headerlink" title="三、Java 的异常处理"></a>三、Java 的异常处理</h3><ol>
+<li><p>Java 中异常分为哪些种类<br> 按照异常需要处理的时机分为编译时异常也叫CheckedException和运行时异常也叫RuntimeException。<br> 只有java语言提供了Checked异常，Java认为Checked异常都是可以被处理的异常，所以Java程序必须显式处理Checked异常。<br> 如果程序没有处理Checked异常，该程序在编译时就会发生错误无法编译。<br> 这体现了Java的设计哲学：没有完善错误处理的代码根本没有机会被执行。对Checked异常</p>
+<p> 处理方法有两种：</p>
+<ol>
+<li>当前方法知道如何处理该异常，则用 try…catch 块来处理该异常。</li>
+<li>当前方法不知道如何处理，则在定义该方法是声明抛出该异常。</li>
+</ol>
+<p> 运行时异常只有当代码在运行时才发行的异常，编译时不需要 try catch。Runtime 如除数是 0 和数组下标越<br> 界等，其产生频繁，处理麻烦，若显示申明或者捕获将会对程序的可读性和运行效率影响很大。所以由系统自动<br> 检测并将它们交给缺省的异常处理程序。当然如果你有处理要求也可以显示捕获它们。</p>
+</li>
+<li><p><em>调用下面的方法，得到的返回值是什么</em></p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public int getNum()&#123;</span><br><span class="line"> 	try &#123;</span><br><span class="line"> 	int a = 1/0;</span><br><span class="line"> 	return 1;</span><br><span class="line"> 	&#125; catch (Exception e) &#123;</span><br><span class="line"> 	return 2;</span><br><span class="line"> 	&#125;finally&#123;</span><br><span class="line">	//int b = 1/0;</span><br><span class="line"> 	return 3;</span><br><span class="line"> 	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>代码在走到第3行的时候遇到了一个MathException，这时第四行的代码就不会执行了，代码直接跳转到catch语句中，走到第6行的时候，
+异常机制有这么一个原则如果在catch中遇到了return或者异常等能使该函数终止的话那么用finally就必须先执行完finally代码块里面的代码然后再返回值。
+因此代码又跳到第8行，可惜第8行是一个return语句，那么这个时候方法就结束了，因此第6行的返回结果就无法被真正返回。
+如果finally仅仅是处理了一个释放资源的操作，那么该道题最终返回的结果就是2。因此上面返回值是3
+</code></pre>
+<h3 id="四、Java-的数据类型"><a href="#四、Java-的数据类型" class="headerlink" title="四、Java 的数据类型"></a>四、Java 的数据类型</h3><ol>
+<li><p>Java 的基本数据类型都有哪些各占几个字节</p>
+<p> Java 有 8 种基本数据类型<br> byte 1<br> char 2<br> short 2<br> int 4<br> float 4<br> double 8<br> long 8<br> boolean 1（boolean 类型比较特别可能只占一个 bit，多个 boolean 可能共同占用一个字节）</p>
+</li>
+<li><p>String 是基本数据类型吗？可以被继承吗？<br> String 是引用类型，底层用 char 数组实现的。因为 String 是 final 类，在 java 中被 final 修饰的类不能被继承，<br> 因此 String 当然不可以被继承。</p>
+</li>
+</ol>
+<h3 id="五、Java-的-IO"><a href="#五、Java-的-IO" class="headerlink" title="五、Java 的 IO"></a>五、Java 的 IO</h3><ol>
+<li>Java 中有几种类型的流<br> 字节流和字符流。字节流继承于 InputStream 和 OutputStream，字符流继承于 InputStreamReader 和<br> OutputStreamWriter</li>
+<li>字节流如何转为字符流<br> 字节输入流转字符输入流通过 InputStreamReader 实现，该类的构造函数可以传入 InputStream 对象。<br> 字节输出流转字符输出流通过 OutputStreamWriter 实现，该类的构造函数可以传入 OutputStream 对象。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//对象输出流</span><br><span class="line">ObjectOutputStream objectOutputStream = new ObjectOutputStream(new</span><br><span class="line">FileOutputStream(new File(&quot;D://obj&quot;)));</span><br><span class="line">objectOutputStream.writeObject(new User(&quot;zhangsan&quot;, 100));</span><br><span class="line">objectOutputStream.close();</span><br><span class="line">//对象输入流</span><br><span class="line">ObjectInputStream objectInputStream = new ObjectInputStream(new</span><br><span class="line">FileInputStream(new File(&quot;D://obj&quot;)));</span><br><span class="line">User user = (User)objectInputStream.readObject();</span><br><span class="line">System.out.println(user);</span><br><span class="line">objectInputStream.close();</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>如何将一个 java 对象序列化到文件里<br> 在 java 中能够被序列化的类必须先实现 Serializable 接口，该接口没有任何抽象方法只是起到一个标记作用。</li>
+</ol>
+<h3 id="六、Java-的集合"><a href="#六、Java-的集合" class="headerlink" title="六、Java 的集合"></a>六、Java 的集合</h3><ol>
+<li>HashMap 排序题，上机题<br> 已知一个HashMap&lt;Integer，User&gt;集合，User有name（String）和age（int）属性。请写一个方法实现对HashMap的排序功能，<br> 该方法接收HashMap&lt;Integer，User&gt;为形参，返回类型为HashMap&lt;Integer，User&gt;，要求对HashMap中的User的age倒序进行排序。<br> 排序时key&#x3D;value键值对不得拆散。：要做出这道题必须对集合的体系结构非常的熟悉。HashMap本身就是不可排序的，但是该道题偏偏让给HashMap排序，<br> 那我们就得想在API中有没有这样的Map结构是有序的，LinkedHashMap，对的，就是他，他是Map结构，也是链表结构，有序的，<br> 更可喜的是他是HashMap的子类，我们返回LinkedHashMap&lt;Integer,User&gt;即可，还符合面向接口（父类编程的思想）。<br> 但凡是对集合的操作，我们应该保持一个原则就是能用JDK中的API就有JDK中的API，比如排序算法我们不应该去用冒泡或者选择，而是首先想到用Collections集合工具类。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public class HashMapTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        HashMap&lt;Integer, User&gt; users = new HashMap&lt;&gt;();</span><br><span class="line">        users.put(1, new User(&quot;张三&quot;, 25));</span><br><span class="line">        users.put(3, new User(&quot;李四&quot;, 22));</span><br><span class="line">        users.put(2, new User(&quot;王五&quot;, 28));</span><br><span class="line">        System.out.println(users);</span><br><span class="line">        HashMap&lt;Integer, User&gt; sortHashMap = sortHashMap(users);</span><br><span class="line">        System.out.println(sortHashMap);</span><br><span class="line">        /**</span><br><span class="line">         * 控制台输出内容 &#123;1=User [name=张三, age=25], 2=User [name=王五, age=28], 3=User [name=李四,</span><br><span class="line">         * age=22]&#125; &#123;2=User [name=王五, age=28], 1=User [name=张三, age=25], 3=User</span><br><span class="line">         * [name=李四, age=22]&#125;</span><br><span class="line">         */</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static HashMap&lt;Integer, User&gt; sortHashMap(HashMap&lt;Integer, User&gt; map) &#123;</span><br><span class="line">        // 首先拿到 map 的键值对集合</span><br><span class="line">        Set&lt;Entry&lt;Integer, User&gt;&gt; entrySet = map.entrySet();</span><br><span class="line">        // 将 set 集合转为 List 集合，为什么，为了使用工具类的排序方法</span><br><span class="line">        List&lt;Entry&lt;Integer, User&gt;&gt; list = new ArrayList&lt;Entry&lt;Integer, User&gt;&gt;(entrySet);</span><br><span class="line">        // 使用 Collections 集合工具类对 list 进行排序，排序规则使用匿名内部类来实现</span><br><span class="line">        Collections.sort(list, new Comparator&lt;Entry&lt;Integer, User&gt;&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public int compare(Entry&lt;Integer, User&gt; o1, Entry&lt;Integer, User&gt; o2) &#123;</span><br><span class="line">                // 按照要求根据 User 的 age 的倒序进行排</span><br><span class="line">                return o2.getValue().getAge() - o1.getValue().getAge();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        // 创建一个新的有序的 HashMap 子类的集合</span><br><span class="line">        LinkedHashMap&lt;Integer, User&gt; linkedHashMap = new LinkedHashMap&lt;Integer, User&gt;();</span><br><span class="line">        // 将 List 中的数据存储在 LinkedHashMap 中</span><br><span class="line">        for (Entry&lt;Integer, User&gt; entry : list) &#123;</span><br><span class="line">            linkedHashMap.put(entry.getKey(), entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        // 返回结果</span><br><span class="line">        return linkedHashMap;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>集合的安全性问题<br> 请问ArrayList、HashSet、HashMap是线程安全的吗？如果不是我想要线程安全的集合怎么办？我们都看过上面那些集合的源码（如果没有那就看看吧），<br> 每个方法都没有加锁，显然都是线程不安全的。话又说过来如果他们安全了也就没第二问了。在集合中Vector和HashTable倒是线程安全的。<br> 你打开源码会发现其实就是把各自核心方法添加上了synchronized关键字。Collections工具类提供了相关的API，可以让上面那3个不安全的集合变为安全的。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// Collections.synchronizedCollection(c)</span><br><span class="line">// Collections.synchronizedList(list)</span><br><span class="line">// Collections.synchronizedMap(m)</span><br><span class="line">// Collections.synchronizedSet(s)</span><br></pre></td></tr></table></figure>
+<pre><code>上面几个函数都有对应的返回值类型，传入什么类型返回什么类型。打开源码其实实现原理非常简单，就是将集
+合的核心方法添加上了 synchronized 关键字。
+</code></pre>
+<h3 id="七、Java-的多线程"><a href="#七、Java-的多线程" class="headerlink" title="七、Java 的多线程"></a>七、Java 的多线程</h3><ol>
+<li><p>多线程的两种创建方式<br> java.lang.Thread类的实例就是一个线程但是它需要调用java.lang.Runnable接口来执行，<br> 由于线程类本身就是调用的Runnable接口所以你可以继承java.lang.Thread类或者直接实现Runnable接口来重写run()方法实现线程。</p>
+</li>
+<li><p>在 java 中 wait 和 sleep 方法的不同？<br> 最大的不同是在等待时wait会释放锁，而sleep一直持有锁。wait通常被用于线程间交互，sleep通常被用于暂停执行。</p>
+</li>
+<li><p>synchronized 和 volatile 关键字的作用<br> 一旦一个共享变量（类的成员变量、类的静态成员变量）被 volatile 修饰之后，那么就具备了两层语义：<br> 1）保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是<br> 立即可见的。<br> 2）禁止进行指令重排序。<br> volatile 本质是在告诉 jvm 当前变量在寄存器（工作内存）中的值是不确定的，需要从主存中读取；<br> synchronized 则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。</p>
+<ol>
+<li>volatile 仅能使用在变量级别；<br> synchronized 则可以使用在变量、方法、和类级别的</li>
+<li>volatile 仅能实现变量的修改可见性，并不能保证原子性；<br> synchronized 则可以保证变量的修改可见性和原子性</li>
+<li>volatile 不会造成线程的阻塞；<br> synchronized 可能会造成线程的阻塞。</li>
+<li>volatile 标记的变量不会被编译器优化；<br> synchronized 标记的变量可以被编译器优化</li>
+</ol>
+</li>
+<li><p>分析线程并发访问代码解释原因</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class Counter &#123;</span><br><span class="line">    private volatile int count = 0;</span><br><span class="line"></span><br><span class="line">    public void inc() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(3);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;[count=&quot; + count + &quot;]&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// ---------------------------------华丽的分割线-----------------------------</span><br><span class="line">public class VolatileTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        final Counter counter = new Counter();</span><br><span class="line">        for (int i = 0; i &lt; 1000; i++) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    counter.inc();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(counter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>在线字符串去空格是一个用js写的小工具上面的代码执行完后输出的结果确定为1000吗？答案是不一定，或者不等于1000。
+这是为什么吗？在java的内存模型中每一个线程运行时都有一个线程栈，线程栈保存了线程运行时候变量值信息。
+当线程访问某一个对象时候值的时候，首先通过对象的引用找到对应在堆内存的变量的值，然后把堆内存变量的具体值load到线
+程本地内存中，建立一个变量副本，之后线程就不再和对象在堆内存变量值有任何关系，而是直接修改副本变量的值，
+在修改完之后的某一个时刻（线程退出之前），自动把线程变量副本的值回写到对象在堆中变量。这样在堆中的对象
+的值就产生变化了。
+也就是说上面主函数中开启了 1000 个子线程，每个线程都有一个变量副本，每个线程修改变量只是临时修改了
+自己的副本，当线程结束时再将修改的值写入在主内存中，这样就出现了线程安全问题。因此结果就不可能等于 1000
+了，一般都会小于 1000。
+
+上面的解释用一张图表示如下：
+</code></pre>
+<p><img src="/assets/img/java/001.png"></p>
+<ol start="5">
+<li>什么是线程池，如何使用？<br> 线程池就是事先将多个线程对象放到一个容器中，当使用的时候就不用new线程而是直接去池中拿线程即可，<br> 节省了开辟子线程的时间，提高的代码执行效率。<br> 在JDK的java.util.concurrent.Executors中提供了生成多种线程池的静态方法。<br> 然后调用他们的 execute 方法即可。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();</span><br><span class="line">ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(4);</span><br><span class="line">ScheduledExecutorService newScheduledThreadPool =</span><br><span class="line">Executors.newScheduledThreadPool(4);</span><br><span class="line">ExecutorService newSingleThreadExecutor = Executors.newSingleThreadExecutor();</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li><p>请叙述一下您对线程池的理解？<br> （如果问到了这样的问题，可以展开的说一下线程池如何用、线程池的好处、线程池的启动策略）<br> 合理利用线程池能够带来三个好处。<br> 第一：降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。<br> 第二：提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。<br> 第三：提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定<br> 性，使用线程池可以进行统一的分配，调优和监控。</p>
+</li>
+<li><p>线程池的启动策略?</p>
+<p> 1、线程池刚创建时，里面没有一个线程。任务队列是作为参数传进来的。不过，就算队列里面有任务，线程池也不会马上执行它们。<br> 2、当调用execute()方法添加一个任务时，线程池会做如下判断：<br> a.如果正在运行的线程数量小于corePoolSize，那么马上创建线程运行这个任务；<br> b.如果正在运行的线程数量大于或等于corePoolSize，那么将这个任务放入队列。<br> c.如果这时候队列满了，而且正在运行的线程数量小于maximumPoolSize，那么还是要创建线程运行这个任务；<br> d.如果队列满了，而且正在运行的线程数量大于或等于maximumPoolSize，那么线程池会抛出异常，告诉调用者“我不能再接受任务了”。<br> 3、当一个线程完成任务时，它会从队列中取下一个任务来执行。4、当一个线程无事可做，超过一定的时间（keepAliveTime）时，线程池会判断，<br> 如果当前运行的线程数大于corePoolSize，那么这个线程就被停掉。所以线程池的所有任务完成后，它最终会收缩到corePoolSize的大小。</p>
+</li>
+<li><p>三个线程 a、b、c 并发运行，b,c 需要 a 线程的数据怎么实现<br> 根据问题的描述，我将问题用以下代码演示，ThreadA、ThreadB、ThreadC，ThreadA用于初始化数据num，<br> 只有当num初始化完成之后再让ThreadB和ThreadC获取到初始化后的变量num。<br> 分析过程如下：考虑到多线程的不确定性，因此我们不能确保ThreadA就一定先于ThreadB和ThreadC前执行，<br> 就算ThreadA先执行了，我们也无法保证ThreadA什么时候才能将变量num给初始化完成。<br> 因此我们必须让ThreadB和ThreadC去等待ThreadA完成任何后发出的消息。现在需要解决两个难题，<br> 一是让ThreadB和ThreadC等待ThreadA先执行完，二是ThreadA执行完之后给ThreadB和ThreadC发送消息。<br> 解决上面的难题我能想到的两种方案，<br> 一是使用纯JavaAPI的Semaphore类来控制线程的等待和释放，<br> 二是使用Android提供的Handler消息机制。</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadCommunication &#123;</span><br><span class="line"></span><br><span class="line">    private static int num;</span><br><span class="line">    /**</span><br><span class="line">    * 定义一个信号量，该类内部维持了多个线程锁，可以阻塞多个线程，释放多个线程，</span><br><span class="line">    * 线程的阻塞和释放是通过 permit 概念来实现的</span><br><span class="line">    * 线程通过 semaphore.acquire()方法获取 permit，如果当前 semaphore 有 permit 则分配给该线程</span><br><span class="line">    * 如果没有则阻塞该线程直到 semaphore</span><br><span class="line">    * 调用 release（）方法释放 permit。 </span><br><span class="line">    * 构造函数中参数：permit（允许）个数</span><br><span class="line">    */</span><br><span class="line">   </span><br><span class="line">    private static Semaphore semaphore = new Semaphore(0);12.</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        Thread threadA = new Thread(new Runnable() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 模拟耗时操作之后初始化变量 num</span><br><span class="line">                    Thread.sleep(1000);</span><br><span class="line">                    num = 1;</span><br><span class="line">                    // 初始化完参数后释放两个 permit</span><br><span class="line">                    semaphore.release(2);</span><br><span class="line"></span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        Thread threadB = new Thread(new Runnable() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 获取 permit，如果 semaphore 没有可用的 permit 则等待，如果有则消耗一个</span><br><span class="line">                    semaphore.acquire();</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + &quot;获取到 num 的值为：&quot; + num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        Thread threadC = new Thread(new Runnable() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 获取 permit，如果 semaphore 没有可用的 permit 则等待，如果有则消耗一个</span><br><span class="line">                    semaphore.acquire();</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + &quot;获取到 num 的值为：&quot; + num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        // 同时开启 3 个线程</span><br><span class="line">        threadA.start();</span><br><span class="line">        threadB.start();</span><br><span class="line">        threadC.start();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="八、JavaSE-高级"><a href="#八、JavaSE-高级" class="headerlink" title="八、JavaSE 高级"></a>八、JavaSE 高级</h3><h4 id="一、Java-中的反射"><a href="#一、Java-中的反射" class="headerlink" title="一、Java 中的反射"></a>一、Java 中的反射</h4><ol>
+<li>说说你对 Java 中反射的理解<br> Java中的反射首先是能够获取到Java中要反射类的字节码，获取字节码有三种方法，<ol>
+<li>Class.forName(className)</li>
+<li>类名.class3.this.getClass()。然后将字节码中的方法，变量，构造函数等映射成相应的Method、Filed、Constructor等类，这些类提供了丰富的方法可以被我们所使用。</li>
+</ol>
+</li>
+</ol>
+<h4 id="二、Java-中的动态代理"><a href="#二、Java-中的动态代理" class="headerlink" title="二、Java 中的动态代理"></a>二、Java 中的动态代理</h4><ol>
+<li>写一个 ArrayList 的动态代理类（笔试题）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">final List&lt;String&gt; list = new ArrayList&lt;String&gt;();</span><br><span class="line">List&lt;String&gt; proxyInstance = (List&lt;String&gt;) Proxy.newProxyInstance(list.getClass().getClassLoader(),</span><br><span class="line">        list.getClass().getInterfaces(), new InvocationHandler() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">                return method.invoke(list, args);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">proxyInstance.add(&quot;你好&quot;);</span><br><span class="line">System.out.println(list);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>动静态代理的区别，什么场景使用？</p>
+<p> 静态代理通常只代理一个类，动态代理是代理一个接口下的多个实现类。静态代理事先知道要代理的是什么，<br> 而动态代理不知道要代理什么东西，只有在运行时才知道。动态代理是实现JDK里的InvocationHandler接口的invoke方法，<br> 但注意的是代理的是接口，也就是你的业务类必须要实现接口，通过Proxy里的newProxyInstance得到代理对象。<br> 还有一种动态代理CGLIB，代理的是类，不需要业务类继承接口，通过派生的子类来实现代理。<br> 通过在运行时，动态修改字节码达到修改类的目的。AOP编程就是基于动态代理实现的，比如著名的Spring框架、Hibernate框架等等都是动态代理的使用例子。</p>
+</li>
+</ol>
+<h4 id="三、Java-中的设计模式"><a href="#三、Java-中的设计模式" class="headerlink" title="三、Java 中的设计模式"></a>三、Java 中的设计模式</h4><ol>
+<li><p>你所知道的设计模式有哪些<br> Java中一般认为有23种设计模式，我们不需要所有的都会，但是其中常用的几种设计模式应该去掌握。<br> 下面列出了所有的设计模式。需要掌握的设计模式我单独列出来了，当然能掌握的越多越好。<br> 总体来说设计模式分为三大类：<br> 创建型模式，共五种：工厂方法模式、抽象工厂模式、单例模式、建造者模式、原型模式。<br> 结构型模式，共七种：适配器模式、装饰器模式、代理模式、外观模式、桥接模式、组合模式、享元模式。<br> 行为型模式，共十一种：策略模式、模板方法模式、观察者模式、迭代子模式、责任链模式、命令模式、备忘录模式、状态模式、访问者模式、中介者模式、解释器模式。</p>
+</li>
+<li><p>单例设计模式</p>
+<ol>
+<li>最好理解的一种设计模式，分为懒汉式和饿汉式。<br> 饿汉式：</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton &#123;</span><br><span class="line">    // 直接创建对象</span><br><span class="line">    public static Singleton instance = new Singleton();</span><br><span class="line"></span><br><span class="line">    // 私有化构造函数</span><br><span class="line">    private Singleton() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 返回对象实例</span><br><span class="line">    public static Singleton getInstance() &#123;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>懒汉式：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton &#123;</span><br><span class="line">    // 声明变量</span><br><span class="line">    private static volatile Singleton singleton = null;</span><br><span class="line"></span><br><span class="line">    // 私有构造函数</span><br><span class="line">    private Singleton() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 提供对外方法</span><br><span class="line">    public static Singleton getInstance() &#123;</span><br><span class="line">        if (singleton == null) &#123;</span><br><span class="line">            synchronized (Singleton.class) &#123;</span><br><span class="line">                if (singleton == null) &#123;</span><br><span class="line">                    singleton = new Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return singleton;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="四、Java-的类加载器"><a href="#四、Java-的类加载器" class="headerlink" title="四、Java 的类加载器"></a>四、Java 的类加载器</h4><pre><code>1. Java 的类加载器的种类都有哪些？
+	1. 根类加载器(Bootstrap) --C++写的 ，看不到源码
+	2. 扩展类加载器（Extension） --加载位置 ：jre\lib\ext 中
+	3. 系统(应用)类加载器(System\App) --加载位置 ：classpath 中
+	4. 自定义加载器(必须继承 ClassLoader)
+2. 类什么时候被初始化？
+	1. 创建类的实例，也就是 new 一个对象
+	2. 访问某个类或接口的静态变量，或者对该静态变量赋值
+	3. 调用类的静态方法
+	4. 反射（Class.forName(&quot;com.lyj.load&quot;)）
+	5. 初始化一个类的子类（会首先初始化子类的父类）
+	6. JVM 启动时标明的启动类，即文件名和类名相同的那个类
+	只有这 6 中情况才会导致类的类的初始化。
+	类的初始化步骤：
+		1. 如果这个类还没有被加载和链接，那先进行加载和链接
+		2. 假如这个类存在直接父类，并且这个类还没有被初始化（注意：在一个类加载器中，类只能初始化一次），那就初始化直接的父类（不适用于接口）
+		3. 加入类中存在初始化语句（如 static 变量和 static 块），那就依次执行这些初始化语句。
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.hansong.icu/2021/03/06/Android_Java/" data-id="cmqm6veqb000okkh7c32hb69o" data-title="Android_Java基础" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/07/Android_android/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Android基础
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/06/Android_SVGA/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Android中SVGA的使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 hansong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
