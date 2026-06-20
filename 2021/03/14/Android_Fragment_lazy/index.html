@@ -1,137 +1,394 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hans">
+
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>懒加载Fragment | Hansong Blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="add+show+hide 模式下的老方案在没有添加懒加载之前，只要使用 add+show+hide 的方式控制并显示 Fragment, 那么不管 Fragment 是否嵌套，在初始化后，如果只调用了add+show，同级下的 Fragment 的相关生命周期函数都会被调用。且调用的生命周期函数如下所示：	onAttach -&gt; onCreate -&gt; onCreatedView -">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="add+show+hide 模式下的老方案在没有添加懒加载之前，只要使用 add+show+hide 的方式控制并显示 Fragment, 那么不管 Fragment 是否嵌套，在初始化后，如果只调用了add+show，同级下的 Fragment 的相关生命周期函数都会被调用。且调用的生命周期函数如下所示：	onAttach -&gt; onCreate -&gt; onCreatedView -">
 <meta property="og:type" content="article">
 <meta property="og:title" content="懒加载Fragment">
 <meta property="og:url" content="https://blog.hansong.icu/2021/03/14/Android_Fragment_lazy/index.html">
-<meta property="og:site_name" content="Hansong Blog">
+<meta property="og:site_name" content="Zihuatanejo">
 <meta property="og:description" content="add+show+hide 模式下的老方案在没有添加懒加载之前，只要使用 add+show+hide 的方式控制并显示 Fragment, 那么不管 Fragment 是否嵌套，在初始化后，如果只调用了add+show，同级下的 Fragment 的相关生命周期函数都会被调用。且调用的生命周期函数如下所示：	onAttach -&gt; onCreate -&gt; onCreatedView -">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/001.jpg">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/002.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/003.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/004.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/005.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/006.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/007.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/008.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/009.jpg">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/010.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/011.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/012.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/013.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/014.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/015.png">
-<meta property="og:image" content="https://blog.hansong.icu/assets/img/lazy/016.png">
+<meta property="og:locale">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
+<meta property="og:image" content="https://blog.hansong.icu/img/404.jpg">
 <meta property="article:published_time" content="2021-03-14T11:51:00.000Z">
 <meta property="article:modified_time" content="2021-03-14T13:22:33.695Z">
-<meta property="article:author" content="hansong">
+<meta property="article:author" content="Zihuatanejo">
 <meta property="article:tag" content="IT">
 <meta property="article:tag" content="Android">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blog.hansong.icu/assets/img/lazy/001.jpg">
-  
-    <link rel="alternate" href="/atom.xml" title="Hansong Blog" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+<meta name="twitter:image" content="https://blog.hansong.icu/img/404.jpg">
 
-  
+
+<title >懒加载Fragment</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
     
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
 
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
 
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2021-03-14 21:22:33"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
 <meta name="generator" content="Hexo 7.3.0"></head>
 
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hansong Blog</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.hansong.icu"></form>
-      </div>
-    </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Android_Fragment_lazy" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/14/Android_Fragment_lazy/" class="article-date">
-  <time class="dt-published" datetime="2021-03-14T11:51:00.000Z" itemprop="datePublished">2021-03-14</time>
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
 </a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      懒加载Fragment
-    </h1>
-  
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
 
-      </header>
+			
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h3 id="add-show-hide-模式下的老方案"><a href="#add-show-hide-模式下的老方案" class="headerlink" title="add+show+hide 模式下的老方案"></a>add+show+hide 模式下的老方案</h3><p>在没有添加懒加载之前，只要使用 add+show+hide 的方式控制并显示 Fragment, 那么不管 Fragment 是否嵌套，在初始化后，如果只调用了add+show，同级下的 Fragment 的相关生命周期函数都会被调用。且调用的生命周期函数如下所示：<br>	onAttach -&gt; onCreate -&gt; onCreatedView -&gt; onActivityCreated -&gt; onStart -&gt; onResume<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904079177547789#heading-54" title="安卓高级">2020年中高级Android大厂面试秘籍</a></p>
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            懒加载Fragment
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2021
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            03/14
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            19:51
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h3 id="add-show-hide-模式下的老方案"><a href="#add-show-hide-模式下的老方案" class="headerlink" title="add+show+hide 模式下的老方案"></a>add+show+hide 模式下的老方案</h3><p>在没有添加懒加载之前，只要使用 add+show+hide 的方式控制并显示 Fragment, 那么不管 Fragment 是否嵌套，在初始化后，如果只调用了add+show，同级下的 Fragment 的相关生命周期函数都会被调用。且调用的生命周期函数如下所示：<br>	onAttach -&gt; onCreate -&gt; onCreatedView -&gt; onActivityCreated -&gt; onStart -&gt; onResume<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904079177547789#heading-54" title="安卓高级">2020年中高级Android大厂面试秘籍</a></p>
 <span id="more"></span>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fragment 完整生命周期：onAttach -&gt; onCreate -&gt; onCreatedView -&gt; onActivityCreated -&gt; onStart -&gt; onResume -&gt; onPause -&gt; onStop -&gt; onDestroyView -&gt; onDestroy -&gt; onDetach</span><br></pre></td></tr></table></figure>
 
-<p>什么是同级 Frament 呢？看下图<br><img src="/assets/img/lazy/001.jpg"></p>
+<p>什么是同级 Frament 呢？看下图<br><img src="/assets/img/lazy/001.jpg"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>上图中，都是使用 add+show+hide 的方式控制 Fragment<br>	在上图两种模式中:</p>
 <ul>
 <li>Fragment_1、Fragment_2、Fragment_3 属于同级 Fragment</li>
 <li>Fragment_a、Fragment_b、Fragment_c 属于同级 Fragment</li>
 <li>Fragment_d、Fragment_e、Fragment_f 属于同级 Fragment</li>
 </ul>
-<p>那这种方式会带来什么问题呢？结合下图我们来分别分析。<br><img src="/assets/img/lazy/002.png"><br>观察上图我们可以发现，同级的Fragment_1、Fragment_2、Fragment_3 都调用了 onAttach…onResume 系列方法，也就是说，如果我们没有对 Fragment 进行懒加载处理，那么我们就会无缘无故的加载一些并不可见的 Fragment , 也就会造成用户流量的无故消耗（我们会在 Fragment 相关生命周期函数中，请求网络或其他数据操作）。</p>
+<p>那这种方式会带来什么问题呢？结合下图我们来分别分析。<br><img src="/assets/img/lazy/002.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'><br>观察上图我们可以发现，同级的Fragment_1、Fragment_2、Fragment_3 都调用了 onAttach…onResume 系列方法，也就是说，如果我们没有对 Fragment 进行懒加载处理，那么我们就会无缘无故的加载一些并不可见的 Fragment , 也就会造成用户流量的无故消耗（我们会在 Fragment 相关生命周期函数中，请求网络或其他数据操作）。</p>
 <p>这里**”不可见的Fragment”**是指，实际不可见但是相关可见生命周期函数(如 onResume 方法）被调用的 Fragment</p>
 <p>如果使用嵌套 Fragment ，这种浪费流量的行为就更明显了。以本节的图一为例，当 Fragment_1 加载时，如果你在 Fragment_1 生命周期函数中使用 show+add+hide 的方式添加 Fragment_a、Fragment_b、Fragment_c , 那么 Fragment_b 又会在其生命周期函数中继续加载 Fragment_d、Fragment_e、Fragment_f 。</p>
-<p>那如何解决这种问题呢？我们继续接着上面的例子走，当我们 show Fragment_2，并 hide其他 Fragment 时，对应 Fragment 的生命周期调用如下：<br><img src="/assets/img/lazy/003.png"></p>
+<p>那如何解决这种问题呢？我们继续接着上面的例子走，当我们 show Fragment_2，并 hide其他 Fragment 时，对应 Fragment 的生命周期调用如下：<br><img src="/assets/img/lazy/003.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>从上图中，我们可以看出 Fragment_2 与 Fragment_3 都调用了 onHiddenChanged 函数，该函数的官方 API 声明如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Called when the hidden state (as returned by &#123;@link #isHidden()&#125; of</span><br><span class="line"> * the fragment has changed.  Fragments start out not hidden; this will</span><br><span class="line"> * be called whenever the fragment changes state from that.</span><br><span class="line"> * @param hidden True if the fragment is now hidden, false otherwise.</span><br><span class="line"> */</span><br><span class="line">public void onHiddenChanged(boolean hidden) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -144,7 +401,7 @@
 </ul>
 <p>嗯，好像有点眉目了。不急，我们继续看下面的例子。</p>
 <p>show Fragment_3 并 hide 其他 Fragment ，对应生命周期函数调用如下所示：</p>
-<p><img src="/assets/img/lazy/004.png"></p>
+<p><img src="/assets/img/lazy/004.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>从图中，我们可以看出，确实只有隐藏状态发生了改变的 Fragment 其 onHiddenChanged 函数才会调用，那么结合以上知识点，我们能得出如下重要结论：</p>
 <p>只要通过 show+hide 方式控制 Fragment 的显隐，那么在第一次初始化后，Fragment 任何的生命周期方法都不会调用，只有 onHiddenChanged 方法会被调用。</p>
 <p>那么，假如我们要在 add+show+hide 模式下控制 Fragment 的懒加载，我们只需要做这两步：</p>
@@ -162,14 +419,14 @@
 <p>在本节中，我们用 FragmentPagerAdapter + ViewPager 为例，向大家讲解如何实现 Fragment 的懒加载。</p>
 <p>注意：在本例中没有调用 setOffscreenPageLimit 方法去设置 ViewPager 预缓存的 Fragment 个数。默认情况下 ViewPager 预缓存 Fragment 的个数为 1 。</p>
 <p>初始化 ViewPager 查看内部 Fragment 生命周期函数调用情况：</p>
-<p><img src="/assets/img/lazy/005.png"></p>
+<p><img src="/assets/img/lazy/005.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>观察上图，我们能发现 ViePager 初始化时，默认会调用其内部 Fragment 的 setUserVisibleHint 方法，因为其预缓存 Fragment 个数为 1 的原因，所以只有 Fragment_1 与 Fragment_2 的生命周期函数被调用。</p>
 <p>我们继续切换到 Fragment_2，查看各个Fragment的生命周期函数的调用变化。如下图所示：</p>
-<p><img src="/assets/img/lazy/006.png"></p>
+<p><img src="/assets/img/lazy/006.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>观察上图，我们同样发现 Fragment 的 setUserVisibleHint 方法被调用了，并且 Fragment_3 的一系列生命周期函数被调用了。继续切换到 Fragment_3:</p>
-<p><img src="/assets/img/lazy/007.png"></p>
+<p><img src="/assets/img/lazy/007.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>观察上图可以发现，Fragment_3 调用了 setUserVisibleHint 方法，继续又切换到 Fragment_1，查看调用函数的变化：</p>
-<p><img src="/assets/img/lazy/008.png"></p>
+<p><img src="/assets/img/lazy/008.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>因为之前在切换到 Fragment_3 时，Frafgment_1 已经走了 onDestoryView(图二，蓝色标记处) 方法，所以 Fragment_1 需要重新走一次生命周期。</p>
 <p>那么结合本节的三幅图，我们能得出以下结论：</p>
 <ul>
@@ -180,7 +437,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">abstract class LazyFragment : Fragment() &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 是否执行懒加载</span><br><span class="line">     */</span><br><span class="line">    private var isLoaded = false</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当前Fragment是否对用户可见</span><br><span class="line">     */</span><br><span class="line">    private var isVisibleToUser = false</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当使用ViewPager+Fragment形式会调用该方法时，setUserVisibleHint会优先Fragment生命周期函数调用，</span><br><span class="line">     * 所以这个时候就,会导致在setUserVisibleHint方法执行时就执行了懒加载，</span><br><span class="line">     * 而不是在onResume方法实际调用的时候执行懒加载。所以需要这个变量</span><br><span class="line">     */</span><br><span class="line">    private var isCallResume = false</span><br><span class="line"></span><br><span class="line">    override fun onResume() &#123;</span><br><span class="line">        super.onResume()</span><br><span class="line">        isCallResume = true</span><br><span class="line">        judgeLazyInit()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    private fun judgeLazyInit() &#123;</span><br><span class="line">        if (!isLoaded &amp;&amp; isVisibleToUser &amp;&amp; isCallResume) &#123;</span><br><span class="line">            lazyInit()</span><br><span class="line">            Log.d(TAG, &quot;lazyInit:!!!!!!!”)</span><br><span class="line">            isLoaded = true</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override fun onHiddenChanged(hidden: Boolean) &#123;</span><br><span class="line">        super.onHiddenChanged(hidden)</span><br><span class="line">        isVisibleToUser = !hidden</span><br><span class="line">        judgeLazyInit()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //在Fragment销毁View的时候，重置状态</span><br><span class="line">    override fun onDestroyView() &#123;</span><br><span class="line">        super.onDestroyView()</span><br><span class="line">        isLoaded = false</span><br><span class="line">        isVisibleToUser = false</span><br><span class="line">        isCallResume = false</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override fun setUserVisibleHint(isVisibleToUser: Boolean) &#123;</span><br><span class="line">        super.setUserVisibleHint(isVisibleToUser)</span><br><span class="line">        this.isVisibleToUser = isVisibleToUser</span><br><span class="line">        judgeLazyInit()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    abstract fun lazyInit()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="复杂-Fragment-嵌套的情况"><a href="#复杂-Fragment-嵌套的情况" class="headerlink" title="复杂 Fragment 嵌套的情况"></a>复杂 Fragment 嵌套的情况</h3><p>当然，在实际项目中，我们可能会遇到更为复杂的 Fragment 嵌套组合。比如 Fragment+Fragment、Fragment+ViewPager、ViewPager+ViewPager….等等。<br>如下图所示：</p>
-<p><img src="/assets/img/lazy/009.jpg"></p>
+<p><img src="/assets/img/lazy/009.jpg"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>对于以上场景，我们就需要重写我们的懒加载，以支持不同嵌套组合模式下 Fragment 正确懒加载。我们需要将 LazyFragment 修改成如下这样：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">abstract class LazyFragment : Fragment() &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 是否执行懒加载</span><br><span class="line">     */</span><br><span class="line">    private var isLoaded = false</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当前Fragment是否对用户可见</span><br><span class="line">     */</span><br><span class="line">    private var isVisibleToUser = false</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当使用ViewPager+Fragment形式会调用该方法时，setUserVisibleHint会优先Fragment生命周期函数调用，</span><br><span class="line">     * 所以这个时候就,会导致在setUserVisibleHint方法执行时就执行了懒加载，</span><br><span class="line">     * 而不是在onResume方法实际调用的时候执行懒加载。所以需要这个变量</span><br><span class="line">     */</span><br><span class="line">    private var isCallResume = false</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 是否调用了setUserVisibleHint方法。处理show+add+hide模式下，默认可见 Fragment 不调用</span><br><span class="line">     * onHiddenChanged 方法，进而不执行懒加载方法的问题。</span><br><span class="line">     */</span><br><span class="line">    private var isCallUserVisibleHint = false</span><br><span class="line"></span><br><span class="line">    override fun onResume() &#123;</span><br><span class="line">        super.onResume()</span><br><span class="line">        isCallResume = true</span><br><span class="line">        if (!isCallUserVisibleHint) isVisibleToUser = !isHidden</span><br><span class="line">        judgeLazyInit()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    private fun judgeLazyInit() &#123;</span><br><span class="line">        if (!isLoaded &amp;&amp; isVisibleToUser &amp;&amp; isCallResume) &#123;</span><br><span class="line">            lazyInit()</span><br><span class="line">            Log.d(TAG, &quot;lazyInit:!!!!!!!”)</span><br><span class="line">            isLoaded = true</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override fun onHiddenChanged(hidden: Boolean) &#123;</span><br><span class="line">        super.onHiddenChanged(hidden)</span><br><span class="line">        isVisibleToUser = !hidden</span><br><span class="line">        judgeLazyInit()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override fun onDestroyView() &#123;</span><br><span class="line">        super.onDestroyView()</span><br><span class="line">        isLoaded = false</span><br><span class="line">        isVisibleToUser = false</span><br><span class="line">        isCallUserVisibleHint = false</span><br><span class="line">        isCallResume = false</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override fun setUserVisibleHint(isVisibleToUser: Boolean) &#123;</span><br><span class="line">        super.setUserVisibleHint(isVisibleToUser)</span><br><span class="line">        this.isVisibleToUser = isVisibleToUser</span><br><span class="line">        isCallUserVisibleHint = true</span><br><span class="line">        judgeLazyInit()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    abstract fun lazyInit()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -204,11 +461,11 @@
 <pre><code>在该例子中设置了 ViewPager 的适配器为 FragmentPagerAdapter 且 behavior 值为 BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT。
 </code></pre>
 <p>默认初始化ViewPager，Fragment 生命周期如下所示：</p>
-<p><img src="/assets/img/lazy/010.png"></p>
+<p><img src="/assets/img/lazy/010.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>切换到 Fragment_2 时，日志情况如下所示：</p>
-<p><img src="/assets/img/lazy/011.png"></p>
+<p><img src="/assets/img/lazy/011.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>切换到 Fragment_3 时，日志情况如下所示:</p>
-<p><img src="/assets/img/lazy/012.png"></p>
+<p><img src="/assets/img/lazy/012.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>因为篇幅的原因，本文没有在讲解 FragmentStatePagerAdapter 设置 behavior 下的使用情况，但是原理以及生命周期函数调用情况一样，感兴趣的小伙伴，可以根据 <a target="_blank" rel="noopener" href="https://github.com/AndyJennifer/AndroidxLazyLoad">AndroidxLazyLoad</a> 项目自行测试。</p>
 <p>观察上述例子，我们可以发现，使用了 BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT 后，确实只有当前可见的 Fragment 调用了 onResume 方法。而导致产生这种改变的原因，是因为 FragmentPagerAdapter 在其 setPrimaryItem 方法中调用了 setMaxLifecycle 方法，如下所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) &#123;</span><br><span class="line">    Fragment fragment = (Fragment)object;</span><br><span class="line">    //如果当前的fragment不是当前选中并可见的Fragment,那么就会调用</span><br><span class="line">    // setMaxLifecycle 设置其最大生命周期为 Lifecycle.State.STARTED</span><br><span class="line">    if (fragment != mCurrentPrimaryItem) &#123;</span><br><span class="line">        if (mCurrentPrimaryItem != null) &#123;</span><br><span class="line">            mCurrentPrimaryItem.setMenuVisibility(false);</span><br><span class="line">            if (mBehavior == BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) &#123;</span><br><span class="line">                if (mCurTransaction == null) &#123;</span><br><span class="line">                    mCurTransaction = mFragmentManager.beginTransaction();</span><br><span class="line">                &#125;</span><br><span class="line">                mCurTransaction.setMaxLifecycle(mCurrentPrimaryItem, Lifecycle.State.STARTED);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                mCurrentPrimaryItem.setUserVisibleHint(false);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    //对于其他非可见的Fragment,则设置其最大生命周期为</span><br><span class="line">    //Lifecycle.State.RESUMED</span><br><span class="line">        fragment.setMenuVisibility(true);</span><br><span class="line">        if (mBehavior == BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) &#123;</span><br><span class="line">            if (mCurTransaction == null) &#123;</span><br><span class="line">                mCurTransaction = mFragmentManager.beginTransaction();</span><br><span class="line">            &#125;</span><br><span class="line">            mCurTransaction.setMaxLifecycle(fragment, Lifecycle.State.RESUMED);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            fragment.setUserVisibleHint(true);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mCurrentPrimaryItem = fragment;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -226,15 +483,15 @@
 </ul>
 <p>结合上述操作模式，查看使用 setMaxLifecycle 后，Fragment 生命周期函数调用的情况。</p>
 <p>add Fragment_1、Fragment_2、Fragment_3，并 hide Fragment_2,Fragment_3</p>
-<p><img src="/assets/img/lazy/013.png"></p>
+<p><img src="/assets/img/lazy/013.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>show Fragment_2，hide 其他 Fragment:</p>
-<p><img src="/assets/img/lazy/014.png"></p>
+<p><img src="/assets/img/lazy/014.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>show Fragment_3 hide 其他 Fragment:</p>
-<p><img src="/assets/img/lazy/015.png"></p>
+<p><img src="/assets/img/lazy/015.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>参考上图，好像真的也能处理懒加载！！！！！美滋滋</p>
 <p>并不完美的 setMaxLifecycle</p>
 <p>当我第一次使用 setMaxLifycycle 方法时，我也和大家一样觉得万事大吉。但这套方案仍然有点点瑕疵，当 Fragment 的嵌套时，即使使用了 setMaxLifycycle 方法，第一次初始化时，同级不可见的Fragment，仍然 TMD 要调用可见生命周期方法。看下面的例子：</p>
-<p><img src="/assets/img/lazy/016.png"></p>
+<p><img src="/assets/img/lazy/016.png"  data-tag='post-image' onload='this.onload=null;this.style.opacity=1;' loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
 <p>不知道是否是谷歌大大没有考虑到 Fragment 嵌套的情况，所以这里我们要对之前的方案就行修改，也就是如下所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">abstract class LazyFragment : Fragment() &#123;</span><br><span class="line"></span><br><span class="line">    private var isLoaded = false</span><br><span class="line"></span><br><span class="line">    override fun onResume() &#123;</span><br><span class="line">        super.onResume()</span><br><span class="line">        //增加了Fragment是否可见的判断</span><br><span class="line">        if (!isLoaded &amp;&amp; !isHidden) &#123;</span><br><span class="line">            lazyInit()</span><br><span class="line">            Log.d(TAG, &quot;lazyInit:!!!!!!!”)</span><br><span class="line">            isLoaded = true</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override fun onDestroyView() &#123;</span><br><span class="line">        super.onDestroyView()</span><br><span class="line">        isLoaded = false</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    abstract fun lazyInit()</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -258,150 +515,275 @@
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>这两种方案的优缺点已经非常明显了，到底该选择何种懒加载模式，还是要基于大家的意愿，作者我更倾向于使用新的方案。关于 Fragment 的懒加载实现，非常愿意听到大家不同的声音，如果你有更好的方案，可以在评论区留下您的 idea，期待您的回复。如果您觉得本篇文章对你有所帮助，请不要吝啬你的关注与点赞。ღ( ´･ᴗ･&#96; )比心</p>
 <p>作者：AndyJennifer<br>链接：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/2201a107d5b5">https://www.jianshu.com/p/2201a107d5b5</a><br>来源：简书</p>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://blog.hansong.icu/2021/03/14/Android_Fragment_lazy/" data-id="cmqm6veq7000ikkh7c6wcbfhz" data-title="懒加载Fragment" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
-
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2021/03/17/Java_threadPool/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">前一篇</strong>
-      <div class="article-nav-title">
-        
-          线程池核心参数介绍
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/03/13/Android_example/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">商城截图</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
+    
     
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT/" rel="tag">IT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2021/03/14/Android_Fragment_lazy/" title="懒加载Fragment">https://blog.hansong.icu/2021/03/14/Android_Fragment_lazy/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
     </div>
-  </div>
-
-
-  
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/Android/" style="font-size: 18.57px;">Android</a> <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/IT/" style="font-size: 20px;">IT</a> <a href="/tags/Java/" style="font-size: 17.14px;">Java</a> <a href="/tags/Kotlin/" style="font-size: 11.43px;">Kotlin</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Scrapy/" style="font-size: 10px;">Scrapy</a> <a href="/tags/Spring/" style="font-size: 11.43px;">Spring</a> <a href="/tags/Tools/" style="font-size: 10px;">Tools</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/java/" style="font-size: 12.86px;">java</a> <a href="/tags/kotlin/" style="font-size: 14.29px;">kotlin</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15.71px;">面试</a>
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2021/03/17/Java_threadPool/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" #.">
+                    未分类
+                </a>
+            </div>
+            <h5>
+                <a href="/2021/03/17/Java_threadPool/" class="trm-anima-link">
+                    线程池核心参数介绍
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>21/03/17</li>
+                <li>18:51</li>
+                
+                
+            </ul>
+        </div>
     </div>
-  </div>
-
-  
+</div>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2021/03/13/Android_example/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
         
-          <li>
-            <a href="/2026/06/20/hello-world/">Hello World</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/24/android_mianshi/">Android面试题和基础知识</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/10/Android_ConfigChanges/">Android ConfigChanges属性</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/android_launch_start/">Android应用冷启动</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/02/signalrtest/">Android-SignalR使用</a>
-          </li>
-        
-      </ul>
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" #.">
+                    未分类
+                </a>
+            </div>
+            <h5>
+                <a href="/2021/03/13/Android_example/" class="trm-anima-link">
+                    商城截图
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>21/03/13</li>
+                <li>12:51</li>
+                
+                
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
+    
+</div>
 
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
       
-      &copy; 2026 hansong<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
     </div>
-    <nav id="mobile-nav">
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-3" title="add+show+hide 模式下的老方案"><a rel="nofollow" class="trm-toc-link" href="#add-show-hide-模式下的老方案"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">add+show+hide 模式下的老方案</span></a></li><li class="trm-toc-item trm-toc-level-3" title="ViewPager+Fragment 模式下的老方案"><a rel="nofollow" class="trm-toc-link" href="#ViewPager-Fragment-模式下的老方案"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">ViewPager+Fragment 模式下的老方案</span></a></li><li class="trm-toc-item trm-toc-level-3" title="复杂 Fragment 嵌套的情况"><a rel="nofollow" class="trm-toc-link" href="#复杂-Fragment-嵌套的情况"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">复杂 Fragment 嵌套的情况</span></a></li><li class="trm-toc-item trm-toc-level-3" title="Androidx 下的懒加载"><a rel="nofollow" class="trm-toc-link" href="#Androidx-下的懒加载"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">Androidx 下的懒加载</span></a></li><li class="trm-toc-item trm-toc-level-3" title="ViewPager+Fragment 模式下的方案"><a rel="nofollow" class="trm-toc-link" href="#ViewPager-Fragment-模式下的方案"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">ViewPager+Fragment 模式下的方案</span></a></li><li class="trm-toc-item trm-toc-level-3" title="add+show+hide 模式下的新方案"><a rel="nofollow" class="trm-toc-link" href="#add-show-hide-模式下的新方案"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">add+show+hide 模式下的新方案</span></a></li><li class="trm-toc-item trm-toc-level-3" title="ViewPager2 的处理方案"><a rel="nofollow" class="trm-toc-link" href="#ViewPager2-的处理方案"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">ViewPager2 的处理方案</span></a></li><li class="trm-toc-item trm-toc-level-3" title="两种方式的对比与总结"><a rel="nofollow" class="trm-toc-link" href="#两种方式的对比与总结"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">两种方式的对比与总结</span></a></li><li class="trm-toc-item trm-toc-level-3" title="最后"><a rel="nofollow" class="trm-toc-link" href="#最后"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">最后</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
   
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
     
 
 
-<script src="/js/jquery-3.6.4.min.js"></script>
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
 
 
 
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
 </body>
+
 </html>
