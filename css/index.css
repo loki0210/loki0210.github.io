@@ -3889,3 +3889,14 @@ pre .coffeescript .title {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
+.trm-card {
+  overflow: hidden;
+}
+.trm-publication {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+.trm-publication img {
+  max-width: 100%;
+  height: auto;
+}
