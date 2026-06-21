@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、为什么先学命令行Linux 应用开发离不开命令行。无论是编译、部署、查看日志、定位进程、分析网络，最终都会回到终端。命令行不是为了炫技，而是为了让你能直接控制系统。 入门 Linux 开发，建议先熟悉这些能力：  能在目录中快速移动和查找文件。 能查看文件内容和日志。 能理解权限、用户、进程和环境变量。 能把常用命令组合成脚本。 能读懂构建脚本、启动脚本和部署脚本。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 开发基础：命令行、Shell 与环境变量">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/21/Linux_Dev_Shell_Basics/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、为什么先学命令行Linux 应用开发离不开命令行。无论是编译、部署、查看日志、定位进程、分析网络，最终都会回到终端。命令行不是为了炫技，而是为了让你能直接控制系统。 入门 Linux 开发，建议先熟悉这些能力：  能在目录中快速移动和查找文件。 能查看文件内容和日志。 能理解权限、用户、进程和环境变量。 能把常用命令组合成脚本。 能读懂构建脚本、启动脚本和部署脚本。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-21T03:25:00.000Z">
+<meta property="article:modified_time" content="2026-06-21T03:31:41.237Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Tools">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Shell">
+<meta name="twitter:card" content="summary">
+
+
+<title >Linux 开发基础：命令行、Shell 与环境变量</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-21 11:31:41"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Linux 开发基础：命令行、Shell 与环境变量
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            11:25
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、为什么先学命令行"><a href="#一、为什么先学命令行" class="headerlink" title="一、为什么先学命令行"></a>一、为什么先学命令行</h2><p>Linux 应用开发离不开命令行。无论是编译、部署、查看日志、定位进程、分析网络，最终都会回到终端。命令行不是为了炫技，而是为了让你能直接控制系统。</p>
+<p>入门 Linux 开发，建议先熟悉这些能力：</p>
+<ul>
+<li>能在目录中快速移动和查找文件。</li>
+<li>能查看文件内容和日志。</li>
+<li>能理解权限、用户、进程和环境变量。</li>
+<li>能把常用命令组合成脚本。</li>
+<li>能读懂构建脚本、启动脚本和部署脚本。</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="二、目录和文件操作"><a href="#二、目录和文件操作" class="headerlink" title="二、目录和文件操作"></a>二、目录和文件操作</h2><p>常用命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br><span class="line"><span class="built_in">ls</span> -la</span><br><span class="line"><span class="built_in">cd</span> /path/to/project</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line"><span class="built_in">cp</span> a.txt b.txt</span><br><span class="line"><span class="built_in">mv</span> old.txt new.txt</span><br><span class="line"><span class="built_in">rm</span> file.txt</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>pwd</code>：显示当前目录。</li>
+<li><code>ls -la</code>：查看所有文件和权限。</li>
+<li><code>cd</code>：切换目录。</li>
+<li><code>mkdir</code>：创建目录。</li>
+<li><code>cp</code>：复制文件。</li>
+<li><code>mv</code>：移动或重命名。</li>
+<li><code>rm</code>：删除文件。</li>
+</ul>
+<p>删除命令要特别小心：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf build</span><br></pre></td></tr></table></figure>
+
+<p><code>rm -rf</code> 会递归删除目录，不会进入回收站。开发中通常只用它删除构建目录、临时目录，不要在不确定路径时执行。</p>
+<h2 id="三、查看文件内容"><a href="#三、查看文件内容" class="headerlink" title="三、查看文件内容"></a>三、查看文件内容</h2><p>查看小文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> app.conf</span><br></pre></td></tr></table></figure>
+
+<p>分页查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">less app.log</span><br></pre></td></tr></table></figure>
+
+<p>查看文件开头和结尾：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">head</span> -n 20 app.log</span><br><span class="line"><span class="built_in">tail</span> -n 50 app.log</span><br></pre></td></tr></table></figure>
+
+<p>实时查看日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">tail</span> -f app.log</span><br></pre></td></tr></table></figure>
+
+<p>开发后台服务时，<code>tail -f</code> 非常常用。程序启动失败、配置错误、连接失败，通常都能先从日志里找到线索。</p>
+<h2 id="四、搜索文件和文本"><a href="#四、搜索文件和文本" class="headerlink" title="四、搜索文件和文本"></a>四、搜索文件和文本</h2><p>查找文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find . -name <span class="string">&quot;*.c&quot;</span></span><br><span class="line">find . -name <span class="string">&quot;CMakeLists.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>搜索文本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep -rn <span class="string">&quot;main&quot;</span> .</span><br><span class="line">grep -rn <span class="string">&quot;error&quot;</span> ./logs</span><br></pre></td></tr></table></figure>
+
+<p>如果安装了 <code>ripgrep</code>，建议用 <code>rg</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rg <span class="string">&quot;socket&quot;</span></span><br><span class="line">rg <span class="string">&quot;TODO&quot;</span> src</span><br></pre></td></tr></table></figure>
+
+<p><code>rg</code> 通常比 <code>grep -r</code> 更快，也会默认忽略 <code>.git</code>、构建目录等无关内容。</p>
+<h2 id="五、管道和重定向"><a href="#五、管道和重定向" class="headerlink" title="五、管道和重定向"></a>五、管道和重定向</h2><p>管道把一个命令的输出交给另一个命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep my_app</span><br></pre></td></tr></table></figure>
+
+<p>重定向输出到文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./app &gt; app.log</span><br><span class="line">./app 2&gt; error.log</span><br><span class="line">./app &gt; app.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>追加输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./app &gt;&gt; app.log</span><br></pre></td></tr></table></figure>
+
+<p>常见含义：</p>
+<ul>
+<li><code>&gt;</code>：覆盖写入标准输出。</li>
+<li><code>&gt;&gt;</code>：追加写入标准输出。</li>
+<li><code>2&gt;</code>：重定向标准错误。</li>
+<li><code>2&gt;&amp;1</code>：把标准错误合并到标准输出。</li>
+</ul>
+<h2 id="六、环境变量"><a href="#六、环境变量" class="headerlink" title="六、环境变量"></a>六、环境变量</h2><p>环境变量用于向程序传递运行环境。</p>
+<p>查看变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
+
+<p>临时设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">APP_ENV=dev ./app</span><br></pre></td></tr></table></figure>
+
+<p>当前终端长期有效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> APP_ENV=dev</span><br><span class="line">./app</span><br></pre></td></tr></table></figure>
+
+<p>常见变量：</p>
+<ul>
+<li><code>PATH</code>：命令搜索路径。</li>
+<li><code>HOME</code>：用户目录。</li>
+<li><code>LD_LIBRARY_PATH</code>：动态库搜索路径。</li>
+<li><code>PKG_CONFIG_PATH</code>：<code>pkg-config</code> 查找 <code>.pc</code> 文件的路径。</li>
+</ul>
+<p>动态库找不到时，常见临时处理方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBRARY_PATH=./lib ./app</span><br></pre></td></tr></table></figure>
+
+<h2 id="七、Shell-脚本入门"><a href="#七、Shell-脚本入门" class="headerlink" title="七、Shell 脚本入门"></a>七、Shell 脚本入门</h2><p>创建 <code>run.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">APP_ENV=<span class="variable">$&#123;APP_ENV:-dev&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;APP_ENV=<span class="variable">$APP_ENV</span>&quot;</span></span><br><span class="line">./build/app --config <span class="string">&quot;./config/<span class="variable">$APP_ENV</span>.conf&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>加执行权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x run.sh</span><br></pre></td></tr></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./run.sh</span><br><span class="line">APP_ENV=prod ./run.sh</span><br></pre></td></tr></table></figure>
+
+<p><code>set -euo pipefail</code> 的作用：</p>
+<ul>
+<li><code>-e</code>：命令失败时退出。</li>
+<li><code>-u</code>：使用未定义变量时报错。</li>
+<li><code>pipefail</code>：管道中任意命令失败都算失败。</li>
+</ul>
+<p>开发脚本建议默认加上这行，避免错误被吞掉。</p>
+<h2 id="八、脚本参数"><a href="#八、脚本参数" class="headerlink" title="八、脚本参数"></a>八、脚本参数</h2><p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">cmd=<span class="variable">$&#123;1:-help&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$cmd</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">  build)</span><br><span class="line">    cmake -S . -B build</span><br><span class="line">    cmake --build build</span><br><span class="line">    ;;</span><br><span class="line">  clean)</span><br><span class="line">    <span class="built_in">rm</span> -rf build</span><br><span class="line">    ;;</span><br><span class="line">  run)</span><br><span class="line">    ./build/app</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;usage: <span class="variable">$0</span> &#123;build|clean|run&#125;&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./dev.sh build</span><br><span class="line">./dev.sh run</span><br><span class="line">./dev.sh clean</span><br></pre></td></tr></table></figure>
+
+<p>这种脚本很适合统一项目命令，避免每个人记不同的构建方式。</p>
+<h2 id="九、入门检查清单"><a href="#九、入门检查清单" class="headerlink" title="九、入门检查清单"></a>九、入门检查清单</h2><p>掌握以下内容后，再继续学习 C&#x2F;C++ 构建、系统调用和网络编程会顺很多：</p>
+<ul>
+<li>能用 <code>cd</code>、<code>ls</code>、<code>find</code>、<code>rg</code> 找文件。</li>
+<li>能用 <code>cat</code>、<code>less</code>、<code>tail -f</code> 看日志。</li>
+<li>能理解 <code>&gt;</code>、<code>&gt;&gt;</code>、<code>2&gt;&amp;1</code>。</li>
+<li>能设置和读取环境变量。</li>
+<li>能写简单 Shell 脚本。</li>
+<li>能用 <code>ps</code>、<code>kill</code> 管理进程。</li>
+<li>能看懂项目里的 <code>build.sh</code>、<code>run.sh</code>、<code>deploy.sh</code>。</li>
+</ul>
+<p>Linux 开发的第一步不是写复杂程序，而是能在系统里高效移动、观察和控制。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/21/Linux_Dev_Shell_Basics/" title="Linux 开发基础：命令行、Shell 与环境变量">https://blog.hansong.icu/2026/06/21/Linux_Dev_Shell_Basics/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Linux_Dev_System_Programming/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux%E5%BC%80%E5%8F%91/">
+                    Linux开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Linux_Dev_System_Programming/" class="trm-anima-link">
+                    Linux 系统编程入门：文件 IO、进程、线程与信号
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>11:26</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Linux_App_Development/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux%E5%BC%80%E5%8F%91/">
+                    Linux开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Linux_App_Development/" class="trm-anima-link">
+                    Linux 应用开发入门
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>11:08</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、为什么先学命令行"><a rel="nofollow" class="trm-toc-link" href="#一、为什么先学命令行"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、为什么先学命令行</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、目录和文件操作"><a rel="nofollow" class="trm-toc-link" href="#二、目录和文件操作"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、目录和文件操作</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、查看文件内容"><a rel="nofollow" class="trm-toc-link" href="#三、查看文件内容"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、查看文件内容</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、搜索文件和文本"><a rel="nofollow" class="trm-toc-link" href="#四、搜索文件和文本"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、搜索文件和文本</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、管道和重定向"><a rel="nofollow" class="trm-toc-link" href="#五、管道和重定向"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、管道和重定向</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、环境变量"><a rel="nofollow" class="trm-toc-link" href="#六、环境变量"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、环境变量</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、Shell 脚本入门"><a rel="nofollow" class="trm-toc-link" href="#七、Shell-脚本入门"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、Shell 脚本入门</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、脚本参数"><a rel="nofollow" class="trm-toc-link" href="#八、脚本参数"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、脚本参数</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、入门检查清单"><a rel="nofollow" class="trm-toc-link" href="#九、入门检查清单"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、入门检查清单</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
