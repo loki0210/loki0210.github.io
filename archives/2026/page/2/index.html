@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-06-21 11:31:50"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-06-21 13:01:46"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（11）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（17）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -360,6 +360,227 @@
     <div class="col-lg-12">
         <!-- timeline -->
         <div class="trm-timeline">
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/06/21/Linux_Dev_Debug_Performance/" class="trm-anima-link">
+                                        Linux 开发进阶：调试、日志、性能分析与线上排错
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">06/21</li>
+                                        <li class="trm-accent-color">11:28</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <h2 id="一、为什么调试能力很重要"><a href="#一、为什么调试能力很重要" class="headerlink" title="一、为什么调试能力很重要"></a>一、为什么调试能力很重要</h2><p>Linux 应用开发真正的难点不只是写代码，而是程序出问题时能不能定位。程序可能在你的机器上正常，在服务器上崩溃；可能测试环境正常，生产环境慢；也可能偶发死锁、内存泄漏、文件句柄耗尽。</p>
+<p>调试和排错要形成固定流程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">确认现象 -&gt; 收集信息 -&gt; 缩小范围 -&gt; 验证假设 -&gt; 修复 -&gt; 回归</span><br></pre></td></tr></table></figure>
+                            </div>
+                        
+                    
+                </div>
+            </div>
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/06/21/Linux_Dev_Network_Programming/" class="trm-anima-link">
+                                        Linux 网络编程入门：Socket、TCP Server 与常用排错
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">06/21</li>
+                                        <li class="trm-accent-color">11:27</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <h2 id="一、网络编程先理解什么"><a href="#一、网络编程先理解什么" class="headerlink" title="一、网络编程先理解什么"></a>一、网络编程先理解什么</h2><p>Linux 网络编程的核心是 socket。socket 是应用程序访问网络的接口，HTTP、WebSocket、RPC 等上层协议最终都建立在 socket 之上。</p>
+<p>入门需要先理解：</p>
+<ul>
+<li>IP：主机地址。</li>
+<li>端口：进程提供服务的入口。</li>
+<li>TCP：可靠字节流。</li>
+<li>UDP：无连接数据报。</li>
+<li>服务端：监听端口，等待连接。</li>
+<li>客户端：主动连接服务端。</li>
+</ul>
+                            </div>
+                        
+                    
+                </div>
+            </div>
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/06/21/Linux_Dev_System_Programming/" class="trm-anima-link">
+                                        Linux 系统编程入门：文件 IO、进程、线程与信号
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">06/21</li>
+                                        <li class="trm-accent-color">11:26</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <h2 id="一、系统编程学什么"><a href="#一、系统编程学什么" class="headerlink" title="一、系统编程学什么"></a>一、系统编程学什么</h2><p>Linux 系统编程关注应用程序和操作系统之间的接口。普通业务代码更多关心业务逻辑，系统编程则关心程序如何使用文件、进程、线程、信号、内存和网络。</p>
+<p>入门阶段重点掌握：</p>
+<ul>
+<li>文件描述符。</li>
+<li><code>open</code>、<code>read</code>、<code>write</code>、<code>close</code>。</li>
+<li>进程创建和等待。</li>
+<li>线程创建和同步。</li>
+<li>信号处理。</li>
+<li>错误码和 <code>errno</code>。</li>
+</ul>
+                            </div>
+                        
+                    
+                </div>
+            </div>
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/06/21/Linux_Dev_Shell_Basics/" class="trm-anima-link">
+                                        Linux 开发基础：命令行、Shell 与环境变量
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">06/21</li>
+                                        <li class="trm-accent-color">11:25</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <h2 id="一、为什么先学命令行"><a href="#一、为什么先学命令行" class="headerlink" title="一、为什么先学命令行"></a>一、为什么先学命令行</h2><p>Linux 应用开发离不开命令行。无论是编译、部署、查看日志、定位进程、分析网络，最终都会回到终端。命令行不是为了炫技，而是为了让你能直接控制系统。</p>
+<p>入门 Linux 开发，建议先熟悉这些能力：</p>
+<ul>
+<li>能在目录中快速移动和查找文件。</li>
+<li>能查看文件内容和日志。</li>
+<li>能理解权限、用户、进程和环境变量。</li>
+<li>能把常用命令组合成脚本。</li>
+<li>能读懂构建脚本、启动脚本和部署脚本。</li>
+</ul>
+                            </div>
+                        
+                    
+                </div>
+            </div>
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/06/21/Linux_App_Development/" class="trm-anima-link">
+                                        Linux 应用开发入门
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">06/21</li>
+                                        <li class="trm-accent-color">11:08</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <h2 id="一、Linux-应用开发是什么"><a href="#一、Linux-应用开发是什么" class="headerlink" title="一、Linux 应用开发是什么"></a>一、Linux 应用开发是什么</h2><p>Linux 应用开发通常指在 Linux 系统上编写、编译、调试、运行和发布用户态程序。它和 Android、嵌入式、服务端开发都有交集，但核心基础基本一致：</p>
+<ul>
+<li>熟悉 Linux 文件系统、权限、进程、线程、信号、网络等机制。</li>
+<li>能使用 GCC、Make、CMake 等工具构建程序。</li>
+<li>能使用 GDB、strace、lsof、top、journalctl 等工具定位问题。</li>
+<li>能理解动态库、静态库、环境变量、系统调用和进程通信。</li>
+<li>能把程序打包、部署，并在目标环境中稳定运行。</li>
+</ul>
+                            </div>
+                        
+                    
+                </div>
+            </div>
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/06/21/Codex_CLI/" class="trm-anima-link">
+                                        Codex CLI 详细使用流程
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">06/21</li>
+                                        <li class="trm-accent-color">10:56</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <h2 id="一、Codex-CLI-是什么"><a href="#一、Codex-CLI-是什么" class="headerlink" title="一、Codex CLI 是什么"></a>一、Codex CLI 是什么</h2><p>Codex CLI 是 OpenAI Codex 的命令行工具，适合在本地终端里处理真实代码仓库中的开发任务。它可以读取当前项目、执行命令、修改文件、运行测试、解释代码、做代码审查，并且会根据权限配置决定什么时候直接执行、什么时候向你确认。</p>
+<p>简单理解：</p>
+<ul>
+<li>在 IDE 中写代码时，可以把 Codex CLI 当成一个“终端里的结对编程助手”。</li>
+<li>在已有项目中排查问题时，可以让它先阅读代码，再给出修改方案并直接落地。</li>
+<li>在重复性任务中，可以用非交互命令让它批量完成检查、重构、生成文档等工作。</li>
+</ul>
+                            </div>
+                        
+                    
+                </div>
+            </div>
             
             <div class="trm-timeline-item trm-scroll-animation">
                 <div class="trm-timeline-mark-light"></div>

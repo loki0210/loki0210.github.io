@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、为什么要服务化一个程序能在终端运行，不代表适合部署。真正部署到 Linux 设备或服务器时，需要解决：  开机自动启动。 异常退出自动重启。 统一查看日志。 使用非 root 用户运行。 控制启动顺序。 优雅停止。  Linux 现代发行版通常使用 systemd 管理服务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 应用服务化：systemd、日志、开机启动与守护进程">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/21/Linux_Dev_Systemd_Service/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、为什么要服务化一个程序能在终端运行，不代表适合部署。真正部署到 Linux 设备或服务器时，需要解决：  开机自动启动。 异常退出自动重启。 统一查看日志。 使用非 root 用户运行。 控制启动顺序。 优雅停止。  Linux 现代发行版通常使用 systemd 管理服务。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-21T03:37:00.000Z">
+<meta property="article:modified_time" content="2026-06-21T05:01:29.321Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="systemd">
+<meta property="article:tag" content="Deploy">
+<meta name="twitter:card" content="summary">
+
+
+<title >Linux 应用服务化：systemd、日志、开机启动与守护进程</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-21 13:01:29"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Linux 应用服务化：systemd、日志、开机启动与守护进程
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            11:37
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、为什么要服务化"><a href="#一、为什么要服务化" class="headerlink" title="一、为什么要服务化"></a>一、为什么要服务化</h2><p>一个程序能在终端运行，不代表适合部署。真正部署到 Linux 设备或服务器时，需要解决：</p>
+<ul>
+<li>开机自动启动。</li>
+<li>异常退出自动重启。</li>
+<li>统一查看日志。</li>
+<li>使用非 root 用户运行。</li>
+<li>控制启动顺序。</li>
+<li>优雅停止。</li>
+</ul>
+<p>Linux 现代发行版通常使用 systemd 管理服务。</p>
+<span id="more"></span>
+
+<h2 id="二、最小-service-文件"><a href="#二、最小-service-文件" class="headerlink" title="二、最小 service 文件"></a>二、最小 service 文件</h2><p>创建：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/systemd/system/my_app.service</span><br></pre></td></tr></table></figure>
+
+<p>内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=My App</span><br><span class="line"><span class="attr">After</span>=network.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="attr">ExecStart</span>=/usr/local/bin/my_app --config /etc/my_app/app.conf</span><br><span class="line"><span class="attr">Restart</span>=<span class="literal">on</span>-failure</span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>加载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+
+<p>启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl start my_app</span><br></pre></td></tr></table></figure>
+
+<p>查看状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status my_app</span><br></pre></td></tr></table></figure>
+
+<p>开机启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> my_app</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、查看日志"><a href="#三、查看日志" class="headerlink" title="三、查看日志"></a>三、查看日志</h2><p>查看最近日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u my_app -n 100</span><br></pre></td></tr></table></figure>
+
+<p>实时日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u my_app -f</span><br></pre></td></tr></table></figure>
+
+<p>按时间过滤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u my_app --since <span class="string">&quot;2026-06-21 10:00:00&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果程序把日志输出到 stdout&#x2F;stderr，systemd 会自动收集到 journal。</p>
+<h2 id="四、优雅停止"><a href="#四、优雅停止" class="headerlink" title="四、优雅停止"></a>四、优雅停止</h2><p>停止服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl stop my_app</span><br></pre></td></tr></table></figure>
+
+<p>systemd 默认会发送 <code>SIGTERM</code>。程序应该捕获 <code>SIGTERM</code>，完成资源清理后退出。</p>
+<p>应用中需要处理：</p>
+<ul>
+<li>停止接收新请求。</li>
+<li>保存必要状态。</li>
+<li>关闭文件。</li>
+<li>关闭 socket。</li>
+<li>等待工作线程退出。</li>
+</ul>
+<p>不要依赖 <code>kill -9</code>，<code>SIGKILL</code> 无法清理资源。</p>
+<h2 id="五、使用非-root-用户"><a href="#五、使用非-root-用户" class="headerlink" title="五、使用非 root 用户"></a>五、使用非 root 用户</h2><p>创建用户：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> useradd --system --no-create-home --shell /usr/sbin/nologin myapp</span><br></pre></td></tr></table></figure>
+
+<p>service：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">User</span>=myapp</span><br><span class="line"><span class="attr">Group</span>=myapp</span><br><span class="line"><span class="attr">ExecStart</span>=/usr/local/bin/my_app --config /etc/my_app/app.conf</span><br></pre></td></tr></table></figure>
+
+<p>目录权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /var/lib/my_app /var/log/my_app</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R myapp:myapp /var/lib/my_app /var/log/my_app</span><br></pre></td></tr></table></figure>
+
+<p>服务不应该默认用 root 跑。只有确实需要特权端口、硬件访问或系统配置时，才考虑授权。</p>
+<h2 id="六、环境变量"><a href="#六、环境变量" class="headerlink" title="六、环境变量"></a>六、环境变量</h2><p>可以在 service 中设置：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Environment</span>=APP_ENV=prod</span><br><span class="line"><span class="attr">Environment</span>=LOG_LEVEL=info</span><br></pre></td></tr></table></figure>
+
+<p>也可以使用环境文件：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">EnvironmentFile</span>=/etc/my_app/my_app.env</span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/my_app/my_app.env</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">APP_ENV=prod</span><br><span class="line">LOG_LEVEL=info</span><br></pre></td></tr></table></figure>
+
+<h2 id="七、重启策略"><a href="#七、重启策略" class="headerlink" title="七、重启策略"></a>七、重启策略</h2><p>常见配置：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Restart</span>=<span class="literal">on</span>-failure</span><br><span class="line"><span class="attr">RestartSec</span>=<span class="number">3</span></span><br><span class="line"><span class="attr">StartLimitIntervalSec</span>=<span class="number">60</span></span><br><span class="line"><span class="attr">StartLimitBurst</span>=<span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li>失败时重启。</li>
+<li>3 秒后重启。</li>
+<li>60 秒内最多尝试 5 次。</li>
+</ul>
+<p>这样可以避免程序一直崩溃、systemd 疯狂拉起。</p>
+<h2 id="八、常见排错"><a href="#八、常见排错" class="headerlink" title="八、常见排错"></a>八、常见排错</h2><h3 id="8-1-service-修改后没生效"><a href="#8-1-service-修改后没生效" class="headerlink" title="8.1 service 修改后没生效"></a>8.1 service 修改后没生效</h3><p>执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart my_app</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-手动能运行，systemd-不能运行"><a href="#8-2-手动能运行，systemd-不能运行" class="headerlink" title="8.2 手动能运行，systemd 不能运行"></a>8.2 手动能运行，systemd 不能运行</h3><p>常见原因：</p>
+<ul>
+<li>工作目录不同。</li>
+<li>环境变量不同。</li>
+<li>权限不同。</li>
+<li>相对路径失效。</li>
+</ul>
+<p>建议在 service 中使用绝对路径：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">WorkingDirectory</span>=/opt/my_app</span><br><span class="line"><span class="attr">ExecStart</span>=/opt/my_app/bin/my_app --config /etc/my_app/app.conf</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-日志不足"><a href="#8-3-日志不足" class="headerlink" title="8.3 日志不足"></a>8.3 日志不足</h3><p>先看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u my_app -n 200 --no-pager</span><br></pre></td></tr></table></figure>
+
+<p>程序启动时应该打印配置路径、监听端口、版本号和关键依赖状态。</p>
+<h2 id="九、推荐-service-模板"><a href="#九、推荐-service-模板" class="headerlink" title="九、推荐 service 模板"></a>九、推荐 service 模板</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=My App</span><br><span class="line"><span class="attr">After</span>=network-<span class="literal">on</span>line.target</span><br><span class="line"><span class="attr">Wants</span>=network-<span class="literal">on</span>line.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="attr">User</span>=myapp</span><br><span class="line"><span class="attr">Group</span>=myapp</span><br><span class="line"><span class="attr">WorkingDirectory</span>=/opt/my_app</span><br><span class="line"><span class="attr">EnvironmentFile</span>=-/etc/my_app/my_app.env</span><br><span class="line"><span class="attr">ExecStart</span>=/opt/my_app/bin/my_app --config /etc/my_app/app.conf</span><br><span class="line"><span class="attr">Restart</span>=<span class="literal">on</span>-failure</span><br><span class="line"><span class="attr">RestartSec</span>=<span class="number">3</span></span><br><span class="line"><span class="attr">StartLimitIntervalSec</span>=<span class="number">60</span></span><br><span class="line"><span class="attr">StartLimitBurst</span>=<span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p><code>EnvironmentFile</code> 前面的 <code>-</code> 表示文件不存在也不算失败。</p>
+<h2 id="十、总结"><a href="#十、总结" class="headerlink" title="十、总结"></a>十、总结</h2><p>服务化不是把程序丢到后台运行。一个合格的 Linux 服务需要可启动、可停止、可重启、可观察、可排错。</p>
+<p>systemd 是部署 Linux 应用的基础工具。掌握它以后，应用从“能跑”到“能长期稳定运行”会跨过一大步。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/21/Linux_Dev_Systemd_Service/" title="Linux 应用服务化：systemd、日志、开机启动与守护进程">https://blog.hansong.icu/2026/06/21/Linux_Dev_Systemd_Service/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Embedded_Linux_Boot_Process/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">
+                    嵌入式开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Embedded_Linux_Boot_Process/" class="trm-anima-link">
+                    嵌入式 Linux 启动流程：BootROM、U-Boot、Kernel、RootFS
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>11:38</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Linux_Dev_Epoll_Reactor/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux%E5%BC%80%E5%8F%91/">
+                    Linux开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Linux_Dev_Epoll_Reactor/" class="trm-anima-link">
+                    Linux 网络编程进阶：epoll 与 Reactor 模型
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>11:36</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、为什么要服务化"><a rel="nofollow" class="trm-toc-link" href="#一、为什么要服务化"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、为什么要服务化</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、最小 service 文件"><a rel="nofollow" class="trm-toc-link" href="#二、最小-service-文件"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、最小 service 文件</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、查看日志"><a rel="nofollow" class="trm-toc-link" href="#三、查看日志"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、查看日志</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、优雅停止"><a rel="nofollow" class="trm-toc-link" href="#四、优雅停止"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、优雅停止</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、使用非 root 用户"><a rel="nofollow" class="trm-toc-link" href="#五、使用非-root-用户"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、使用非 root 用户</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、环境变量"><a rel="nofollow" class="trm-toc-link" href="#六、环境变量"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、环境变量</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、重启策略"><a rel="nofollow" class="trm-toc-link" href="#七、重启策略"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、重启策略</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、常见排错"><a rel="nofollow" class="trm-toc-link" href="#八、常见排错"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、常见排错</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="8.1 service 修改后没生效"><a rel="nofollow" class="trm-toc-link" href="#8-1-service-修改后没生效"><span class="trm-toc-number">8.1.</span> <span class="trm-toc-text">8.1 service 修改后没生效</span></a></li><li class="trm-toc-item trm-toc-level-3" title="8.2 手动能运行，systemd 不能运行"><a rel="nofollow" class="trm-toc-link" href="#8-2-手动能运行，systemd-不能运行"><span class="trm-toc-number">8.2.</span> <span class="trm-toc-text">8.2 手动能运行，systemd 不能运行</span></a></li><li class="trm-toc-item trm-toc-level-3" title="8.3 日志不足"><a rel="nofollow" class="trm-toc-link" href="#8-3-日志不足"><span class="trm-toc-number">8.3.</span> <span class="trm-toc-text">8.3 日志不足</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="九、推荐 service 模板"><a rel="nofollow" class="trm-toc-link" href="#九、推荐-service-模板"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、推荐 service 模板</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十、总结"><a rel="nofollow" class="trm-toc-link" href="#十、总结"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>

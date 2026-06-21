@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、什么是 IPCIPC 是 Inter-Process Communication，也就是进程间通信。Linux 中每个进程默认有独立地址空间，一个进程不能直接访问另一个进程的内存。如果多个进程需要协作，就需要 IPC。 常见 IPC 方式：  管道 pipe。 命名管道 FIFO。 信号 signal。 共享内存 shared memory。 消息队列 message queue。 Unix">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 系统编程进阶：IPC 进程间通信入门">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/21/Linux_Dev_IPC/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、什么是 IPCIPC 是 Inter-Process Communication，也就是进程间通信。Linux 中每个进程默认有独立地址空间，一个进程不能直接访问另一个进程的内存。如果多个进程需要协作，就需要 IPC。 常见 IPC 方式：  管道 pipe。 命名管道 FIFO。 信号 signal。 共享内存 shared memory。 消息队列 message queue。 Unix">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-21T03:35:00.000Z">
+<meta property="article:modified_time" content="2026-06-21T05:01:29.320Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="IPC">
+<meta name="twitter:card" content="summary">
+
+
+<title >Linux 系统编程进阶：IPC 进程间通信入门</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-21 13:01:29"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Linux 系统编程进阶：IPC 进程间通信入门
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            11:35
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、什么是-IPC"><a href="#一、什么是-IPC" class="headerlink" title="一、什么是 IPC"></a>一、什么是 IPC</h2><p>IPC 是 Inter-Process Communication，也就是进程间通信。Linux 中每个进程默认有独立地址空间，一个进程不能直接访问另一个进程的内存。如果多个进程需要协作，就需要 IPC。</p>
+<p>常见 IPC 方式：</p>
+<ul>
+<li>管道 pipe。</li>
+<li>命名管道 FIFO。</li>
+<li>信号 signal。</li>
+<li>共享内存 shared memory。</li>
+<li>消息队列 message queue。</li>
+<li>Unix Domain Socket。</li>
+<li>TCP&#x2F;UDP socket。</li>
+</ul>
+<span id="more"></span>
+
+<p>入门阶段重点掌握 pipe、FIFO、共享内存和 Unix Domain Socket。</p>
+<h2 id="二、匿名管道-pipe"><a href="#二、匿名管道-pipe" class="headerlink" title="二、匿名管道 pipe"></a>二、匿名管道 pipe</h2><p>匿名管道常用于父子进程之间通信。</p>
+<p>特点：</p>
+<ul>
+<li>单向通信。</li>
+<li>只能用于有亲缘关系的进程。</li>
+<li>数据按字节流传输。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">int</span> fds[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">if</span> (pipe(fds) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        perror(<span class="string">&quot;pipe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">pid_t</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        close(fds[<span class="number">1</span>]);</span><br><span class="line">        <span class="type">char</span> buf[<span class="number">128</span>];</span><br><span class="line">        <span class="type">ssize_t</span> n = read(fds[<span class="number">0</span>], buf, <span class="keyword">sizeof</span>(buf) - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            buf[n] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;child recv: %s\n&quot;</span>, buf);</span><br><span class="line">        &#125;</span><br><span class="line">        close(fds[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    close(fds[<span class="number">0</span>]);</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *msg = <span class="string">&quot;hello pipe&quot;</span>;</span><br><span class="line">    write(fds[<span class="number">1</span>], msg, <span class="built_in">strlen</span>(msg));</span><br><span class="line">    close(fds[<span class="number">1</span>]);</span><br><span class="line">    wait(<span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、命名管道-FIFO"><a href="#三、命名管道-FIFO" class="headerlink" title="三、命名管道 FIFO"></a>三、命名管道 FIFO</h2><p>FIFO 可以让没有亲缘关系的进程通信。</p>
+<p>创建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkfifo</span> /tmp/app.fifo</span><br></pre></td></tr></table></figure>
+
+<p>终端 1：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /tmp/app.fifo</span><br></pre></td></tr></table></figure>
+
+<p>终端 2：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;hello fifo&quot;</span> &gt; /tmp/app.fifo</span><br></pre></td></tr></table></figure>
+
+<p>FIFO 常用于简单的命令传递和进程协作，但它不是复杂消息协议的最佳选择。</p>
+<h2 id="四、共享内存"><a href="#四、共享内存" class="headerlink" title="四、共享内存"></a>四、共享内存</h2><p>共享内存允许多个进程映射同一块内存，速度快，但需要同步机制。</p>
+<p>常见组合：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shared memory + semaphore / mutex</span><br></pre></td></tr></table></figure>
+
+<p>如果没有同步，多个进程同时读写会出现竞态问题。</p>
+<p>共享内存适合：</p>
+<ul>
+<li>大量数据交换。</li>
+<li>图像帧缓存。</li>
+<li>高频状态共享。</li>
+<li>低延迟通信。</li>
+</ul>
+<p>不适合：</p>
+<ul>
+<li>简单命令传递。</li>
+<li>需要强消息边界的场景。</li>
+<li>不愿处理同步复杂度的场景。</li>
+</ul>
+<h2 id="五、Unix-Domain-Socket"><a href="#五、Unix-Domain-Socket" class="headerlink" title="五、Unix Domain Socket"></a>五、Unix Domain Socket</h2><p>Unix Domain Socket 是本机进程通信常用方式。</p>
+<p>优点：</p>
+<ul>
+<li>支持双向通信。</li>
+<li>支持流式或数据报。</li>
+<li>不经过网络协议栈完整路径，效率高。</li>
+<li>可以用文件路径作为地址。</li>
+</ul>
+<p>常见路径：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/tmp/app.sock</span><br><span class="line">/run/app/app.sock</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>本机服务和客户端通信。</li>
+<li>后台 daemon 提供控制接口。</li>
+<li>多进程架构内部通信。</li>
+</ul>
+<h2 id="六、Socket-和-FIFO-怎么选"><a href="#六、Socket-和-FIFO-怎么选" class="headerlink" title="六、Socket 和 FIFO 怎么选"></a>六、Socket 和 FIFO 怎么选</h2><p>简单规则：</p>
+<ul>
+<li>父子进程单向通信：pipe。</li>
+<li>临时命令传递：FIFO。</li>
+<li>大块数据低延迟共享：shared memory。</li>
+<li>本机客户端&#x2F;服务端模型：Unix Domain Socket。</li>
+<li>跨机器通信：TCP&#x2F;UDP socket。</li>
+</ul>
+<h2 id="七、IPC-排错"><a href="#七、IPC-排错" class="headerlink" title="七、IPC 排错"></a>七、IPC 排错</h2><p>查看 Unix socket：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -xl</span><br></pre></td></tr></table></figure>
+
+<p>查看进程打开的文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -p &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>查看 FIFO：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /tmp/app.fifo</span><br></pre></td></tr></table></figure>
+
+<p>跟踪系统调用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -e <span class="built_in">read</span>,write,openat,connect,accept ./app</span><br></pre></td></tr></table></figure>
+
+<h2 id="八、设计建议"><a href="#八、设计建议" class="headerlink" title="八、设计建议"></a>八、设计建议</h2><p>IPC 设计时要先回答：</p>
+<ul>
+<li>谁是服务端，谁是客户端？</li>
+<li>通信是单向还是双向？</li>
+<li>是否需要消息边界？</li>
+<li>数据量大不大？</li>
+<li>是否需要跨机器？</li>
+<li>对延迟是否敏感？</li>
+<li>进程异常退出后怎么清理资源？</li>
+</ul>
+<p>不要一上来就选共享内存。共享内存性能好，但同步和生命周期管理更复杂。大多数本机控制接口用 Unix Domain Socket 会更稳。</p>
+<h2 id="九、总结"><a href="#九、总结" class="headerlink" title="九、总结"></a>九、总结</h2><p>IPC 的本质是让多个独立进程协作。入门阶段不用一次掌握所有机制，先把 pipe、FIFO、Unix Domain Socket 的使用场景分清楚，再根据性能需求学习共享内存。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/21/Linux_Dev_IPC/" title="Linux 系统编程进阶：IPC 进程间通信入门">https://blog.hansong.icu/2026/06/21/Linux_Dev_IPC/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Linux_Dev_Epoll_Reactor/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux%E5%BC%80%E5%8F%91/">
+                    Linux开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Linux_Dev_Epoll_Reactor/" class="trm-anima-link">
+                    Linux 网络编程进阶：epoll 与 Reactor 模型
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>11:36</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Embedded_Linux_Device_Tree_Driver/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">
+                    嵌入式开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Embedded_Linux_Device_Tree_Driver/" class="trm-anima-link">
+                    嵌入式 Linux 进阶：设备树、驱动和应用层的关系
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>11:32</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、什么是 IPC"><a rel="nofollow" class="trm-toc-link" href="#一、什么是-IPC"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、什么是 IPC</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、匿名管道 pipe"><a rel="nofollow" class="trm-toc-link" href="#二、匿名管道-pipe"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、匿名管道 pipe</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、命名管道 FIFO"><a rel="nofollow" class="trm-toc-link" href="#三、命名管道-FIFO"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、命名管道 FIFO</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、共享内存"><a rel="nofollow" class="trm-toc-link" href="#四、共享内存"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、共享内存</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、Unix Domain Socket"><a rel="nofollow" class="trm-toc-link" href="#五、Unix-Domain-Socket"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、Unix Domain Socket</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、Socket 和 FIFO 怎么选"><a rel="nofollow" class="trm-toc-link" href="#六、Socket-和-FIFO-怎么选"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、Socket 和 FIFO 怎么选</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、IPC 排错"><a rel="nofollow" class="trm-toc-link" href="#七、IPC-排错"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、IPC 排错</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、设计建议"><a rel="nofollow" class="trm-toc-link" href="#八、设计建议"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、设计建议</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、总结"><a rel="nofollow" class="trm-toc-link" href="#九、总结"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
