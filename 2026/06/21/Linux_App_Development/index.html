@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、Linux 应用开发是什么Linux 应用开发通常指在 Linux 系统上编写、编译、调试、运行和发布用户态程序。它和 Android、嵌入式、服务端开发都有交集，但核心基础基本一致：  熟悉 Linux 文件系统、权限、进程、线程、信号、网络等机制。 能使用 GCC、Make、CMake 等工具构建程序。 能使用 GDB、strace、lsof、top、journalctl 等工具定位问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 应用开发入门">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/21/Linux_App_Development/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、Linux 应用开发是什么Linux 应用开发通常指在 Linux 系统上编写、编译、调试、运行和发布用户态程序。它和 Android、嵌入式、服务端开发都有交集，但核心基础基本一致：  熟悉 Linux 文件系统、权限、进程、线程、信号、网络等机制。 能使用 GCC、Make、CMake 等工具构建程序。 能使用 GDB、strace、lsof、top、journalctl 等工具定位问题。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-21T03:08:54.000Z">
+<meta property="article:modified_time" content="2026-06-21T03:10:35.299Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Tools">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="C">
+<meta name="twitter:card" content="summary">
+
+
+<title >Linux 应用开发入门</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-21 11:10:35"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Linux 应用开发入门
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            11:08
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、Linux-应用开发是什么"><a href="#一、Linux-应用开发是什么" class="headerlink" title="一、Linux 应用开发是什么"></a>一、Linux 应用开发是什么</h2><p>Linux 应用开发通常指在 Linux 系统上编写、编译、调试、运行和发布用户态程序。它和 Android、嵌入式、服务端开发都有交集，但核心基础基本一致：</p>
+<ul>
+<li>熟悉 Linux 文件系统、权限、进程、线程、信号、网络等机制。</li>
+<li>能使用 GCC、Make、CMake 等工具构建程序。</li>
+<li>能使用 GDB、strace、lsof、top、journalctl 等工具定位问题。</li>
+<li>能理解动态库、静态库、环境变量、系统调用和进程通信。</li>
+<li>能把程序打包、部署，并在目标环境中稳定运行。</li>
+</ul>
+<span id="more"></span>
+
+<p>Linux 下既可以开发命令行工具，也可以开发后台服务、网络程序、桌面应用、驱动配套工具、嵌入式应用等。入门阶段建议从命令行程序和后台服务开始，因为它们能覆盖最多基础能力。</p>
+<h2 id="二、开发环境准备"><a href="#二、开发环境准备" class="headerlink" title="二、开发环境准备"></a>二、开发环境准备</h2><h3 id="2-1-选择发行版"><a href="#2-1-选择发行版" class="headerlink" title="2.1 选择发行版"></a>2.1 选择发行版</h3><p>常见选择：</p>
+<ul>
+<li>Ubuntu &#x2F; Debian：资料多，适合入门和服务器开发。</li>
+<li>Fedora：软件较新，适合跟进新工具链。</li>
+<li>CentOS Stream &#x2F; Rocky Linux &#x2F; AlmaLinux：偏企业服务器环境。</li>
+<li>Arch Linux：滚动更新，适合熟悉 Linux 后使用。</li>
+</ul>
+<p>如果是新手，建议使用 Ubuntu LTS。</p>
+<h3 id="2-2-安装基础工具"><a href="#2-2-安装基础工具" class="headerlink" title="2.2 安装基础工具"></a>2.2 安装基础工具</h3><p>Ubuntu &#x2F; Debian：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install -y build-essential gcc g++ make cmake gdb git pkg-config</span><br></pre></td></tr></table></figure>
+
+<p>Fedora：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> dnf groupinstall -y <span class="string">&quot;Development Tools&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> dnf install -y gcc gcc-c++ make cmake gdb git pkgconf-pkg-config</span><br></pre></td></tr></table></figure>
+
+<p>检查版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gcc --version</span><br><span class="line">g++ --version</span><br><span class="line">make --version</span><br><span class="line">cmake --version</span><br><span class="line">gdb --version</span><br><span class="line">git --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-推荐编辑器"><a href="#2-3-推荐编辑器" class="headerlink" title="2.3 推荐编辑器"></a>2.3 推荐编辑器</h3><p>常见选择：</p>
+<ul>
+<li>VS Code：配合 Remote SSH、C&#x2F;C++ 插件、CMake Tools，入门友好。</li>
+<li>Vim &#x2F; Neovim：适合终端开发。</li>
+<li>CLion：C&#x2F;C++ 项目体验好，但需要授权。</li>
+<li>Qt Creator：适合 Qt 桌面应用。</li>
+</ul>
+<p>入门阶段可以使用 VS Code，等熟悉终端工具后再逐步增加 Vim、tmux 等工具。</p>
+<h2 id="三、第一个-C-程序"><a href="#三、第一个-C-程序" class="headerlink" title="三、第一个 C 程序"></a>三、第一个 C 程序</h2><p>创建文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> linux-demo</span><br><span class="line"><span class="built_in">cd</span> linux-demo</span><br><span class="line"><span class="built_in">touch</span> hello.c</span><br></pre></td></tr></table></figure>
+
+<p>写入代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Hello Linux app development\n&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;argc = %d\n&quot;</span>, argc);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; argc; i++) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;argv[%d] = %s\n&quot;</span>, i, argv[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc hello.c -o hello</span><br></pre></td></tr></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./hello a b c</span><br></pre></td></tr></table></figure>
+
+<p>输出类似：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Hello Linux app development</span><br><span class="line">argc = 4</span><br><span class="line">argv[0] = ./hello</span><br><span class="line">argv[1] = a</span><br><span class="line">argv[2] = b</span><br><span class="line">argv[3] = c</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意：</p>
+<ul>
+<li><code>./hello</code> 表示运行当前目录下的可执行文件。</li>
+<li>Linux 默认不会从当前目录搜索命令，所以不能直接输入 <code>hello</code>。</li>
+<li><code>argc</code> 是参数个数。</li>
+<li><code>argv</code> 是参数数组。</li>
+</ul>
+<h2 id="四、编译基础"><a href="#四、编译基础" class="headerlink" title="四、编译基础"></a>四、编译基础</h2><h3 id="4-1-GCC-常用参数"><a href="#4-1-GCC-常用参数" class="headerlink" title="4.1 GCC 常用参数"></a>4.1 GCC 常用参数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o app</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li><code>main.c</code>：源文件。</li>
+<li><code>-o app</code>：输出可执行文件名。</li>
+</ul>
+<p>常用参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o app -Wall -Wextra -g</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>-Wall</code>：开启常见警告。</li>
+<li><code>-Wextra</code>：开启更多警告。</li>
+<li><code>-g</code>：生成调试信息，方便 GDB 调试。</li>
+</ul>
+<p>优化编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o app -O2</span><br></pre></td></tr></table></figure>
+
+<p>开发阶段建议使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o app -Wall -Wextra -g</span><br></pre></td></tr></table></figure>
+
+<p>发布阶段再考虑：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o app -O2</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-编译多个文件"><a href="#4-2-编译多个文件" class="headerlink" title="4.2 编译多个文件"></a>4.2 编译多个文件</h3><p>目录：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">linux-demo/</span><br><span class="line">├── main.c</span><br><span class="line">├── math_utils.c</span><br><span class="line">└── math_utils.h</span><br></pre></td></tr></table></figure>
+
+<p><code>math_utils.h</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> MATH_UTILS_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MATH_UTILS_H</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>math_utils.c</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;math_utils.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>main.c</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;math_utils.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;1 + 2 = %d\n&quot;</span>, add(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c math_utils.c -o app -Wall -Wextra -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、使用-Makefile"><a href="#五、使用-Makefile" class="headerlink" title="五、使用 Makefile"></a>五、使用 Makefile</h2><p>文件少的时候可以直接用 <code>gcc</code>，文件多了以后建议使用 Makefile。</p>
+<p>创建 <code>Makefile</code>：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">CC := gcc</span><br><span class="line">CFLAGS := -Wall -Wextra -g</span><br><span class="line">TARGET := app</span><br><span class="line">SRCS := main.c math_utils.c</span><br><span class="line">OBJS := $(SRCS:.c=.o)</span><br><span class="line"></span><br><span class="line"><span class="section">all: <span class="variable">$(TARGET)</span></span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(TARGET)</span>: <span class="variable">$(OBJS)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(OBJS)</span> -o <span class="variable">$(TARGET)</span></span><br><span class="line"></span><br><span class="line"><span class="section">%.o: %.c</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(CFLAGS)</span> -c <span class="variable">$&lt;</span> -o <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -f <span class="variable">$(TARGET)</span> <span class="variable">$(OBJS)</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：Makefile 的命令行前面必须是 Tab，不是空格。</p>
+<p>编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>清理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make clean</span><br></pre></td></tr></table></figure>
+
+<p>重新编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make clean</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、使用-CMake"><a href="#六、使用-CMake" class="headerlink" title="六、使用 CMake"></a>六、使用 CMake</h2><p>CMake 更适合跨平台和中大型项目。</p>
+<p>目录：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">linux-demo/</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── main.c</span><br><span class="line">├── math_utils.c</span><br><span class="line">└── math_utils.h</span><br></pre></td></tr></table></figure>
+
+<p><code>CMakeLists.txt</code>：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.16</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(linux_demo C)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span>(CMAKE_C_STANDARD <span class="number">11</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_C_STANDARD_REQUIRED <span class="keyword">ON</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(app</span><br><span class="line">    main.c</span><br><span class="line">    math_utils.c</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_compile_options</span>(app PRIVATE</span><br><span class="line">    -Wall</span><br><span class="line">    -Wextra</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>构建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmake -S . -B build</span><br><span class="line">cmake --build build</span><br></pre></td></tr></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./build/app</span><br></pre></td></tr></table></figure>
+
+<p>清理构建目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf build</span><br></pre></td></tr></table></figure>
+
+<p>实际项目中推荐使用 out-of-source build，也就是把构建产物放到 <code>build</code> 目录，避免污染源码目录。</p>
+<h2 id="七、调试程序"><a href="#七、调试程序" class="headerlink" title="七、调试程序"></a>七、调试程序</h2><h3 id="7-1-使用-GDB"><a href="#7-1-使用-GDB" class="headerlink" title="7.1 使用 GDB"></a>7.1 使用 GDB</h3><p>编译时带上 <code>-g</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c math_utils.c -o app -Wall -Wextra -g</span><br></pre></td></tr></table></figure>
+
+<p>启动调试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb ./app</span><br></pre></td></tr></table></figure>
+
+<p>常用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">break main</span><br><span class="line">run</span><br><span class="line">next</span><br><span class="line">step</span><br><span class="line">print variable_name</span><br><span class="line">backtrace</span><br><span class="line">continue</span><br><span class="line">quit</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>break main</code>：在 main 函数打断点。</li>
+<li><code>run</code>：开始运行。</li>
+<li><code>next</code>：执行下一行，不进入函数。</li>
+<li><code>step</code>：执行下一行，进入函数。</li>
+<li><code>print</code>：打印变量。</li>
+<li><code>backtrace</code>：查看调用栈。</li>
+<li><code>continue</code>：继续运行。</li>
+<li><code>quit</code>：退出。</li>
+</ul>
+<h3 id="7-2-调试崩溃"><a href="#7-2-调试崩溃" class="headerlink" title="7.2 调试崩溃"></a>7.2 调试崩溃</h3><p>程序段错误：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Segmentation fault (core dumped)</span><br></pre></td></tr></table></figure>
+
+<p>可以开启 core dump：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -c unlimited</span><br></pre></td></tr></table></figure>
+
+<p>重新运行程序，生成 core 文件后调试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb ./app core</span><br></pre></td></tr></table></figure>
+
+<p>在 GDB 中查看调用栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">backtrace</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-使用-strace"><a href="#7-3-使用-strace" class="headerlink" title="7.3 使用 strace"></a>7.3 使用 strace</h3><p><code>strace</code> 可以查看程序调用了哪些系统调用。</p>
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y strace</span><br></pre></td></tr></table></figure>
+
+<p>使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace ./app</span><br></pre></td></tr></table></figure>
+
+<p>查看文件访问：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -e openat ./app</span><br></pre></td></tr></table></figure>
+
+<p>保存日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -o trace.log ./app</span><br></pre></td></tr></table></figure>
+
+<p>如果程序提示文件不存在、权限不足、网络连接失败，<code>strace</code> 很有用。</p>
+<h2 id="八、Linux-文件和权限"><a href="#八、Linux-文件和权限" class="headerlink" title="八、Linux 文件和权限"></a>八、Linux 文件和权限</h2><h3 id="8-1-常见目录"><a href="#8-1-常见目录" class="headerlink" title="8.1 常见目录"></a>8.1 常见目录</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/bin        基础命令</span><br><span class="line">/usr/bin    普通用户命令</span><br><span class="line">/usr/lib    库文件</span><br><span class="line">/etc        配置文件</span><br><span class="line">/var/log    日志文件</span><br><span class="line">/tmp        临时文件</span><br><span class="line">/home       用户目录</span><br><span class="line">/proc       进程和内核信息</span><br></pre></td></tr></table></figure>
+
+<p>应用开发中常见路径：</p>
+<ul>
+<li>配置文件：<code>/etc/your_app/</code></li>
+<li>日志文件：<code>/var/log/your_app/</code></li>
+<li>数据文件：<code>/var/lib/your_app/</code></li>
+<li>可执行文件：<code>/usr/bin/your_app</code> 或 <code>/usr/local/bin/your_app</code></li>
+</ul>
+<h3 id="8-2-权限"><a href="#8-2-权限" class="headerlink" title="8.2 权限"></a>8.2 权限</h3><p>查看权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwxr-xr-x 1 user user 12345 Jun 21 10:00 app</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li><code>r</code>：读。</li>
+<li><code>w</code>：写。</li>
+<li><code>x</code>：执行。</li>
+<li>第一组：文件所有者权限。</li>
+<li>第二组：所属组权限。</li>
+<li>第三组：其他用户权限。</li>
+</ul>
+<p>给程序增加执行权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x app</span><br></pre></td></tr></table></figure>
+
+<h2 id="九、进程、线程和信号"><a href="#九、进程、线程和信号" class="headerlink" title="九、进程、线程和信号"></a>九、进程、线程和信号</h2><h3 id="9-1-查看进程"><a href="#9-1-查看进程" class="headerlink" title="9.1 查看进程"></a>9.1 查看进程</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep app</span><br><span class="line">top</span><br><span class="line">htop</span><br></pre></td></tr></table></figure>
+
+<p>查看某个进程打开的文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -p &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>查看端口占用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -lntp</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-信号"><a href="#9-2-信号" class="headerlink" title="9.2 信号"></a>9.2 信号</h3><p>Linux 通过信号通知进程发生了某些事件。</p>
+<p>常见信号：</p>
+<ul>
+<li><code>SIGINT</code>：终端 Ctrl+C。</li>
+<li><code>SIGTERM</code>：请求进程正常退出。</li>
+<li><code>SIGKILL</code>：强制杀死进程，不能被捕获。</li>
+<li><code>SIGHUP</code>：终端断开或请求重新加载配置。</li>
+</ul>
+<p>结束进程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>强制结束：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>开发后台服务时，应该优先处理 <code>SIGTERM</code>，收到后释放资源并正常退出。</p>
+<h2 id="十、日志和配置"><a href="#十、日志和配置" class="headerlink" title="十、日志和配置"></a>十、日志和配置</h2><h3 id="10-1-日志"><a href="#10-1-日志" class="headerlink" title="10.1 日志"></a>10.1 日志</h3><p>入门阶段可以先打印到标准输出：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stdout</span>, <span class="string">&quot;info: app started\n&quot;</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;error: something failed\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后台服务建议输出结构化日志，至少包含：</p>
+<ul>
+<li>时间。</li>
+<li>日志级别。</li>
+<li>模块名。</li>
+<li>错误码。</li>
+<li>关键参数。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2026-06-21 10:00:00 INFO server started port=8080</span><br><span class="line">2026-06-21 10:01:12 ERROR connect database failed code=111</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-2-配置"><a href="#10-2-配置" class="headerlink" title="10.2 配置"></a>10.2 配置</h3><p>常见配置方式：</p>
+<ul>
+<li>命令行参数。</li>
+<li>环境变量。</li>
+<li>配置文件。</li>
+</ul>
+<p>命令行参数适合一次性指定：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./app --port 8080 --config ./app.conf</span><br></pre></td></tr></table></figure>
+
+<p>环境变量适合部署环境差异：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">APP_ENV=prod ./app</span><br></pre></td></tr></table></figure>
+
+<p>配置文件适合长期配置：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">port=8080</span><br><span class="line">log_level=info</span><br><span class="line">data_dir=/var/lib/my_app</span><br></pre></td></tr></table></figure>
+
+<h2 id="十一、动态库和静态库"><a href="#十一、动态库和静态库" class="headerlink" title="十一、动态库和静态库"></a>十一、动态库和静态库</h2><h3 id="11-1-静态库"><a href="#11-1-静态库" class="headerlink" title="11.1 静态库"></a>11.1 静态库</h3><p>生成目标文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c math_utils.c -o math_utils.o</span><br></pre></td></tr></table></figure>
+
+<p>打包静态库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ar rcs libmathutils.a math_utils.o</span><br></pre></td></tr></table></figure>
+
+<p>链接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -L. -lmathutils -o app</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-动态库"><a href="#11-2-动态库" class="headerlink" title="11.2 动态库"></a>11.2 动态库</h3><p>编译动态库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -shared math_utils.c -o libmathutils.so</span><br></pre></td></tr></table></figure>
+
+<p>链接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -L. -lmathutils -o app</span><br></pre></td></tr></table></figure>
+
+<p>运行前指定库路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBRARY_PATH=. ./app</span><br></pre></td></tr></table></figure>
+
+<p>查看程序依赖了哪些动态库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd ./app</span><br></pre></td></tr></table></figure>
+
+<p>如果出现 <code>not found</code>，说明动态库搜索路径不正确。</p>
+<h2 id="十二、网络应用入门"><a href="#十二、网络应用入门" class="headerlink" title="十二、网络应用入门"></a>十二、网络应用入门</h2><p>Linux 网络应用常见方向：</p>
+<ul>
+<li>TCP 服务端。</li>
+<li>HTTP 服务。</li>
+<li>WebSocket 服务。</li>
+<li>本地 Unix Domain Socket。</li>
+<li>客户端工具。</li>
+</ul>
+<p>入门建议先理解：</p>
+<ul>
+<li>IP 和端口。</li>
+<li>TCP 和 UDP。</li>
+<li>socket API。</li>
+<li>阻塞和非阻塞 IO。</li>
+<li>select &#x2F; poll &#x2F; epoll。</li>
+</ul>
+<p>查看监听端口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -lntp</span><br></pre></td></tr></table></figure>
+
+<p>测试 TCP 连接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 127.0.0.1 8080</span><br></pre></td></tr></table></figure>
+
+<p>请求 HTTP 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:8080</span><br></pre></td></tr></table></figure>
+
+<p>网络程序排错常用工具：</p>
+<ul>
+<li><code>curl</code>：测试 HTTP。</li>
+<li><code>nc</code>：测试 TCP &#x2F; UDP。</li>
+<li><code>ss</code>：查看端口。</li>
+<li><code>tcpdump</code>：抓包。</li>
+<li><code>strace</code>：看系统调用。</li>
+</ul>
+<h2 id="十三、后台服务和-systemd"><a href="#十三、后台服务和-systemd" class="headerlink" title="十三、后台服务和 systemd"></a>十三、后台服务和 systemd</h2><p>如果程序需要开机启动、异常重启、统一日志管理，可以使用 systemd。</p>
+<p>示例服务文件：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=My Linux App</span><br><span class="line"><span class="attr">After</span>=network.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="attr">ExecStart</span>=/usr/local/bin/my_app --config /etc/my_app/app.conf</span><br><span class="line"><span class="attr">Restart</span>=<span class="literal">on</span>-failure</span><br><span class="line"><span class="attr">User</span>=myapp</span><br><span class="line"><span class="attr">Group</span>=myapp</span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>保存为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/systemd/system/my_app.service</span><br></pre></td></tr></table></figure>
+
+<p>加载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+
+<p>启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl start my_app</span><br></pre></td></tr></table></figure>
+
+<p>设置开机启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> my_app</span><br></pre></td></tr></table></figure>
+
+<p>查看状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status my_app</span><br></pre></td></tr></table></figure>
+
+<p>查看日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u my_app -f</span><br></pre></td></tr></table></figure>
+
+<h2 id="十四、打包和发布"><a href="#十四、打包和发布" class="headerlink" title="十四、打包和发布"></a>十四、打包和发布</h2><h3 id="14-1-简单发布"><a href="#14-1-简单发布" class="headerlink" title="14.1 简单发布"></a>14.1 简单发布</h3><p>小工具可以直接发布可执行文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp ./app user@server:/usr/local/bin/app</span><br></pre></td></tr></table></figure>
+
+<p>远端增加执行权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /usr/local/bin/app</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-2-发布目录结构"><a href="#14-2-发布目录结构" class="headerlink" title="14.2 发布目录结构"></a>14.2 发布目录结构</h3><p>更完整的发布结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">my_app/</span><br><span class="line">├── bin/</span><br><span class="line">│   └── my_app</span><br><span class="line">├── conf/</span><br><span class="line">│   └── app.conf</span><br><span class="line">├── lib/</span><br><span class="line">│   └── libxxx.so</span><br><span class="line">└── README.md</span><br></pre></td></tr></table></figure>
+
+<p>压缩：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -czf my_app.tar.gz my_app/</span><br></pre></td></tr></table></figure>
+
+<p>解压：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzf my_app.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-3-Debian-包"><a href="#14-3-Debian-包" class="headerlink" title="14.3 Debian 包"></a>14.3 Debian 包</h3><p>如果面向 Ubuntu &#x2F; Debian 系统，后续可以学习 <code>.deb</code> 打包。入门阶段不必一开始就做包管理，先保证程序能稳定构建、运行、停止、重启、查看日志。</p>
+<h2 id="十五、常见问题"><a href="#十五、常见问题" class="headerlink" title="十五、常见问题"></a>十五、常见问题</h2><h3 id="15-1-Permission-denied"><a href="#15-1-Permission-denied" class="headerlink" title="15.1 Permission denied"></a>15.1 Permission denied</h3><p>可能原因：</p>
+<ul>
+<li>文件没有执行权限。</li>
+<li>当前用户没有访问目录权限。</li>
+<li>程序访问了需要 root 权限的资源。</li>
+</ul>
+<p>检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l app</span><br></pre></td></tr></table></figure>
+
+<p>处理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x app</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-2-command-not-found"><a href="#15-2-command-not-found" class="headerlink" title="15.2 command not found"></a>15.2 command not found</h3><p>可能原因：</p>
+<ul>
+<li>程序不在 PATH 中。</li>
+<li>当前目录没有使用 <code>./</code>。</li>
+</ul>
+<p>运行当前目录程序：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./app</span><br></pre></td></tr></table></figure>
+
+<p>查看 PATH：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="15-3-cannot-open-shared-object-file"><a href="#15-3-cannot-open-shared-object-file" class="headerlink" title="15.3 cannot open shared object file"></a>15.3 cannot open shared object file</h3><p>动态库找不到。</p>
+<p>检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd ./app</span><br></pre></td></tr></table></figure>
+
+<p>临时解决：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBRARY_PATH=/path/to/lib ./app</span><br></pre></td></tr></table></figure>
+
+<p>长期解决：</p>
+<ul>
+<li>把库安装到系统库目录。</li>
+<li>配置 <code>/etc/ld.so.conf.d/</code>。</li>
+<li>使用 rpath。</li>
+<li>发布时带上运行脚本设置库路径。</li>
+</ul>
+<h3 id="15-4-Segmentation-fault"><a href="#15-4-Segmentation-fault" class="headerlink" title="15.4 Segmentation fault"></a>15.4 Segmentation fault</h3><p>常见原因：</p>
+<ul>
+<li>空指针。</li>
+<li>数组越界。</li>
+<li>使用已经释放的内存。</li>
+<li>栈溢出。</li>
+<li>错误的类型转换。</li>
+</ul>
+<p>排查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o app -Wall -Wextra -g</span><br><span class="line">gdb ./app</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-5-端口被占用"><a href="#15-5-端口被占用" class="headerlink" title="15.5 端口被占用"></a>15.5 端口被占用</h3><p>检查端口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -lntp | grep 8080</span><br></pre></td></tr></table></figure>
+
+<p>找到进程后决定是否关闭：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="十六、学习路线"><a href="#十六、学习路线" class="headerlink" title="十六、学习路线"></a>十六、学习路线</h2><p>建议按这个顺序学习：</p>
+<ol>
+<li>Linux 基础命令：<code>cd</code>、<code>ls</code>、<code>cp</code>、<code>mv</code>、<code>rm</code>、<code>find</code>、<code>grep</code>、<code>sed</code>、<code>awk</code>。</li>
+<li>Shell 基础：变量、管道、重定向、脚本、退出码。</li>
+<li>C 语言基础：指针、结构体、内存管理、文件 IO。</li>
+<li>编译工具：GCC、Makefile、CMake。</li>
+<li>调试工具：GDB、strace、lsof、valgrind。</li>
+<li>系统编程：进程、线程、信号、IPC、socket。</li>
+<li>服务化：日志、配置、systemd、权限隔离。</li>
+<li>发布部署：压缩包、动态库依赖、deb&#x2F;rpm、容器。</li>
+<li>性能优化：top、perf、火焰图、内存分析。</li>
+<li>工程化：单元测试、CI、代码规范、版本管理。</li>
+</ol>
+<h2 id="十七、入门项目练习"><a href="#十七、入门项目练习" class="headerlink" title="十七、入门项目练习"></a>十七、入门项目练习</h2><p>可以从这些小项目开始：</p>
+<ul>
+<li>写一个命令行计算器。</li>
+<li>写一个日志切分工具。</li>
+<li>写一个文件搜索工具。</li>
+<li>写一个 TCP echo server。</li>
+<li>写一个 HTTP 静态文件服务。</li>
+<li>写一个定时执行任务的小服务。</li>
+<li>写一个读取配置文件并输出日志的后台进程。</li>
+</ul>
+<p>每个项目都尽量做到：</p>
+<ul>
+<li>支持命令行参数。</li>
+<li>有清晰的错误提示。</li>
+<li>有 README。</li>
+<li>可以使用 Makefile 或 CMake 构建。</li>
+<li>可以用 GDB 调试。</li>
+<li>可以打包发布。</li>
+</ul>
+<h2 id="十八、总结"><a href="#十八、总结" class="headerlink" title="十八、总结"></a>十八、总结</h2><p>Linux 应用开发入门不要只看语法，要尽快把程序放到真实 Linux 环境中编译、运行、调试和部署。最小闭环是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">写代码 -&gt; 编译 -&gt; 运行 -&gt; 出错 -&gt; 调试 -&gt; 修复 -&gt; 打包 -&gt; 部署 -&gt; 查看日志</span><br></pre></td></tr></table></figure>
+
+<p>把这个闭环跑熟之后，再深入学习网络编程、多线程、性能优化和系统服务化，Linux 应用开发的基础就比较扎实了。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/21/Linux_App_Development/" title="Linux 应用开发入门">https://blog.hansong.icu/2026/06/21/Linux_App_Development/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Codex_CLI/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" #.">
+                    未分类
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Codex_CLI/" class="trm-anima-link">
+                    Codex CLI 详细使用流程
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>10:56</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、Linux 应用开发是什么"><a rel="nofollow" class="trm-toc-link" href="#一、Linux-应用开发是什么"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、Linux 应用开发是什么</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、开发环境准备"><a rel="nofollow" class="trm-toc-link" href="#二、开发环境准备"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、开发环境准备</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="2.1 选择发行版"><a rel="nofollow" class="trm-toc-link" href="#2-1-选择发行版"><span class="trm-toc-number">2.1.</span> <span class="trm-toc-text">2.1 选择发行版</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2.2 安装基础工具"><a rel="nofollow" class="trm-toc-link" href="#2-2-安装基础工具"><span class="trm-toc-number">2.2.</span> <span class="trm-toc-text">2.2 安装基础工具</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2.3 推荐编辑器"><a rel="nofollow" class="trm-toc-link" href="#2-3-推荐编辑器"><span class="trm-toc-number">2.3.</span> <span class="trm-toc-text">2.3 推荐编辑器</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="三、第一个 C 程序"><a rel="nofollow" class="trm-toc-link" href="#三、第一个-C-程序"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、第一个 C 程序</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、编译基础"><a rel="nofollow" class="trm-toc-link" href="#四、编译基础"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、编译基础</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="4.1 GCC 常用参数"><a rel="nofollow" class="trm-toc-link" href="#4-1-GCC-常用参数"><span class="trm-toc-number">4.1.</span> <span class="trm-toc-text">4.1 GCC 常用参数</span></a></li><li class="trm-toc-item trm-toc-level-3" title="4.2 编译多个文件"><a rel="nofollow" class="trm-toc-link" href="#4-2-编译多个文件"><span class="trm-toc-number">4.2.</span> <span class="trm-toc-text">4.2 编译多个文件</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="五、使用 Makefile"><a rel="nofollow" class="trm-toc-link" href="#五、使用-Makefile"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、使用 Makefile</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、使用 CMake"><a rel="nofollow" class="trm-toc-link" href="#六、使用-CMake"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、使用 CMake</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、调试程序"><a rel="nofollow" class="trm-toc-link" href="#七、调试程序"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、调试程序</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="7.1 使用 GDB"><a rel="nofollow" class="trm-toc-link" href="#7-1-使用-GDB"><span class="trm-toc-number">7.1.</span> <span class="trm-toc-text">7.1 使用 GDB</span></a></li><li class="trm-toc-item trm-toc-level-3" title="7.2 调试崩溃"><a rel="nofollow" class="trm-toc-link" href="#7-2-调试崩溃"><span class="trm-toc-number">7.2.</span> <span class="trm-toc-text">7.2 调试崩溃</span></a></li><li class="trm-toc-item trm-toc-level-3" title="7.3 使用 strace"><a rel="nofollow" class="trm-toc-link" href="#7-3-使用-strace"><span class="trm-toc-number">7.3.</span> <span class="trm-toc-text">7.3 使用 strace</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="八、Linux 文件和权限"><a rel="nofollow" class="trm-toc-link" href="#八、Linux-文件和权限"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、Linux 文件和权限</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="8.1 常见目录"><a rel="nofollow" class="trm-toc-link" href="#8-1-常见目录"><span class="trm-toc-number">8.1.</span> <span class="trm-toc-text">8.1 常见目录</span></a></li><li class="trm-toc-item trm-toc-level-3" title="8.2 权限"><a rel="nofollow" class="trm-toc-link" href="#8-2-权限"><span class="trm-toc-number">8.2.</span> <span class="trm-toc-text">8.2 权限</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="九、进程、线程和信号"><a rel="nofollow" class="trm-toc-link" href="#九、进程、线程和信号"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、进程、线程和信号</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="9.1 查看进程"><a rel="nofollow" class="trm-toc-link" href="#9-1-查看进程"><span class="trm-toc-number">9.1.</span> <span class="trm-toc-text">9.1 查看进程</span></a></li><li class="trm-toc-item trm-toc-level-3" title="9.2 信号"><a rel="nofollow" class="trm-toc-link" href="#9-2-信号"><span class="trm-toc-number">9.2.</span> <span class="trm-toc-text">9.2 信号</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十、日志和配置"><a rel="nofollow" class="trm-toc-link" href="#十、日志和配置"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、日志和配置</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="10.1 日志"><a rel="nofollow" class="trm-toc-link" href="#10-1-日志"><span class="trm-toc-number">10.1.</span> <span class="trm-toc-text">10.1 日志</span></a></li><li class="trm-toc-item trm-toc-level-3" title="10.2 配置"><a rel="nofollow" class="trm-toc-link" href="#10-2-配置"><span class="trm-toc-number">10.2.</span> <span class="trm-toc-text">10.2 配置</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十一、动态库和静态库"><a rel="nofollow" class="trm-toc-link" href="#十一、动态库和静态库"><span class="trm-toc-number">11.</span> <span class="trm-toc-text">十一、动态库和静态库</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="11.1 静态库"><a rel="nofollow" class="trm-toc-link" href="#11-1-静态库"><span class="trm-toc-number">11.1.</span> <span class="trm-toc-text">11.1 静态库</span></a></li><li class="trm-toc-item trm-toc-level-3" title="11.2 动态库"><a rel="nofollow" class="trm-toc-link" href="#11-2-动态库"><span class="trm-toc-number">11.2.</span> <span class="trm-toc-text">11.2 动态库</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十二、网络应用入门"><a rel="nofollow" class="trm-toc-link" href="#十二、网络应用入门"><span class="trm-toc-number">12.</span> <span class="trm-toc-text">十二、网络应用入门</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十三、后台服务和 systemd"><a rel="nofollow" class="trm-toc-link" href="#十三、后台服务和-systemd"><span class="trm-toc-number">13.</span> <span class="trm-toc-text">十三、后台服务和 systemd</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十四、打包和发布"><a rel="nofollow" class="trm-toc-link" href="#十四、打包和发布"><span class="trm-toc-number">14.</span> <span class="trm-toc-text">十四、打包和发布</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="14.1 简单发布"><a rel="nofollow" class="trm-toc-link" href="#14-1-简单发布"><span class="trm-toc-number">14.1.</span> <span class="trm-toc-text">14.1 简单发布</span></a></li><li class="trm-toc-item trm-toc-level-3" title="14.2 发布目录结构"><a rel="nofollow" class="trm-toc-link" href="#14-2-发布目录结构"><span class="trm-toc-number">14.2.</span> <span class="trm-toc-text">14.2 发布目录结构</span></a></li><li class="trm-toc-item trm-toc-level-3" title="14.3 Debian 包"><a rel="nofollow" class="trm-toc-link" href="#14-3-Debian-包"><span class="trm-toc-number">14.3.</span> <span class="trm-toc-text">14.3 Debian 包</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十五、常见问题"><a rel="nofollow" class="trm-toc-link" href="#十五、常见问题"><span class="trm-toc-number">15.</span> <span class="trm-toc-text">十五、常见问题</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="15.1 Permission denied"><a rel="nofollow" class="trm-toc-link" href="#15-1-Permission-denied"><span class="trm-toc-number">15.1.</span> <span class="trm-toc-text">15.1 Permission denied</span></a></li><li class="trm-toc-item trm-toc-level-3" title="15.2 command not found"><a rel="nofollow" class="trm-toc-link" href="#15-2-command-not-found"><span class="trm-toc-number">15.2.</span> <span class="trm-toc-text">15.2 command not found</span></a></li><li class="trm-toc-item trm-toc-level-3" title="15.3 cannot open shared object file"><a rel="nofollow" class="trm-toc-link" href="#15-3-cannot-open-shared-object-file"><span class="trm-toc-number">15.3.</span> <span class="trm-toc-text">15.3 cannot open shared object file</span></a></li><li class="trm-toc-item trm-toc-level-3" title="15.4 Segmentation fault"><a rel="nofollow" class="trm-toc-link" href="#15-4-Segmentation-fault"><span class="trm-toc-number">15.4.</span> <span class="trm-toc-text">15.4 Segmentation fault</span></a></li><li class="trm-toc-item trm-toc-level-3" title="15.5 端口被占用"><a rel="nofollow" class="trm-toc-link" href="#15-5-端口被占用"><span class="trm-toc-number">15.5.</span> <span class="trm-toc-text">15.5 端口被占用</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十六、学习路线"><a rel="nofollow" class="trm-toc-link" href="#十六、学习路线"><span class="trm-toc-number">16.</span> <span class="trm-toc-text">十六、学习路线</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十七、入门项目练习"><a rel="nofollow" class="trm-toc-link" href="#十七、入门项目练习"><span class="trm-toc-number">17.</span> <span class="trm-toc-text">十七、入门项目练习</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十八、总结"><a rel="nofollow" class="trm-toc-link" href="#十八、总结"><span class="trm-toc-number">18.</span> <span class="trm-toc-text">十八、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
