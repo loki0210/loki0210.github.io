@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、Codex CLI 是什么Codex CLI 是 OpenAI Codex 的命令行工具，适合在本地终端里处理真实代码仓库中的开发任务。它可以读取当前项目、执行命令、修改文件、运行测试、解释代码、做代码审查，并且会根据权限配置决定什么时候直接执行、什么时候向你确认。 简单理解：  在 IDE 中写代码时，可以把 Codex CLI 当成一个“终端里的结对编程助手”。 在已有项目中排查问题时，可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codex CLI 详细使用流程">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/21/Codex_CLI/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、Codex CLI 是什么Codex CLI 是 OpenAI Codex 的命令行工具，适合在本地终端里处理真实代码仓库中的开发任务。它可以读取当前项目、执行命令、修改文件、运行测试、解释代码、做代码审查，并且会根据权限配置决定什么时候直接执行、什么时候向你确认。 简单理解：  在 IDE 中写代码时，可以把 Codex CLI 当成一个“终端里的结对编程助手”。 在已有项目中排查问题时，可">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-21T02:56:41.000Z">
+<meta property="article:modified_time" content="2026-06-21T02:58:24.207Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Tools">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Codex">
+<meta name="twitter:card" content="summary">
+
+
+<title >Codex CLI 详细使用流程</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-21 10:58:24"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Codex CLI 详细使用流程
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            10:56
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、Codex-CLI-是什么"><a href="#一、Codex-CLI-是什么" class="headerlink" title="一、Codex CLI 是什么"></a>一、Codex CLI 是什么</h2><p>Codex CLI 是 OpenAI Codex 的命令行工具，适合在本地终端里处理真实代码仓库中的开发任务。它可以读取当前项目、执行命令、修改文件、运行测试、解释代码、做代码审查，并且会根据权限配置决定什么时候直接执行、什么时候向你确认。</p>
+<p>简单理解：</p>
+<ul>
+<li>在 IDE 中写代码时，可以把 Codex CLI 当成一个“终端里的结对编程助手”。</li>
+<li>在已有项目中排查问题时，可以让它先阅读代码，再给出修改方案并直接落地。</li>
+<li>在重复性任务中，可以用非交互命令让它批量完成检查、重构、生成文档等工作。</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="二、安装前准备"><a href="#二、安装前准备" class="headerlink" title="二、安装前准备"></a>二、安装前准备</h2><h3 id="2-1-基础环境"><a href="#2-1-基础环境" class="headerlink" title="2.1 基础环境"></a>2.1 基础环境</h3><p>建议先准备好：</p>
+<ul>
+<li>Node.js：建议安装当前 LTS 版本。</li>
+<li>npm：Node.js 自带。</li>
+<li>Git：用于项目版本管理。</li>
+<li>一个 OpenAI &#x2F; ChatGPT 账号，或者 OpenAI API Key。</li>
+<li>一个可以正常构建、测试的本地代码项目。</li>
+</ul>
+<p>检查命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line">git --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-安装-Codex-CLI"><a href="#2-2-安装-Codex-CLI" class="headerlink" title="2.2 安装 Codex CLI"></a>2.2 安装 Codex CLI</h3><p>使用 npm 全局安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g @openai/codex</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后检查版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex --version</span><br></pre></td></tr></table></figure>
+
+<p>如果你不想全局安装，也可以用 <code>npx</code> 临时运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx @openai/codex --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-Windows-注意事项"><a href="#2-3-Windows-注意事项" class="headerlink" title="2.3 Windows 注意事项"></a>2.3 Windows 注意事项</h3><p>在 Windows 上推荐使用 WSL2 运行 Codex CLI。原因是很多项目的构建、脚本、Git 行为在 Linux 环境下更稳定，Codex 也更容易和常见开发工具链配合。</p>
+<p>如果使用 WSL2：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install -y nodejs npm git</span><br><span class="line">npm install -g @openai/codex</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、登录和认证"><a href="#三、登录和认证" class="headerlink" title="三、登录和认证"></a>三、登录和认证</h2><p>Codex CLI 常见有两种认证方式。</p>
+<h3 id="3-1-使用-ChatGPT-账号登录"><a href="#3-1-使用-ChatGPT-账号登录" class="headerlink" title="3.1 使用 ChatGPT 账号登录"></a>3.1 使用 ChatGPT 账号登录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex login</span><br></pre></td></tr></table></figure>
+
+<p>执行后按终端提示在浏览器中完成授权。</p>
+<p>适合场景：</p>
+<ul>
+<li>你主要使用 ChatGPT 账号。</li>
+<li>你希望本地 CLI 使用账号授权。</li>
+<li>你不想在本机长期保存 API Key。</li>
+</ul>
+<h3 id="3-2-使用-API-Key"><a href="#3-2-使用-API-Key" class="headerlink" title="3.2 使用 API Key"></a>3.2 使用 API Key</h3><p>也可以通过环境变量提供 API Key：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> OPENAI_API_KEY=<span class="string">&quot;你的 API Key&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>为了长期生效，可以把它写入 shell 配置文件，例如 <code>~/.bashrc</code>、<code>~/.zshrc</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export OPENAI_API_KEY=&quot;你的 API Key&quot;&#x27;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>注意：不要把 API Key 写进项目代码、README、<code>.env.example</code>、截图或提交记录中。</p>
+<h2 id="四、在项目中启动-Codex"><a href="#四、在项目中启动-Codex" class="headerlink" title="四、在项目中启动 Codex"></a>四、在项目中启动 Codex</h2><p>进入你的项目目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /path/to/your/project</span><br></pre></td></tr></table></figure>
+
+<p>启动交互式 Codex：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex</span><br></pre></td></tr></table></figure>
+
+<p>第一次进入一个项目时，Codex 通常会确认当前目录是否可信。只有你确认之后，它才适合读取项目、执行命令、修改文件。</p>
+<p>建议第一次提问时先让它熟悉项目：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请先阅读这个项目的结构，说明主要模块、启动方式、测试命令和部署方式，不要修改代码。</span><br></pre></td></tr></table></figure>
+
+<p>这样做的好处是先建立上下文，避免一上来就让它盲目修改。</p>
+<h2 id="五、常用交互方式"><a href="#五、常用交互方式" class="headerlink" title="五、常用交互方式"></a>五、常用交互方式</h2><h3 id="5-1-让-Codex-解释项目"><a href="#5-1-让-Codex-解释项目" class="headerlink" title="5.1 让 Codex 解释项目"></a>5.1 让 Codex 解释项目</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请阅读这个仓库，说明它的技术栈、目录结构、核心入口文件和本地运行方式。</span><br></pre></td></tr></table></figure>
+
+<p>适合刚接手新项目时使用。</p>
+<h3 id="5-2-让-Codex-修复-Bug"><a href="#5-2-让-Codex-修复-Bug" class="headerlink" title="5.2 让 Codex 修复 Bug"></a>5.2 让 Codex 修复 Bug</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">登录接口在 token 过期后没有自动刷新，请定位原因并修复。修改完成后运行相关测试。</span><br></pre></td></tr></table></figure>
+
+<p>建议把现象、期望结果、复现步骤都写清楚：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">复现步骤：</span><br><span class="line">1. 登录成功后等待 token 过期</span><br><span class="line">2. 访问 /api/user/profile</span><br><span class="line">3. 页面直接跳回登录页</span><br><span class="line"></span><br><span class="line">期望结果：</span><br><span class="line">token 过期时先调用刷新接口，刷新失败后再跳转登录。</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-让-Codex-新增功能"><a href="#5-3-让-Codex-新增功能" class="headerlink" title="5.3 让 Codex 新增功能"></a>5.3 让 Codex 新增功能</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">给文章列表增加按标签筛选功能，要求：</span><br><span class="line">1. URL 支持 ?tag=xxx</span><br><span class="line">2. 页面刷新后保留筛选状态</span><br><span class="line">3. 增加必要测试</span><br><span class="line">4. 保持现有 UI 风格</span><br></pre></td></tr></table></figure>
+
+<p>需求越具体，结果越稳定。复杂功能建议拆成多轮：</p>
+<ul>
+<li>第一轮：让 Codex 阅读相关代码并给方案。</li>
+<li>第二轮：确认方案后再实现。</li>
+<li>第三轮：运行测试并修复问题。</li>
+</ul>
+<h3 id="5-4-让-Codex-做代码审查"><a href="#5-4-让-Codex-做代码审查" class="headerlink" title="5.4 让 Codex 做代码审查"></a>5.4 让 Codex 做代码审查</h3><p>可以直接在交互模式中说：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请 review 当前工作区的改动，重点关注潜在 bug、边界条件和测试缺失。</span><br></pre></td></tr></table></figure>
+
+<p>也可以使用命令模式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex review</span><br></pre></td></tr></table></figure>
+
+<p>代码审查时建议让它优先输出问题，而不是先总结优点：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请按严重程度列出 review 发现，必须包含文件和行号；如果没有问题，请说明剩余风险。</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-5-让-Codex-生成文档"><a href="#5-5-让-Codex-生成文档" class="headerlink" title="5.5 让 Codex 生成文档"></a>5.5 让 Codex 生成文档</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">请根据当前项目生成一份 README，包含：</span><br><span class="line">1. 项目简介</span><br><span class="line">2. 环境要求</span><br><span class="line">3. 安装依赖</span><br><span class="line">4. 本地启动</span><br><span class="line">5. 测试命令</span><br><span class="line">6. 构建和部署</span><br></pre></td></tr></table></figure>
+
+<p>如果是写技术博客、接口文档、迁移说明，也可以让它直接输出 Markdown。</p>
+<h2 id="六、常用命令"><a href="#六、常用命令" class="headerlink" title="六、常用命令"></a>六、常用命令</h2><h3 id="6-1-交互模式"><a href="#6-1-交互模式" class="headerlink" title="6.1 交互模式"></a>6.1 交互模式</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex</span><br></pre></td></tr></table></figure>
+
+<p>进入后可以连续对话，适合开发、调试、重构、解释代码。</p>
+<h3 id="6-2-非交互执行"><a href="#6-2-非交互执行" class="headerlink" title="6.2 非交互执行"></a>6.2 非交互执行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex <span class="built_in">exec</span> <span class="string">&quot;修复当前项目中的 lint 错误，并运行测试&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>适合一次性任务、脚本化任务、CI 辅助任务。</p>
+<p>常见用法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">codex <span class="built_in">exec</span> <span class="string">&quot;阅读 package.json，说明这个项目如何启动和测试&quot;</span></span><br><span class="line">codex <span class="built_in">exec</span> <span class="string">&quot;为 src/utils/date.ts 增加单元测试&quot;</span></span><br><span class="line">codex <span class="built_in">exec</span> <span class="string">&quot;检查当前 git diff，找出可能的 bug&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-恢复会话"><a href="#6-3-恢复会话" class="headerlink" title="6.3 恢复会话"></a>6.3 恢复会话</h3><p>如果之前的上下文还需要继续，可以恢复会话：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex resume</span><br></pre></td></tr></table></figure>
+
+<p>适合长任务中断后继续，例如前面已经分析过项目结构、制定过方案，不想重新解释一遍。</p>
+<h3 id="6-4-查看帮助"><a href="#6-4-查看帮助" class="headerlink" title="6.4 查看帮助"></a>6.4 查看帮助</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+
+<p>某个子命令的帮助：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">codex <span class="built_in">exec</span> --<span class="built_in">help</span></span><br><span class="line">codex review --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="七、权限、沙箱和确认机制"><a href="#七、权限、沙箱和确认机制" class="headerlink" title="七、权限、沙箱和确认机制"></a>七、权限、沙箱和确认机制</h2><p>Codex CLI 的一个重要概念是：它不应该默认拥有无限制权限。实际使用中要理解三个层面。</p>
+<h3 id="7-1-文件读写权限"><a href="#7-1-文件读写权限" class="headerlink" title="7.1 文件读写权限"></a>7.1 文件读写权限</h3><p>Codex 会读取当前项目文件，必要时修改文件。一般建议：</p>
+<ul>
+<li>只在可信项目目录中运行。</li>
+<li>让项目保持 Git 管理。</li>
+<li>修改前先看 <code>git status</code>。</li>
+<li>修改后用 <code>git diff</code> 检查。</li>
+</ul>
+<h3 id="7-2-命令执行权限"><a href="#7-2-命令执行权限" class="headerlink" title="7.2 命令执行权限"></a>7.2 命令执行权限</h3><p>Codex 可能会运行命令，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="built_in">test</span></span><br><span class="line">npm run build</span><br><span class="line">git diff</span><br><span class="line">rg <span class="string">&quot;keyword&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>对于安装依赖、访问网络、删除文件、发布部署等高风险动作，建议保持确认机制，不要长期设置成完全自动。</p>
+<h3 id="7-3-网络权限"><a href="#7-3-网络权限" class="headerlink" title="7.3 网络权限"></a>7.3 网络权限</h3><p>如果任务需要查询外部文档、下载依赖、访问包管理器，Codex 可能需要网络权限。你应该确认：</p>
+<ul>
+<li>这个网络访问是否真的必要。</li>
+<li>是否会上传敏感代码或配置。</li>
+<li>是否只是访问官方文档、npm、GitHub 等可信来源。</li>
+</ul>
+<h2 id="八、配置文件-config-toml"><a href="#八、配置文件-config-toml" class="headerlink" title="八、配置文件 config.toml"></a>八、配置文件 config.toml</h2><p>Codex CLI 可以通过配置文件保存默认行为。常见位置是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.codex/config.toml</span><br></pre></td></tr></table></figure>
+
+<p>也可能在项目中使用 <code>.codex/config.toml</code> 保存项目级配置。</p>
+<p>示例：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">model</span> = <span class="string">&quot;你的可用 Codex 模型&quot;</span></span><br><span class="line"><span class="attr">approval_policy</span> = <span class="string">&quot;on-request&quot;</span></span><br><span class="line"><span class="attr">sandbox_mode</span> = <span class="string">&quot;workspace-write&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[projects.&quot;/path/to/your/project&quot;]</span></span><br><span class="line"><span class="attr">trust_level</span> = <span class="string">&quot;trusted&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>model</code>：指定默认模型。可根据账号可用模型调整。</li>
+<li><code>approval_policy</code>：控制什么时候需要用户确认。</li>
+<li><code>sandbox_mode</code>：控制文件和命令的隔离程度。</li>
+<li><code>projects</code>：保存特定项目的信任配置。</li>
+</ul>
+<p>如果不确定怎么配置，建议先使用默认值，只在遇到明确需求时再调整。</p>
+<h2 id="九、AGENTS-md-项目说明"><a href="#九、AGENTS-md-项目说明" class="headerlink" title="九、AGENTS.md 项目说明"></a>九、AGENTS.md 项目说明</h2><p>如果一个项目长期使用 Codex，建议在仓库根目录新增 <code>AGENTS.md</code>，把项目规则写清楚。</p>
+<p>示例：</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># AGENTS.md</span></span><br><span class="line"></span><br><span class="line"><span class="section">## 项目命令</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> 安装依赖：npm install</span><br><span class="line"><span class="bullet">-</span> 本地启动：npm run dev</span><br><span class="line"><span class="bullet">-</span> 单元测试：npm test</span><br><span class="line"><span class="bullet">-</span> 构建：npm run build</span><br><span class="line"></span><br><span class="line"><span class="section">## 代码规范</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> 优先使用 TypeScript。</span><br><span class="line"><span class="bullet">-</span> 新增功能必须补充测试。</span><br><span class="line"><span class="bullet">-</span> 不要修改 public 目录中的构建产物。</span><br><span class="line"><span class="bullet">-</span> 提交前必须运行 npm test。</span><br><span class="line"></span><br><span class="line"><span class="section">## 注意事项</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> API Key 只能从环境变量读取。</span><br><span class="line"><span class="bullet">-</span> 不要提交 .env 文件。</span><br><span class="line"><span class="bullet">-</span> UI 改动需要保持现有设计风格。</span><br></pre></td></tr></table></figure>
+
+<p><code>AGENTS.md</code> 适合保存项目长期规则，例如构建命令、测试命令、代码风格、禁止修改的目录、部署注意事项等。</p>
+<h2 id="十、推荐工作流"><a href="#十、推荐工作流" class="headerlink" title="十、推荐工作流"></a>十、推荐工作流</h2><h3 id="10-1-修改前"><a href="#10-1-修改前" class="headerlink" title="10.1 修改前"></a>10.1 修改前</h3><p>先确认工作区状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
+
+<p>如果当前有未提交代码，先明确哪些是自己的改动，避免让 Codex 覆盖未完成内容。</p>
+<p>然后启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex</span><br></pre></td></tr></table></figure>
+
+<p>先让 Codex 读项目：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请先阅读项目结构和关键配置，告诉我启动、测试、构建命令，不要修改代码。</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-2-修改中"><a href="#10-2-修改中" class="headerlink" title="10.2 修改中"></a>10.2 修改中</h3><p>给任务时尽量包含：</p>
+<ul>
+<li>背景：为什么要改。</li>
+<li>目标：最终要达到什么效果。</li>
+<li>范围：哪些文件或模块可以改。</li>
+<li>限制：哪些行为不能变。</li>
+<li>验证：改完要跑什么命令。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请修复移动端菜单点击后无法关闭的问题。</span><br><span class="line">范围限制：优先修改 Header 组件，不要重构路由。</span><br><span class="line">验证方式：运行 npm test 和 npm run build。</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-3-修改后"><a href="#10-3-修改后" class="headerlink" title="10.3 修改后"></a>10.3 修改后</h3><p>让 Codex 总结：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请总结你修改了哪些文件、解决了什么问题、运行了哪些验证命令。</span><br></pre></td></tr></table></figure>
+
+<p>自己再检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git diff</span><br><span class="line">npm <span class="built_in">test</span></span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>最后提交：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;fix: close mobile menu after navigation&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="十一、常见任务模板"><a href="#十一、常见任务模板" class="headerlink" title="十一、常见任务模板"></a>十一、常见任务模板</h2><h3 id="11-1-排查构建失败"><a href="#11-1-排查构建失败" class="headerlink" title="11.1 排查构建失败"></a>11.1 排查构建失败</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run build 失败了。请先运行构建命令，阅读错误信息，定位根因并修复。修改后重新运行构建。</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-增加测试"><a href="#11-2-增加测试" class="headerlink" title="11.2 增加测试"></a>11.2 增加测试</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请为 userService 增加单元测试，覆盖成功、失败、空数据和异常返回。保持现有测试框架和命名风格。</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-3-重构代码"><a href="#11-3-重构代码" class="headerlink" title="11.3 重构代码"></a>11.3 重构代码</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请重构订单金额计算逻辑，目标是降低重复代码并保持行为不变。先阅读现有测试，重构后必须运行测试。</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-4-写发布说明"><a href="#11-4-写发布说明" class="headerlink" title="11.4 写发布说明"></a>11.4 写发布说明</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请根据当前 git diff 生成一份发布说明，包含新增功能、问题修复、兼容性影响和测试结果。</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-5-生成提交信息"><a href="#11-5-生成提交信息" class="headerlink" title="11.5 生成提交信息"></a>11.5 生成提交信息</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请根据当前 git diff 生成 3 个符合 Conventional Commits 的提交信息，我会从中选择一个。</span><br></pre></td></tr></table></figure>
+
+<h2 id="十二、排错"><a href="#十二、排错" class="headerlink" title="十二、排错"></a>十二、排错</h2><h3 id="12-1-command-not-found-codex"><a href="#12-1-command-not-found-codex" class="headerlink" title="12.1 command not found: codex"></a>12.1 command not found: codex</h3><p>原因通常是 npm 全局 bin 目录不在 PATH 中。</p>
+<p>检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config get prefix</span><br></pre></td></tr></table></figure>
+
+<p>把输出目录下的 <code>bin</code> 加入 PATH，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="subst">$(npm config get prefix)</span>/bin:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-登录失败"><a href="#12-2-登录失败" class="headerlink" title="12.2 登录失败"></a>12.2 登录失败</h3><p>可以尝试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">codex <span class="built_in">logout</span></span><br><span class="line">codex login</span><br></pre></td></tr></table></figure>
+
+<p>如果使用 API Key，确认环境变量是否存在：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$OPENAI_API_KEY</span></span><br></pre></td></tr></table></figure>
+
+<p>不要直接把真实 Key 输出到截图或日志里。</p>
+<h3 id="12-3-模型不可用"><a href="#12-3-模型不可用" class="headerlink" title="12.3 模型不可用"></a>12.3 模型不可用</h3><p>如果配置了固定模型但账号没有权限，可能会报模型不可用。处理方式：</p>
+<ul>
+<li>删除配置里的 <code>model</code>，使用默认模型。</li>
+<li>或改成当前账号可用的 Codex 模型。</li>
+<li>或在 ChatGPT &#x2F; OpenAI 平台确认账号权限。</li>
+</ul>
+<h3 id="12-4-Codex-修改了不该修改的文件"><a href="#12-4-Codex-修改了不该修改的文件" class="headerlink" title="12.4 Codex 修改了不该修改的文件"></a>12.4 Codex 修改了不该修改的文件</h3><p>先不要慌，使用 Git 检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git diff</span><br></pre></td></tr></table></figure>
+
+<p>如果只是想撤销某个文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git restore path/to/file</span><br></pre></td></tr></table></figure>
+
+<p>如果文件中既有你的改动又有 Codex 的改动，不要直接恢复整个文件，应该手动挑选需要保留的部分。</p>
+<h3 id="12-5-任务执行到一半中断"><a href="#12-5-任务执行到一半中断" class="headerlink" title="12.5 任务执行到一半中断"></a>12.5 任务执行到一半中断</h3><p>可以尝试恢复：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex resume</span><br></pre></td></tr></table></figure>
+
+<p>也可以重新打开 Codex，把当前状态说明清楚：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">刚才任务中断了。请先查看 git status 和相关文件，继续完成未完成的修改，并说明你接下来要做什么。</span><br></pre></td></tr></table></figure>
+
+<h2 id="十三、安全建议"><a href="#十三、安全建议" class="headerlink" title="十三、安全建议"></a>十三、安全建议</h2><ul>
+<li>始终在 Git 仓库里使用 Codex。</li>
+<li>复杂修改前先提交或 stash 当前工作。</li>
+<li>不要把密钥、证书、生产数据库地址交给 Codex 处理。</li>
+<li>发布、删除、迁移数据等高风险命令必须人工确认。</li>
+<li>让 Codex 运行测试，但不要完全依赖它判断业务正确性。</li>
+<li>代码审查时要求它指出文件和行号，方便你复核。</li>
+<li>长期项目建议维护 <code>AGENTS.md</code>，减少重复说明。</li>
+</ul>
+<h2 id="十四、一个完整示例"><a href="#十四、一个完整示例" class="headerlink" title="十四、一个完整示例"></a>十四、一个完整示例</h2><p>下面是一套比较稳妥的真实使用流程。</p>
+<p>进入项目：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/work/my-app</span><br><span class="line">git status</span><br><span class="line">codex</span><br></pre></td></tr></table></figure>
+
+<p>让 Codex 先读项目：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请阅读项目结构，找出启动、测试、构建命令，并说明主要业务模块。不要修改代码。</span><br></pre></td></tr></table></figure>
+
+<p>提出任务：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请修复用户资料页刷新后偶尔显示空白的问题。</span><br><span class="line">要求：</span><br><span class="line">1. 先定位原因</span><br><span class="line">2. 保持现有 UI 样式</span><br><span class="line">3. 增加必要的边界处理</span><br><span class="line">4. 修改后运行测试和构建</span><br></pre></td></tr></table></figure>
+
+<p>查看结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请总结修改内容、影响范围和验证结果。</span><br></pre></td></tr></table></figure>
+
+<p>本地复核：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git diff</span><br><span class="line">npm <span class="built_in">test</span></span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>提交：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;fix: handle empty profile state after refresh&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="十五、参考资料"><a href="#十五、参考资料" class="headerlink" title="十五、参考资料"></a>十五、参考资料</h2><ul>
+<li>OpenAI Codex CLI 文档：<a target="_blank" rel="noopener" href="https://developers.openai.com/codex/cli">https://developers.openai.com/codex/cli</a></li>
+<li>Codex CLI 功能说明：<a target="_blank" rel="noopener" href="https://developers.openai.com/codex/cli/features">https://developers.openai.com/codex/cli/features</a></li>
+<li>Codex 配置说明：<a target="_blank" rel="noopener" href="https://developers.openai.com/codex/config">https://developers.openai.com/codex/config</a></li>
+<li>Codex CLI GitHub 仓库：<a target="_blank" rel="noopener" href="https://github.com/openai/codex">https://github.com/openai/codex</a></li>
+</ul>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/21/Codex_CLI/" title="Codex CLI 详细使用流程">https://blog.hansong.icu/2026/06/21/Codex_CLI/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/20/hello-world/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" #.">
+                    未分类
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/20/hello-world/" class="trm-anima-link">
+                    Hello World
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/20</li>
+                <li>17:00</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、Codex CLI 是什么"><a rel="nofollow" class="trm-toc-link" href="#一、Codex-CLI-是什么"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、Codex CLI 是什么</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、安装前准备"><a rel="nofollow" class="trm-toc-link" href="#二、安装前准备"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、安装前准备</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="2.1 基础环境"><a rel="nofollow" class="trm-toc-link" href="#2-1-基础环境"><span class="trm-toc-number">2.1.</span> <span class="trm-toc-text">2.1 基础环境</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2.2 安装 Codex CLI"><a rel="nofollow" class="trm-toc-link" href="#2-2-安装-Codex-CLI"><span class="trm-toc-number">2.2.</span> <span class="trm-toc-text">2.2 安装 Codex CLI</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2.3 Windows 注意事项"><a rel="nofollow" class="trm-toc-link" href="#2-3-Windows-注意事项"><span class="trm-toc-number">2.3.</span> <span class="trm-toc-text">2.3 Windows 注意事项</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="三、登录和认证"><a rel="nofollow" class="trm-toc-link" href="#三、登录和认证"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、登录和认证</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="3.1 使用 ChatGPT 账号登录"><a rel="nofollow" class="trm-toc-link" href="#3-1-使用-ChatGPT-账号登录"><span class="trm-toc-number">3.1.</span> <span class="trm-toc-text">3.1 使用 ChatGPT 账号登录</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3.2 使用 API Key"><a rel="nofollow" class="trm-toc-link" href="#3-2-使用-API-Key"><span class="trm-toc-number">3.2.</span> <span class="trm-toc-text">3.2 使用 API Key</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="四、在项目中启动 Codex"><a rel="nofollow" class="trm-toc-link" href="#四、在项目中启动-Codex"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、在项目中启动 Codex</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、常用交互方式"><a rel="nofollow" class="trm-toc-link" href="#五、常用交互方式"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、常用交互方式</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="5.1 让 Codex 解释项目"><a rel="nofollow" class="trm-toc-link" href="#5-1-让-Codex-解释项目"><span class="trm-toc-number">5.1.</span> <span class="trm-toc-text">5.1 让 Codex 解释项目</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5.2 让 Codex 修复 Bug"><a rel="nofollow" class="trm-toc-link" href="#5-2-让-Codex-修复-Bug"><span class="trm-toc-number">5.2.</span> <span class="trm-toc-text">5.2 让 Codex 修复 Bug</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5.3 让 Codex 新增功能"><a rel="nofollow" class="trm-toc-link" href="#5-3-让-Codex-新增功能"><span class="trm-toc-number">5.3.</span> <span class="trm-toc-text">5.3 让 Codex 新增功能</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5.4 让 Codex 做代码审查"><a rel="nofollow" class="trm-toc-link" href="#5-4-让-Codex-做代码审查"><span class="trm-toc-number">5.4.</span> <span class="trm-toc-text">5.4 让 Codex 做代码审查</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5.5 让 Codex 生成文档"><a rel="nofollow" class="trm-toc-link" href="#5-5-让-Codex-生成文档"><span class="trm-toc-number">5.5.</span> <span class="trm-toc-text">5.5 让 Codex 生成文档</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="六、常用命令"><a rel="nofollow" class="trm-toc-link" href="#六、常用命令"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、常用命令</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="6.1 交互模式"><a rel="nofollow" class="trm-toc-link" href="#6-1-交互模式"><span class="trm-toc-number">6.1.</span> <span class="trm-toc-text">6.1 交互模式</span></a></li><li class="trm-toc-item trm-toc-level-3" title="6.2 非交互执行"><a rel="nofollow" class="trm-toc-link" href="#6-2-非交互执行"><span class="trm-toc-number">6.2.</span> <span class="trm-toc-text">6.2 非交互执行</span></a></li><li class="trm-toc-item trm-toc-level-3" title="6.3 恢复会话"><a rel="nofollow" class="trm-toc-link" href="#6-3-恢复会话"><span class="trm-toc-number">6.3.</span> <span class="trm-toc-text">6.3 恢复会话</span></a></li><li class="trm-toc-item trm-toc-level-3" title="6.4 查看帮助"><a rel="nofollow" class="trm-toc-link" href="#6-4-查看帮助"><span class="trm-toc-number">6.4.</span> <span class="trm-toc-text">6.4 查看帮助</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="七、权限、沙箱和确认机制"><a rel="nofollow" class="trm-toc-link" href="#七、权限、沙箱和确认机制"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、权限、沙箱和确认机制</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="7.1 文件读写权限"><a rel="nofollow" class="trm-toc-link" href="#7-1-文件读写权限"><span class="trm-toc-number">7.1.</span> <span class="trm-toc-text">7.1 文件读写权限</span></a></li><li class="trm-toc-item trm-toc-level-3" title="7.2 命令执行权限"><a rel="nofollow" class="trm-toc-link" href="#7-2-命令执行权限"><span class="trm-toc-number">7.2.</span> <span class="trm-toc-text">7.2 命令执行权限</span></a></li><li class="trm-toc-item trm-toc-level-3" title="7.3 网络权限"><a rel="nofollow" class="trm-toc-link" href="#7-3-网络权限"><span class="trm-toc-number">7.3.</span> <span class="trm-toc-text">7.3 网络权限</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="八、配置文件 config.toml"><a rel="nofollow" class="trm-toc-link" href="#八、配置文件-config-toml"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、配置文件 config.toml</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、AGENTS.md 项目说明"><a rel="nofollow" class="trm-toc-link" href="#九、AGENTS-md-项目说明"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、AGENTS.md 项目说明</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十、推荐工作流"><a rel="nofollow" class="trm-toc-link" href="#十、推荐工作流"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、推荐工作流</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="10.1 修改前"><a rel="nofollow" class="trm-toc-link" href="#10-1-修改前"><span class="trm-toc-number">10.1.</span> <span class="trm-toc-text">10.1 修改前</span></a></li><li class="trm-toc-item trm-toc-level-3" title="10.2 修改中"><a rel="nofollow" class="trm-toc-link" href="#10-2-修改中"><span class="trm-toc-number">10.2.</span> <span class="trm-toc-text">10.2 修改中</span></a></li><li class="trm-toc-item trm-toc-level-3" title="10.3 修改后"><a rel="nofollow" class="trm-toc-link" href="#10-3-修改后"><span class="trm-toc-number">10.3.</span> <span class="trm-toc-text">10.3 修改后</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十一、常见任务模板"><a rel="nofollow" class="trm-toc-link" href="#十一、常见任务模板"><span class="trm-toc-number">11.</span> <span class="trm-toc-text">十一、常见任务模板</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="11.1 排查构建失败"><a rel="nofollow" class="trm-toc-link" href="#11-1-排查构建失败"><span class="trm-toc-number">11.1.</span> <span class="trm-toc-text">11.1 排查构建失败</span></a></li><li class="trm-toc-item trm-toc-level-3" title="11.2 增加测试"><a rel="nofollow" class="trm-toc-link" href="#11-2-增加测试"><span class="trm-toc-number">11.2.</span> <span class="trm-toc-text">11.2 增加测试</span></a></li><li class="trm-toc-item trm-toc-level-3" title="11.3 重构代码"><a rel="nofollow" class="trm-toc-link" href="#11-3-重构代码"><span class="trm-toc-number">11.3.</span> <span class="trm-toc-text">11.3 重构代码</span></a></li><li class="trm-toc-item trm-toc-level-3" title="11.4 写发布说明"><a rel="nofollow" class="trm-toc-link" href="#11-4-写发布说明"><span class="trm-toc-number">11.4.</span> <span class="trm-toc-text">11.4 写发布说明</span></a></li><li class="trm-toc-item trm-toc-level-3" title="11.5 生成提交信息"><a rel="nofollow" class="trm-toc-link" href="#11-5-生成提交信息"><span class="trm-toc-number">11.5.</span> <span class="trm-toc-text">11.5 生成提交信息</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十二、排错"><a rel="nofollow" class="trm-toc-link" href="#十二、排错"><span class="trm-toc-number">12.</span> <span class="trm-toc-text">十二、排错</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="12.1 command not found: codex"><a rel="nofollow" class="trm-toc-link" href="#12-1-command-not-found-codex"><span class="trm-toc-number">12.1.</span> <span class="trm-toc-text">12.1 command not found: codex</span></a></li><li class="trm-toc-item trm-toc-level-3" title="12.2 登录失败"><a rel="nofollow" class="trm-toc-link" href="#12-2-登录失败"><span class="trm-toc-number">12.2.</span> <span class="trm-toc-text">12.2 登录失败</span></a></li><li class="trm-toc-item trm-toc-level-3" title="12.3 模型不可用"><a rel="nofollow" class="trm-toc-link" href="#12-3-模型不可用"><span class="trm-toc-number">12.3.</span> <span class="trm-toc-text">12.3 模型不可用</span></a></li><li class="trm-toc-item trm-toc-level-3" title="12.4 Codex 修改了不该修改的文件"><a rel="nofollow" class="trm-toc-link" href="#12-4-Codex-修改了不该修改的文件"><span class="trm-toc-number">12.4.</span> <span class="trm-toc-text">12.4 Codex 修改了不该修改的文件</span></a></li><li class="trm-toc-item trm-toc-level-3" title="12.5 任务执行到一半中断"><a rel="nofollow" class="trm-toc-link" href="#12-5-任务执行到一半中断"><span class="trm-toc-number">12.5.</span> <span class="trm-toc-text">12.5 任务执行到一半中断</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十三、安全建议"><a rel="nofollow" class="trm-toc-link" href="#十三、安全建议"><span class="trm-toc-number">13.</span> <span class="trm-toc-text">十三、安全建议</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十四、一个完整示例"><a rel="nofollow" class="trm-toc-link" href="#十四、一个完整示例"><span class="trm-toc-number">14.</span> <span class="trm-toc-text">十四、一个完整示例</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十五、参考资料"><a rel="nofollow" class="trm-toc-link" href="#十五、参考资料"><span class="trm-toc-number">15.</span> <span class="trm-toc-text">十五、参考资料</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
