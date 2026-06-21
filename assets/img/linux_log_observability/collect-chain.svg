@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="400" viewBox="0 0 1100 400" role="img" aria-label="log collection chain">
+  <rect width="1100" height="400" rx="18" fill="#fffdf7"/>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="80" y="145" width="150" height="86" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+    <text x="155" y="182" font-size="22" font-weight="700" fill="#075985">File</text>
+    <text x="155" y="210" font-size="17" fill="#075985">offset</text>
+    <rect x="310" y="145" width="170" height="86" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+    <text x="395" y="182" font-size="22" font-weight="700" fill="#14532d">Agent</text>
+    <text x="395" y="210" font-size="17" fill="#14532d">buffer</text>
+    <rect x="565" y="145" width="170" height="86" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    <text x="650" y="182" font-size="22" font-weight="700" fill="#78350f">Pipeline</text>
+    <text x="650" y="210" font-size="17" fill="#78350f">parse route</text>
+    <rect x="820" y="145" width="190" height="86" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="3"/>
+    <text x="915" y="182" font-size="22" font-weight="700" fill="#4c1d95">Storage</text>
+    <text x="915" y="210" font-size="17" fill="#4c1d95">search alert</text>
+  </g>
+  <g stroke="#475569" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M230 188 H300"/>
+    <path d="M480 188 H555"/>
+    <path d="M735 188 H810"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="18" fill="#334155">
+    <text x="256" y="150">tail</text>
+    <text x="500" y="150">ship</text>
+    <text x="760" y="150">index</text>
+    <text x="132" y="292">multi-line rules</text>
+    <text x="348" y="292">local retry</text>
+    <text x="595" y="292">json fields</text>
+    <text x="860" y="292">retention policy</text>
+  </g>
+</svg>

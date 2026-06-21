@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="420" viewBox="0 0 1100 420" role="img" aria-label="offline sync states">
+  <rect width="1100" height="420" rx="18" fill="#fbfbff"/>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="90" y="166" width="160" height="80" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+    <text x="170" y="214" font-size="22" font-weight="700" fill="#14532d">SYNCED</text>
+    <rect x="330" y="80" width="180" height="80" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    <text x="420" y="128" font-size="22" font-weight="700" fill="#78350f">PENDING</text>
+    <rect x="600" y="80" width="180" height="80" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+    <text x="690" y="128" font-size="22" font-weight="700" fill="#075985">UPLOADING</text>
+    <rect x="850" y="166" width="160" height="80" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+    <text x="930" y="214" font-size="22" font-weight="700" fill="#14532d">SYNCED</text>
+    <rect x="465" y="280" width="180" height="80" rx="14" fill="#fee2e2" stroke="#dc2626" stroke-width="3"/>
+    <text x="555" y="328" font-size="22" font-weight="700" fill="#7f1d1d">FAILED</text>
+  </g>
+  <g stroke="#475569" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M250 190 C290 145 310 120 320 120"/>
+    <path d="M510 120 H590"/>
+    <path d="M780 120 C825 145 840 180 840 200"/>
+    <path d="M690 160 C680 235 635 285 645 315"/>
+    <path d="M465 320 C330 325 220 275 185 247"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="18" fill="#334155">
+    <text x="270" y="116">local edit</text>
+    <text x="535" y="100">worker starts</text>
+    <text x="790" y="178">success</text>
+    <text x="680" y="254">network error</text>
+    <text x="304" y="345">retry later</text>
+  </g>
+</svg>

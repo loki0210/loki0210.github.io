@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="360" viewBox="0 0 1100 360" role="img" aria-label="crawler retry strategy">
+  <rect width="1100" height="360" rx="18" fill="#fbfaf7"/>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <circle cx="180" cy="180" r="62" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+    <text x="180" y="173" font-size="22" font-weight="700" fill="#075985">Request</text>
+    <text x="180" y="201" font-size="17" fill="#075985">timeout 10s</text>
+    <polygon points="420,105 510,180 420,255 330,180" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    <text x="420" y="174" font-size="22" font-weight="700" fill="#78350f">Success?</text>
+    <text x="420" y="202" font-size="17" fill="#78350f">2xx only</text>
+    <rect x="660" y="112" width="180" height="80" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+    <text x="750" y="146" font-size="22" font-weight="700" fill="#14532d">Parse</text>
+    <text x="750" y="174" font-size="17" fill="#14532d">save item</text>
+    <rect x="660" y="225" width="180" height="80" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="3"/>
+    <text x="750" y="259" font-size="22" font-weight="700" fill="#7f1d1d">Backoff</text>
+    <text x="750" y="287" font-size="17" fill="#7f1d1d">0.5s, 1s, 1.5s</text>
+  </g>
+  <g stroke="#475569" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M242 180 H318"/>
+    <path d="M510 180 H650"/>
+    <path d="M420 255 C450 315 590 322 650 278"/>
+    <path d="M660 265 C530 338 250 315 198 241"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="18" fill="#334155">
+    <text x="570" y="154">yes</text>
+    <text x="525" y="306">retryable error</text>
+  </g>
+</svg>

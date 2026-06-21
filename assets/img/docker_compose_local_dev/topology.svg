@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="420" viewBox="0 0 1100 420" role="img" aria-label="docker compose local topology">
+  <rect width="1100" height="420" rx="18" fill="#f8fafc"/>
+  <rect x="90" y="70" width="920" height="270" rx="24" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+  <text x="550" y="112" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#1e3a8a">Compose Project Network</text>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="150" y="165" width="170" height="92" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="235" y="203" font-size="24" font-weight="700" fill="#1e40af">app</text>
+    <text x="235" y="232" font-size="18" fill="#1e40af">:8080</text>
+    <rect x="465" y="165" width="170" height="92" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="550" y="203" font-size="24" font-weight="700" fill="#14532d">mysql</text>
+    <text x="550" y="232" font-size="18" fill="#14532d">:3306</text>
+    <rect x="780" y="165" width="170" height="92" rx="14" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="865" y="203" font-size="24" font-weight="700" fill="#7f1d1d">redis</text>
+    <text x="865" y="232" font-size="18" fill="#7f1d1d">:6379</text>
+  </g>
+  <g stroke="#475569" stroke-width="4" fill="none">
+    <path d="M320 211 H465"/>
+    <path d="M635 211 H780"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="18" fill="#334155" text-anchor="middle">
+    <text x="392" y="192">DB_HOST=mysql</text>
+    <text x="708" y="192">REDIS_HOST=redis</text>
+    <text x="550" y="370">Host ports expose only what developers need.</text>
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="400" viewBox="0 0 1100 400" role="img" aria-label="linux log management flow">
+  <rect width="1100" height="400" rx="18" fill="#f8fafc"/>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#334155"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="80" y="145" width="150" height="82" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+    <text x="155" y="181" font-size="23" font-weight="700" fill="#1e3a8a">App</text>
+    <text x="155" y="208" font-size="17" fill="#1e3a8a">stdout/file</text>
+    <rect x="325" y="70" width="170" height="82" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+    <text x="410" y="106" font-size="23" font-weight="700" fill="#14532d">journal</text>
+    <text x="410" y="133" font-size="17" fill="#14532d">systemd</text>
+    <rect x="325" y="230" width="170" height="82" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    <text x="410" y="266" font-size="23" font-weight="700" fill="#78350f">log files</text>
+    <text x="410" y="293" font-size="17" fill="#78350f">logrotate</text>
+    <rect x="590" y="145" width="170" height="82" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="3"/>
+    <text x="675" y="181" font-size="23" font-weight="700" fill="#4c1d95">collector</text>
+    <text x="675" y="208" font-size="17" fill="#4c1d95">agent</text>
+    <rect x="855" y="145" width="170" height="82" rx="14" fill="#fee2e2" stroke="#dc2626" stroke-width="3"/>
+    <text x="940" y="181" font-size="23" font-weight="700" fill="#7f1d1d">backend</text>
+    <text x="940" y="208" font-size="17" fill="#7f1d1d">query alert</text>
+  </g>
+  <g stroke="#334155" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M230 180 C265 140 290 112 315 112"/>
+    <path d="M230 198 C270 238 292 270 315 270"/>
+    <path d="M495 112 C545 120 560 150 580 175"/>
+    <path d="M495 270 C545 258 560 220 580 197"/>
+    <path d="M760 186 H845"/>
+  </g>
+  <text x="550" y="360" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="#334155">Keep writing, retention, collection and alerting as one design.</text>
+</svg>
