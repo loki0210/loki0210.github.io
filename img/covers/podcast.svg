@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Podcast cover">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#263238"/>
+      <stop offset="0.52" stop-color="#2f8f83"/>
+      <stop offset="1" stop-color="#f6c85f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M52 0H0v52" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+  <circle cx="955" cy="116" r="260" fill="url(#glow)"/>
+  <circle cx="210" cy="585" r="260" fill="url(#glow)"/>
+  <path d="M110 502 C250 404 355 442 480 358 S760 214 1090 264" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.16"/>
+  <path d="M110 550 C286 450 390 488 520 408 S780 270 1090 322" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.12"/>
+  <g>
+    <circle cx="600" cy="338" r="174" fill="#000000" opacity="0.14"/>
+    <circle cx="600" cy="338" r="146" fill="#ffffff" opacity="0.08"/>
+    <path d="M560 270a40 40 0 0 1 80 0v92a40 40 0 0 1-80 0z" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.96"/>
+    <path d="M520 332v24a80 80 0 0 0 160 0v-24M600 436v54M552 490h96" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.96"/>
+    <path d="M504 272a132 132 0 0 0-36 90M696 272a132 132 0 0 1 36 90M476 230a184 184 0 0 0-54 132M724 230a184 184 0 0 1 54 132" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.72"/>
+  </g>
+</svg>
