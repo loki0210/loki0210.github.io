@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、AI 适合做什么样的代码评审AI 做代码评审，不应该只当成“自动找 bug”的工具。更合理的定位是辅助阅读、整理上下文、发现遗漏，并把评审者的注意力集中到高风险位置。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 辅助代码评审实践：从上下文整理到风险清单">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/22/AI_Coding_Review_Workflow/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、AI 适合做什么样的代码评审AI 做代码评审，不应该只当成“自动找 bug”的工具。更合理的定位是辅助阅读、整理上下文、发现遗漏，并把评审者的注意力集中到高风险位置。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-22T10:22:00.000Z">
+<meta property="article:modified_time" content="2026-06-22T10:22:00.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Tools">
+<meta property="article:tag" content="CodeReview">
+<meta name="twitter:card" content="summary">
+
+
+<title >AI 辅助代码评审实践：从上下文整理到风险清单</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-22 18:22:00"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            AI 辅助代码评审实践：从上下文整理到风险清单
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            18:22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、AI-适合做什么样的代码评审"><a href="#一、AI-适合做什么样的代码评审" class="headerlink" title="一、AI 适合做什么样的代码评审"></a>一、AI 适合做什么样的代码评审</h2><p>AI 做代码评审，不应该只当成“自动找 bug”的工具。更合理的定位是辅助阅读、整理上下文、发现遗漏，并把评审者的注意力集中到高风险位置。</p>
+<span id="more"></span>
+
+<p>适合交给 AI 的任务：</p>
+<ul>
+<li>总结本次改动的范围。</li>
+<li>找出改动涉及的入口、状态和边界条件。</li>
+<li>检查明显的空指针、异常分支和资源释放问题。</li>
+<li>对比测试覆盖和行为变更。</li>
+<li>生成评审清单。</li>
+<li>提醒可能影响兼容性的接口变化。</li>
+</ul>
+<p>不适合完全交给 AI 的任务：</p>
+<ul>
+<li>判断业务规则是否正确。</li>
+<li>决定架构方向。</li>
+<li>替代最终代码责任人。</li>
+<li>在不了解生产约束时给出结论。</li>
+</ul>
+<p>AI 的输出可以作为线索，但不能直接作为评审结论。</p>
+<h2 id="二、先给足上下文"><a href="#二、先给足上下文" class="headerlink" title="二、先给足上下文"></a>二、先给足上下文</h2><p>很多 AI 评审质量差，不是模型能力问题，而是上下文太少。只贴一段 diff，让它判断完整风险，往往会得到很泛的建议。</p>
+<p>更好的输入包括：</p>
+<ul>
+<li>这次改动要解决什么问题。</li>
+<li>相关模块的职责。</li>
+<li>关键接口和数据流。</li>
+<li>是否涉及数据库、缓存、消息队列或外部服务。</li>
+<li>线上兼容性要求。</li>
+<li>已经跑过哪些测试。</li>
+</ul>
+<p>示例提示词：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请基于下面的变更做代码评审。</span><br><span class="line">重点关注：行为回归、并发安全、异常处理、数据兼容、测试缺口。</span><br><span class="line">先总结改动范围，再列出高风险问题，不要泛泛建议。</span><br></pre></td></tr></table></figure>
+
+<p>如果上下文很大，可以先让 AI 总结文件职责，再逐段审查关键 diff。</p>
+<h2 id="三、让-AI-先复述改动"><a href="#三、让-AI-先复述改动" class="headerlink" title="三、让 AI 先复述改动"></a>三、让 AI 先复述改动</h2><p>进入问题列表之前，先让 AI 复述改动范围很有用。它能暴露模型是否真的理解了代码。</p>
+<p>需要关注复述里有没有这些问题：</p>
+<ul>
+<li>把新增逻辑说成删除逻辑。</li>
+<li>忽略关键配置。</li>
+<li>混淆调用方和被调用方。</li>
+<li>没有提到数据库或状态变化。</li>
+<li>把测试代码当成生产逻辑。</li>
+</ul>
+<p>如果复述已经不准确，后面的评审结论也不可靠。此时应该补充上下文，或者缩小输入范围重新审查。</p>
+<h2 id="四、按风险维度提问"><a href="#四、按风险维度提问" class="headerlink" title="四、按风险维度提问"></a>四、按风险维度提问</h2><p>不要只问“这段代码有什么问题”。更有效的方式是按维度拆开。</p>
+<p>可以依次检查：</p>
+<ul>
+<li>正确性：输入、输出、边界值是否符合预期。</li>
+<li>兼容性：旧数据、旧接口、旧客户端是否还能工作。</li>
+<li>并发性：重复请求、竞态条件、锁粒度是否合理。</li>
+<li>可靠性：异常、超时、重试和降级是否完整。</li>
+<li>性能：循环、查询、缓存、批量处理是否有明显风险。</li>
+<li>安全性：鉴权、越权、日志脱敏和注入风险。</li>
+<li>可测试性：关键路径是否有单元测试或集成测试。</li>
+</ul>
+<p>这样得到的反馈更具体，也方便评审者逐项确认。</p>
+<h2 id="五、要求它给证据"><a href="#五、要求它给证据" class="headerlink" title="五、要求它给证据"></a>五、要求它给证据</h2><p>AI 很容易给出听起来合理但没有依据的判断。评审时应该要求它指出代码位置、触发条件和可能后果。</p>
+<p>更好的问题形式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">如果你认为这里有风险，请说明：</span><br><span class="line">1. 风险发生在哪个函数或分支</span><br><span class="line">2. 什么输入或状态会触发</span><br><span class="line">3. 最坏结果是什么</span><br><span class="line">4. 建议如何验证</span><br></pre></td></tr></table></figure>
+
+<p>如果一个问题不能说明触发条件，大概率只是泛化建议。评审者可以降低优先级，不必被长列表牵着走。</p>
+<h2 id="六、让-AI-生成测试清单"><a href="#六、让-AI-生成测试清单" class="headerlink" title="六、让 AI 生成测试清单"></a>六、让 AI 生成测试清单</h2><p>测试清单通常比修复建议更有价值。因为它能帮助人确认行为，而不是直接接受模型的修改。</p>
+<p>可以让 AI 生成：</p>
+<ul>
+<li>正常路径用例。</li>
+<li>边界输入用例。</li>
+<li>异常返回用例。</li>
+<li>重复请求用例。</li>
+<li>权限不足用例。</li>
+<li>旧数据兼容用例。</li>
+<li>并发访问用例。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请根据这次改动列出必须补充的测试。</span><br><span class="line">每条测试包含：场景、输入、期望结果、属于单元测试还是集成测试。</span><br></pre></td></tr></table></figure>
+
+<p>这类输出更容易落到实际工程动作上。</p>
+<h2 id="七、不要让-AI-直接大改"><a href="#七、不要让-AI-直接大改" class="headerlink" title="七、不要让 AI 直接大改"></a>七、不要让 AI 直接大改</h2><p>AI 可以给补丁建议，但不要在没有理解的情况下直接接受大面积改动。尤其是公共模块、数据迁移、鉴权逻辑和支付相关代码。</p>
+<p>更稳的做法：</p>
+<ul>
+<li>先让 AI 解释问题。</li>
+<li>再让它给最小修复方案。</li>
+<li>人确认方案后再改代码。</li>
+<li>改完后让 AI 复查新增 diff。</li>
+<li>最后跑测试和人工验证。</li>
+</ul>
+<p>如果 AI 给出的方案需要改很多无关文件，通常说明问题没有收敛。此时应重新定义目标，而不是继续扩大改动。</p>
+<h2 id="八、形成固定模板"><a href="#八、形成固定模板" class="headerlink" title="八、形成固定模板"></a>八、形成固定模板</h2><p>团队里可以准备一个固定评审模板，让 AI 输出结构稳定。</p>
+<p>示例模板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">请输出：</span><br><span class="line">1. 改动摘要</span><br><span class="line">2. 高风险问题</span><br><span class="line">3. 中低风险问题</span><br><span class="line">4. 测试缺口</span><br><span class="line">5. 需要人工确认的问题</span><br><span class="line"></span><br><span class="line">只列和本次 diff 直接相关的问题。</span><br><span class="line">不要输出通用编码建议。</span><br></pre></td></tr></table></figure>
+
+<p>稳定模板的好处是方便比较、归档和复用。评审者也能快速跳过低价值内容。</p>
+<h2 id="九、最终责任仍在人"><a href="#九、最终责任仍在人" class="headerlink" title="九、最终责任仍在人"></a>九、最终责任仍在人</h2><p>AI 辅助评审的目标不是减少责任，而是提高阅读效率。它能帮你看到一些遗漏，但不能替你理解业务。</p>
+<p>最终评审结论应该来自：</p>
+<ul>
+<li>对需求的理解。</li>
+<li>对系统边界的判断。</li>
+<li>对线上风险的经验。</li>
+<li>对测试结果的确认。</li>
+</ul>
+<p>把 AI 当成一个很快但需要复核的初级评审助手，效果通常最好。它能节省时间，但不能替代工程判断。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/22/AI_Coding_Review_Workflow/" title="AI 辅助代码评审实践：从上下文整理到风险清单">https://blog.hansong.icu/2026/06/22/AI_Coding_Review_Workflow/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Linux_Network_Troubleshooting/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/linux.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux%E5%BC%80%E5%8F%91/">
+                    Linux开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Linux_Network_Troubleshooting/" class="trm-anima-link">
+                    Linux 网络排障入门：从连通性到端口和抓包
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>18:34</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Podcast_Planning_Workflow/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/podcast.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%86%85%E5%AE%B9%E5%88%9B%E4%BD%9C/">
+                    内容创作
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Podcast_Planning_Workflow/" class="trm-anima-link">
+                    播客制作入门：选题、录音、剪辑和发布流程
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>18:17</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、AI 适合做什么样的代码评审"><a rel="nofollow" class="trm-toc-link" href="#一、AI-适合做什么样的代码评审"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、AI 适合做什么样的代码评审</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、先给足上下文"><a rel="nofollow" class="trm-toc-link" href="#二、先给足上下文"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、先给足上下文</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、让 AI 先复述改动"><a rel="nofollow" class="trm-toc-link" href="#三、让-AI-先复述改动"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、让 AI 先复述改动</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、按风险维度提问"><a rel="nofollow" class="trm-toc-link" href="#四、按风险维度提问"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、按风险维度提问</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、要求它给证据"><a rel="nofollow" class="trm-toc-link" href="#五、要求它给证据"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、要求它给证据</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、让 AI 生成测试清单"><a rel="nofollow" class="trm-toc-link" href="#六、让-AI-生成测试清单"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、让 AI 生成测试清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、不要让 AI 直接大改"><a rel="nofollow" class="trm-toc-link" href="#七、不要让-AI-直接大改"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、不要让 AI 直接大改</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、形成固定模板"><a rel="nofollow" class="trm-toc-link" href="#八、形成固定模板"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、形成固定模板</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、最终责任仍在人"><a rel="nofollow" class="trm-toc-link" href="#九、最终责任仍在人"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、最终责任仍在人</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
