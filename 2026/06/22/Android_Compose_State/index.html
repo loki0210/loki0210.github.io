@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、为什么 Compose 更强调状态传统 View 体系里，页面通常是“找到控件，然后修改控件属性”： 12textView.text &#x3D; user.nameprogressBar.visibility &#x3D; View.GONE  Compose 的思路更接近“状态是什么，界面就长什么样”。当状态变化时，相关 Composable 会重新执行，生成新的 UI 描述。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Compose 状态管理：State、ViewModel、Flow 与副作用">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/22/Android_Compose_State/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、为什么 Compose 更强调状态传统 View 体系里，页面通常是“找到控件，然后修改控件属性”： 12textView.text &#x3D; user.nameprogressBar.visibility &#x3D; View.GONE  Compose 的思路更接近“状态是什么，界面就长什么样”。当状态变化时，相关 Composable 会重新执行，生成新的 UI 描述。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-22T01:20:00.000Z">
+<meta property="article:modified_time" content="2026-06-22T01:20:00.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Compose">
+<meta property="article:tag" content="State">
+<meta name="twitter:card" content="summary">
+
+
+<title >Android Compose 状态管理：State、ViewModel、Flow 与副作用</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-22 09:20:00"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/android.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Android Compose 状态管理：State、ViewModel、Flow 与副作用
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:20
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、为什么-Compose-更强调状态"><a href="#一、为什么-Compose-更强调状态" class="headerlink" title="一、为什么 Compose 更强调状态"></a>一、为什么 Compose 更强调状态</h2><p>传统 View 体系里，页面通常是“找到控件，然后修改控件属性”：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">textView.text = user.name</span><br><span class="line">progressBar.visibility = View.GONE</span><br></pre></td></tr></table></figure>
+
+<p>Compose 的思路更接近“状态是什么，界面就长什么样”。当状态变化时，相关 Composable 会重新执行，生成新的 UI 描述。</p>
+<span id="more"></span>
+
+<p>简单理解：</p>
+<ul>
+<li>状态是数据源。</li>
+<li>UI 是状态的展示结果。</li>
+<li>事件负责修改状态。</li>
+<li>Compose 根据状态变化自动刷新界面。</li>
+</ul>
+<p>这种模型能减少手动同步 UI 的代码，但前提是状态边界要设计清楚。</p>
+<h2 id="二、局部状态：remember-和-mutableStateOf"><a href="#二、局部状态：remember-和-mutableStateOf" class="headerlink" title="二、局部状态：remember 和 mutableStateOf"></a>二、局部状态：remember 和 mutableStateOf</h2><p>只在当前组件内部使用的状态，可以放在 Composable 中：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Composable</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">Counter</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> count <span class="keyword">by</span> remember &#123; mutableStateOf(<span class="number">0</span>) &#125;</span><br><span class="line"></span><br><span class="line">    Button(onClick = &#123; count++ &#125;) &#123;</span><br><span class="line">        Text(text = <span class="string">&quot;count: <span class="variable">$count</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>remember</code> 会在重组时保留对象，<code>mutableStateOf</code> 会让 Compose 观察这个值。</p>
+<p>适合放在局部状态里的内容：</p>
+<ul>
+<li>输入框临时内容。</li>
+<li>展开或收起状态。</li>
+<li>Tab 选中项。</li>
+<li>弹窗是否显示。</li>
+</ul>
+<p>不适合放在局部状态里的内容：</p>
+<ul>
+<li>页面核心业务数据。</li>
+<li>需要跨页面共享的数据。</li>
+<li>网络请求结果。</li>
+<li>进程重建后必须恢复的数据。</li>
+</ul>
+<h2 id="三、状态提升"><a href="#三、状态提升" class="headerlink" title="三、状态提升"></a>三、状态提升</h2><p>当一个组件既展示状态又修改状态时，它会变得不容易复用。更常见的方式是把状态放到父级，由子组件只负责展示和回调。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Composable</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">SearchBar</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    keyword: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    onKeywordChange: (<span class="type">String</span>) -&gt; <span class="type">Unit</span></span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span> &#123;</span><br><span class="line">    TextField(</span><br><span class="line">        value = keyword,</span><br><span class="line">        onValueChange = onKeywordChange,</span><br><span class="line">        placeholder = &#123; Text(<span class="string">&quot;搜索&quot;</span>) &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>父级负责保存状态：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Composable</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">SearchScreen</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> keyword <span class="keyword">by</span> remember &#123; mutableStateOf(<span class="string">&quot;&quot;</span>) &#125;</span><br><span class="line"></span><br><span class="line">    SearchBar(</span><br><span class="line">        keyword = keyword,</span><br><span class="line">        onKeywordChange = &#123; keyword = it &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>状态提升的好处：</p>
+<ul>
+<li>子组件更容易复用。</li>
+<li>状态变化路径更清晰。</li>
+<li>测试时更容易传入不同状态。</li>
+<li>页面复杂后更容易迁移到 ViewModel。</li>
+</ul>
+<h2 id="四、页面状态放到-ViewModel"><a href="#四、页面状态放到-ViewModel" class="headerlink" title="四、页面状态放到 ViewModel"></a>四、页面状态放到 ViewModel</h2><p>页面级业务状态建议放进 ViewModel，例如加载中、列表数据、错误信息和空页面状态。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">ArticleUiState</span>(</span><br><span class="line">    <span class="keyword">val</span> loading: <span class="built_in">Boolean</span> = <span class="literal">false</span>,</span><br><span class="line">    <span class="keyword">val</span> items: List&lt;Article&gt; = emptyList(),</span><br><span class="line">    <span class="keyword">val</span> errorMessage: String? = <span class="literal">null</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ArticleViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> _uiState = MutableStateFlow(ArticleUiState())</span><br><span class="line">    <span class="keyword">val</span> uiState: StateFlow&lt;ArticleUiState&gt; = _uiState.asStateFlow()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">loadArticles</span><span class="params">()</span></span> &#123;</span><br><span class="line">        viewModelScope.launch &#123;</span><br><span class="line">            _uiState.value = _uiState.value.copy(loading = <span class="literal">true</span>)</span><br><span class="line">            runCatching &#123;</span><br><span class="line">                repository.getArticles()</span><br><span class="line">            &#125;.onSuccess &#123; list -&gt;</span><br><span class="line">                _uiState.value = ArticleUiState(items = list)</span><br><span class="line">            &#125;.onFailure &#123; e -&gt;</span><br><span class="line">                _uiState.value = ArticleUiState(errorMessage = e.message)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Composable 只订阅状态并展示：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Composable</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">ArticleRoute</span><span class="params">(viewModel: <span class="type">ArticleViewModel</span> = viewModel()</span></span>) &#123;</span><br><span class="line">    <span class="keyword">val</span> uiState <span class="keyword">by</span> viewModel.uiState.collectAsState()</span><br><span class="line"></span><br><span class="line">    ArticleScreen(</span><br><span class="line">        uiState = uiState,</span><br><span class="line">        onRetry = viewModel::loadArticles</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样页面逻辑不会散落在多个 Composable 里。</p>
+<h2 id="五、副作用怎么放"><a href="#五、副作用怎么放" class="headerlink" title="五、副作用怎么放"></a>五、副作用怎么放</h2><p>Compose 中不要在 Composable 函数体里直接做网络请求、写数据库或启动协程。因为 Composable 可能会频繁重组，直接执行副作用很容易重复触发。</p>
+<p>常用副作用 API：</p>
+<ul>
+<li><code>LaunchedEffect</code>：进入组合或 key 变化时启动协程。</li>
+<li><code>DisposableEffect</code>：注册和释放监听器。</li>
+<li><code>SideEffect</code>：每次成功重组后执行同步副作用。</li>
+<li><code>rememberUpdatedState</code>：在长生命周期回调中拿到最新参数。</li>
+</ul>
+<p>页面首次加载可以这样写：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Composable</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">ArticleRoute</span><span class="params">(viewModel: <span class="type">ArticleViewModel</span> = viewModel()</span></span>) &#123;</span><br><span class="line">    LaunchedEffect(<span class="built_in">Unit</span>) &#123;</span><br><span class="line">        viewModel.loadArticles()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> uiState <span class="keyword">by</span> viewModel.uiState.collectAsState()</span><br><span class="line">    ArticleScreen(uiState = uiState)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果 key 改变才需要重新加载，就把 key 放进 <code>LaunchedEffect</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LaunchedEffect(categoryId) &#123;</span><br><span class="line">    viewModel.loadByCategory(categoryId)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、列表性能注意点"><a href="#六、列表性能注意点" class="headerlink" title="六、列表性能注意点"></a>六、列表性能注意点</h2><p><code>LazyColumn</code> 展示列表时建议提供稳定 key：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">LazyColumn &#123;</span><br><span class="line">    items(</span><br><span class="line">        items = uiState.items,</span><br><span class="line">        key = &#123; it.id &#125;</span><br><span class="line">    ) &#123; article -&gt;</span><br><span class="line">        ArticleItem(article = article)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样数据插入、删除、排序时，Compose 更容易复用已有节点，减少状态错乱和不必要的重组。</p>
+<p>同时要避免在 item 内创建昂贵对象：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> formatter = remember &#123; DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd&quot;</span>) &#125;</span><br></pre></td></tr></table></figure>
+
+<p>能用 <code>remember</code> 缓存的对象，不要每次重组都重新创建。</p>
+<h2 id="七、常见问题"><a href="#七、常见问题" class="headerlink" title="七、常见问题"></a>七、常见问题</h2><h3 id="7-1-状态放太散"><a href="#7-1-状态放太散" class="headerlink" title="7.1 状态放太散"></a>7.1 状态放太散</h3><p>一个页面里如果多个组件都各自保存业务状态，后期会很难判断数据来源。页面核心状态应该集中到 ViewModel，再向下分发。</p>
+<h3 id="7-2-用普通变量保存状态"><a href="#7-2-用普通变量保存状态" class="headerlink" title="7.2 用普通变量保存状态"></a>7.2 用普通变量保存状态</h3><p>普通变量变化不会触发 Compose 刷新：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>需要使用 <code>mutableStateOf</code>、<code>StateFlow</code> 或其他 Compose 可观察状态。</p>
+<h3 id="7-3-在-Composable-里直接请求网络"><a href="#7-3-在-Composable-里直接请求网络" class="headerlink" title="7.3 在 Composable 里直接请求网络"></a>7.3 在 Composable 里直接请求网络</h3><p>这种写法容易因为重组重复请求。网络请求应放到 ViewModel，再通过副作用触发。</p>
+<h2 id="八、小结"><a href="#八、小结" class="headerlink" title="八、小结"></a>八、小结</h2><p>Compose 状态管理可以按层次拆分：</p>
+<ul>
+<li>组件内部临时状态：<code>remember</code>。</li>
+<li>组件复用状态：状态提升。</li>
+<li>页面业务状态：ViewModel + <code>StateFlow</code>。</li>
+<li>一次性动作和异步任务：副作用 API。</li>
+</ul>
+<p>核心原则是让数据流单向流动：状态向下传递，事件向上传递。页面复杂之后，这个原则比具体 API 更重要。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/22/Android_Compose_State/" title="Android Compose 状态管理：State、ViewModel、Flow 与副作用">https://blog.hansong.icu/2026/06/22/Android_Compose_State/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/kotlin.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Kotlin/">
+                    Kotlin
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/" class="trm-anima-link">
+                    Kotlin 协程实践：结构化并发、异常处理和取消
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>10:35</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/21/Night_Sky_Photography_Basics/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/assets/img/night_sky_photo/milky-way.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E6%91%84%E5%BD%B1/">
+                    摄影
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/21/Night_Sky_Photography_Basics/" class="trm-anima-link">
+                    夜空摄影入门：器材、参数、构图和后期
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/21</li>
+                <li>16:24</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、为什么 Compose 更强调状态"><a rel="nofollow" class="trm-toc-link" href="#一、为什么-Compose-更强调状态"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、为什么 Compose 更强调状态</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、局部状态：remember 和 mutableStateOf"><a rel="nofollow" class="trm-toc-link" href="#二、局部状态：remember-和-mutableStateOf"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、局部状态：remember 和 mutableStateOf</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、状态提升"><a rel="nofollow" class="trm-toc-link" href="#三、状态提升"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、状态提升</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、页面状态放到 ViewModel"><a rel="nofollow" class="trm-toc-link" href="#四、页面状态放到-ViewModel"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、页面状态放到 ViewModel</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、副作用怎么放"><a rel="nofollow" class="trm-toc-link" href="#五、副作用怎么放"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、副作用怎么放</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、列表性能注意点"><a rel="nofollow" class="trm-toc-link" href="#六、列表性能注意点"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、列表性能注意点</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、常见问题"><a rel="nofollow" class="trm-toc-link" href="#七、常见问题"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、常见问题</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="7.1 状态放太散"><a rel="nofollow" class="trm-toc-link" href="#7-1-状态放太散"><span class="trm-toc-number">7.1.</span> <span class="trm-toc-text">7.1 状态放太散</span></a></li><li class="trm-toc-item trm-toc-level-3" title="7.2 用普通变量保存状态"><a rel="nofollow" class="trm-toc-link" href="#7-2-用普通变量保存状态"><span class="trm-toc-number">7.2.</span> <span class="trm-toc-text">7.2 用普通变量保存状态</span></a></li><li class="trm-toc-item trm-toc-level-3" title="7.3 在 Composable 里直接请求网络"><a rel="nofollow" class="trm-toc-link" href="#7-3-在-Composable-里直接请求网络"><span class="trm-toc-number">7.3.</span> <span class="trm-toc-text">7.3 在 Composable 里直接请求网络</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="八、小结"><a rel="nofollow" class="trm-toc-link" href="#八、小结"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>

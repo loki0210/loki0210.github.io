@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、什么是幂等幂等指同一个操作执行一次和执行多次，最终产生的业务结果一致。 例如查询接口天然是幂等的： 1GET &#x2F;api&#x2F;orders&#x2F;1001  多查几次不会改变订单状态。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="后端接口幂等设计：重复提交、重试、订单和消息消费">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/22/Backend_API_Idempotency/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、什么是幂等幂等指同一个操作执行一次和执行多次，最终产生的业务结果一致。 例如查询接口天然是幂等的： 1GET &#x2F;api&#x2F;orders&#x2F;1001  多查几次不会改变订单状态。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-22T03:50:00.000Z">
+<meta property="article:modified_time" content="2026-06-22T03:50:00.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Backend">
+<meta property="article:tag" content="API">
+<meta property="article:tag" content="Idempotency">
+<meta name="twitter:card" content="summary">
+
+
+<title >后端接口幂等设计：重复提交、重试、订单和消息消费</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-22 11:50:00"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/backend.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            后端接口幂等设计：重复提交、重试、订单和消息消费
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            11:50
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、什么是幂等"><a href="#一、什么是幂等" class="headerlink" title="一、什么是幂等"></a>一、什么是幂等</h2><p>幂等指同一个操作执行一次和执行多次，最终产生的业务结果一致。</p>
+<p>例如查询接口天然是幂等的：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /api/orders/1001</span><br></pre></td></tr></table></figure>
+
+<p>多查几次不会改变订单状态。</p>
+<span id="more"></span>
+
+<p>但创建订单、支付回调、库存扣减、消息消费就不一定幂等：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST /api/orders</span><br><span class="line">POST /api/pay/callback</span><br><span class="line">POST /api/coupon/receive</span><br></pre></td></tr></table></figure>
+
+<p>如果用户连点两次、客户端超时重试、网关重复转发、消息队列重复投递，就可能产生重复订单、重复扣款或重复发券。</p>
+<h2 id="二、哪些场景必须考虑幂等"><a href="#二、哪些场景必须考虑幂等" class="headerlink" title="二、哪些场景必须考虑幂等"></a>二、哪些场景必须考虑幂等</h2><p>常见高风险场景：</p>
+<ul>
+<li>创建订单。</li>
+<li>支付回调。</li>
+<li>退款申请。</li>
+<li>优惠券领取。</li>
+<li>库存扣减。</li>
+<li>表单重复提交。</li>
+<li>消息队列消费。</li>
+<li>定时任务补偿。</li>
+<li>第三方接口回调。</li>
+</ul>
+<p>判断标准很简单：如果重复执行会改变钱、库存、权益、状态，就必须设计幂等。</p>
+<h2 id="三、唯一请求号"><a href="#三、唯一请求号" class="headerlink" title="三、唯一请求号"></a>三、唯一请求号</h2><p>最常见的方式是客户端或服务端生成唯一请求号，也叫 <code>requestId</code>、<code>idempotencyKey</code> 或业务流水号。</p>
+<p>请求示例：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /api/orders</span><br><span class="line"><span class="attribute">Idempotency-Key</span><span class="punctuation">: </span>7f7d6f9c-9b2a-4c43-a61f-7e6d2f7d1001</span><br></pre></td></tr></table></figure>
+
+<p>服务端处理流程：</p>
+<ol>
+<li>校验幂等 key 是否存在。</li>
+<li>不存在则创建处理记录。</li>
+<li>执行业务操作。</li>
+<li>保存业务结果。</li>
+<li>重复请求直接返回第一次处理结果。</li>
+</ol>
+<p>表结构示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create table</span> api_idempotency (</span><br><span class="line">    id <span class="type">bigint</span> <span class="keyword">primary key</span> auto_increment,</span><br><span class="line">    idem_key <span class="type">varchar</span>(<span class="number">128</span>) <span class="keyword">not null</span>,</span><br><span class="line">    biz_type <span class="type">varchar</span>(<span class="number">64</span>) <span class="keyword">not null</span>,</span><br><span class="line">    status <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">not null</span>,</span><br><span class="line">    response_body text,</span><br><span class="line">    created_at datetime <span class="keyword">not null</span>,</span><br><span class="line">    updated_at datetime <span class="keyword">not null</span>,</span><br><span class="line">    <span class="keyword">unique</span> key uk_idem_key_biz_type (idem_key, biz_type)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>关键点是唯一索引。没有唯一约束，只靠先查再插，在并发下仍然可能重复。</p>
+<h2 id="四、利用数据库唯一约束"><a href="#四、利用数据库唯一约束" class="headerlink" title="四、利用数据库唯一约束"></a>四、利用数据库唯一约束</h2><p>有些业务可以直接用业务唯一键保证幂等。</p>
+<p>例如用户领取优惠券，一个用户对同一张券只能领取一次：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create table</span> user_coupon (</span><br><span class="line">    id <span class="type">bigint</span> <span class="keyword">primary key</span> auto_increment,</span><br><span class="line">    user_id <span class="type">bigint</span> <span class="keyword">not null</span>,</span><br><span class="line">    coupon_id <span class="type">bigint</span> <span class="keyword">not null</span>,</span><br><span class="line">    created_at datetime <span class="keyword">not null</span>,</span><br><span class="line">    <span class="keyword">unique</span> key uk_user_coupon (user_id, coupon_id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>接口逻辑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">receiveCoupon</span><span class="params">(Long userId, Long couponId)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        userCouponMapper.insert(userId, couponId);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (DuplicateKeyException e) &#123;</span><br><span class="line">        <span class="comment">// 已领取，按成功处理</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式简单可靠，但只适合能明确找到业务唯一键的场景。</p>
+<h2 id="五、状态机防重"><a href="#五、状态机防重" class="headerlink" title="五、状态机防重"></a>五、状态机防重</h2><p>订单、退款、工单这类业务通常有状态流转。状态机本身也可以防止重复执行。</p>
+<p>例如订单支付：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> orders</span><br><span class="line"><span class="keyword">set</span> status <span class="operator">=</span> <span class="string">&#x27;PAID&#x27;</span>,</span><br><span class="line">    paid_at <span class="operator">=</span> now()</span><br><span class="line"><span class="keyword">where</span> order_no <span class="operator">=</span> #&#123;orderNo&#125;</span><br><span class="line">  <span class="keyword">and</span> status <span class="operator">=</span> <span class="string">&#x27;WAIT_PAY&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>只有待支付状态才能更新为已支付。重复回调时，订单已经是 <code>PAID</code>，更新行数为 0，业务可以查询当前订单后直接返回成功。</p>
+<p>这种写法比“先查状态再更新”更抗并发，因为判断和修改在同一条 SQL 中完成。</p>
+<h2 id="六、Redis-锁的作用和边界"><a href="#六、Redis-锁的作用和边界" class="headerlink" title="六、Redis 锁的作用和边界"></a>六、Redis 锁的作用和边界</h2><p>Redis 分布式锁常用于拦截短时间内的重复请求：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET lock:order:create:&#123;requestId&#125; 1 NX EX 30</span><br></pre></td></tr></table></figure>
+
+<p>拿到锁才执行业务，拿不到锁说明同一个请求正在处理。</p>
+<p>但要注意：</p>
+<ul>
+<li>锁只能减少并发进入，不能替代数据库唯一约束。</li>
+<li>锁过期时间太短，业务没执行完就可能被第二个请求拿到锁。</li>
+<li>服务异常退出时，要有最终一致的兜底机制。</li>
+</ul>
+<p>可靠做法通常是“Redis 锁 + 数据库唯一约束 + 状态机”组合使用。</p>
+<h2 id="七、消息消费幂等"><a href="#七、消息消费幂等" class="headerlink" title="七、消息消费幂等"></a>七、消息消费幂等</h2><p>消息队列通常只保证至少投递一次，消费者必须能处理重复消息。</p>
+<p>可以建立消费记录表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create table</span> mq_consume_record (</span><br><span class="line">    id <span class="type">bigint</span> <span class="keyword">primary key</span> auto_increment,</span><br><span class="line">    message_id <span class="type">varchar</span>(<span class="number">128</span>) <span class="keyword">not null</span>,</span><br><span class="line">    consumer_group <span class="type">varchar</span>(<span class="number">64</span>) <span class="keyword">not null</span>,</span><br><span class="line">    status <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">not null</span>,</span><br><span class="line">    created_at datetime <span class="keyword">not null</span>,</span><br><span class="line">    <span class="keyword">unique</span> key uk_msg_group (message_id, consumer_group)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>消费流程：</p>
+<ol>
+<li>插入消费记录。</li>
+<li>插入成功，执行业务。</li>
+<li>业务成功，更新记录为成功。</li>
+<li>插入失败，说明已经消费过或正在消费。</li>
+</ol>
+<p>如果消息本身没有全局唯一 ID，可以使用业务单号、事件类型和版本号组合出唯一键。</p>
+<h2 id="八、接口返回策略"><a href="#八、接口返回策略" class="headerlink" title="八、接口返回策略"></a>八、接口返回策略</h2><p>幂等接口遇到重复请求时，不建议直接返回“重复提交”错误。更好的体验是返回第一次请求的业务结果。</p>
+<p>例如创建订单：</p>
+<ul>
+<li>第一次请求创建订单成功，返回订单号。</li>
+<li>第二次使用同一个幂等 key 请求，仍然返回同一个订单号。</li>
+</ul>
+<p>这样客户端即使因为超时重试，也能拿到确定结果。</p>
+<p>如果第一次请求还在处理中，可以返回明确状态：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PROCESSING&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;请求处理中，请稍后查询&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="九、小结"><a href="#九、小结" class="headerlink" title="九、小结"></a>九、小结</h2><p>幂等设计不是单个工具能解决的问题，而是一组约束：</p>
+<ul>
+<li>请求层用幂等 key 识别重复请求。</li>
+<li>数据层用唯一索引兜底。</li>
+<li>状态流转用条件更新防止重复变更。</li>
+<li>消息消费用消费记录防重。</li>
+<li>返回结果尽量保持可重试。</li>
+</ul>
+<p>涉及资金、库存、权益和外部回调的接口，都应该在设计阶段把幂等方案写清楚。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/22/Backend_API_Idempotency/" title="后端接口幂等设计：重复提交、重试、订单和消息消费">https://blog.hansong.icu/2026/06/22/Backend_API_Idempotency/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/kotlin.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Kotlin/">
+                    Kotlin
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/" class="trm-anima-link">
+                    Kotlin 协程实践：结构化并发、异常处理和取消
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>10:35</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、什么是幂等"><a rel="nofollow" class="trm-toc-link" href="#一、什么是幂等"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、什么是幂等</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、哪些场景必须考虑幂等"><a rel="nofollow" class="trm-toc-link" href="#二、哪些场景必须考虑幂等"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、哪些场景必须考虑幂等</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、唯一请求号"><a rel="nofollow" class="trm-toc-link" href="#三、唯一请求号"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、唯一请求号</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、利用数据库唯一约束"><a rel="nofollow" class="trm-toc-link" href="#四、利用数据库唯一约束"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、利用数据库唯一约束</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、状态机防重"><a rel="nofollow" class="trm-toc-link" href="#五、状态机防重"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、状态机防重</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、Redis 锁的作用和边界"><a rel="nofollow" class="trm-toc-link" href="#六、Redis-锁的作用和边界"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、Redis 锁的作用和边界</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、消息消费幂等"><a rel="nofollow" class="trm-toc-link" href="#七、消息消费幂等"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、消息消费幂等</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、接口返回策略"><a rel="nofollow" class="trm-toc-link" href="#八、接口返回策略"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、接口返回策略</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、小结"><a rel="nofollow" class="trm-toc-link" href="#九、小结"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>

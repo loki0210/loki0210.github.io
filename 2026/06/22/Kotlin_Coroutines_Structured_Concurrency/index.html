@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、协程解决什么问题协程不是为了让代码“看起来更高级”，而是为了用同步写法组织异步任务。网络请求、数据库读写、文件 IO、定时任务都可以放进协程里，让代码更容易串联和取消。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin 协程实践：结构化并发、异常处理和取消">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、协程解决什么问题协程不是为了让代码“看起来更高级”，而是为了用同步写法组织异步任务。网络请求、数据库读写、文件 IO、定时任务都可以放进协程里，让代码更容易串联和取消。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-22T02:35:00.000Z">
+<meta property="article:modified_time" content="2026-06-22T02:35:00.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="Coroutines">
+<meta name="twitter:card" content="summary">
+
+
+<title >Kotlin 协程实践：结构化并发、异常处理和取消</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-22 10:35:00"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/kotlin.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Kotlin 协程实践：结构化并发、异常处理和取消
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            10:35
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、协程解决什么问题"><a href="#一、协程解决什么问题" class="headerlink" title="一、协程解决什么问题"></a>一、协程解决什么问题</h2><p>协程不是为了让代码“看起来更高级”，而是为了用同步写法组织异步任务。网络请求、数据库读写、文件 IO、定时任务都可以放进协程里，让代码更容易串联和取消。</p>
+<span id="more"></span>
+
+<p>传统回调写法容易出现几个问题：</p>
+<ul>
+<li>多层回调嵌套。</li>
+<li>错误处理分散。</li>
+<li>页面销毁后任务还在执行。</li>
+<li>多个异步任务之间的生命周期不清楚。</li>
+</ul>
+<p>协程的价值是把这些异步任务放到明确的作用域中管理。</p>
+<h2 id="二、结构化并发"><a href="#二、结构化并发" class="headerlink" title="二、结构化并发"></a>二、结构化并发</h2><p>结构化并发的核心是：协程必须属于某个作用域，父协程结束时，子协程也应该一起结束。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">loadHomeData</span><span class="params">()</span></span>: HomeData = coroutineScope &#123;</span><br><span class="line">    <span class="keyword">val</span> banner = async &#123; api.getBanner() &#125;</span><br><span class="line">    <span class="keyword">val</span> articles = async &#123; api.getArticles() &#125;</span><br><span class="line"></span><br><span class="line">    HomeData(</span><br><span class="line">        banner = banner.await(),</span><br><span class="line">        articles = articles.await()</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里 <code>banner</code> 和 <code>articles</code> 是并发执行的，但它们都受 <code>coroutineScope</code> 管理。如果其中一个失败，整个作用域会失败，另一个任务也会被取消。</p>
+<p>这比随手使用全局协程更可靠：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GlobalScope.launch &#123;</span><br><span class="line">    <span class="comment">// 不推荐</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>GlobalScope</code> 的生命周期太长，容易造成页面退出后任务继续执行。</p>
+<h2 id="三、常用作用域"><a href="#三、常用作用域" class="headerlink" title="三、常用作用域"></a>三、常用作用域</h2><p>Android 中常见作用域：</p>
+<ul>
+<li><code>viewModelScope</code>：跟随 ViewModel 生命周期。</li>
+<li><code>lifecycleScope</code>：跟随 Activity 或 Fragment 生命周期。</li>
+<li><code>rememberCoroutineScope</code>：Compose 中跟随当前组合生命周期。</li>
+</ul>
+<p>一般建议：</p>
+<ul>
+<li>页面业务请求放在 <code>viewModelScope</code>。</li>
+<li>和界面生命周期强相关的动作放在 <code>lifecycleScope</code>。</li>
+<li>Compose 点击事件中触发 Snackbar、滚动等 UI 动作用 <code>rememberCoroutineScope</code>。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UserViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">refresh</span><span class="params">()</span></span> &#123;</span><br><span class="line">        viewModelScope.launch &#123;</span><br><span class="line">            <span class="keyword">val</span> user = repository.getUser()</span><br><span class="line">            _uiState.value = UserUiState.Success(user)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、调度器选择"><a href="#四、调度器选择" class="headerlink" title="四、调度器选择"></a>四、调度器选择</h2><p>协程调度器决定任务在哪类线程执行：</p>
+<ul>
+<li><code>Dispatchers.Main</code>：主线程，更新 UI。</li>
+<li><code>Dispatchers.IO</code>：网络、文件、数据库等 IO 操作。</li>
+<li><code>Dispatchers.Default</code>：CPU 密集型计算。</li>
+<li><code>Dispatchers.Unconfined</code>：特殊场景，不建议日常业务使用。</li>
+</ul>
+<p>Repository 中可以显式切换到 IO：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UserRepository</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> api: UserApi,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> dao: UserDao</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">refreshUser</span><span class="params">()</span></span>: User = withContext(Dispatchers.IO) &#123;</span><br><span class="line">        <span class="keyword">val</span> user = api.getUser()</span><br><span class="line">        dao.insert(user.toEntity())</span><br><span class="line">        user</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ViewModel 不需要关心底层线程细节，只负责调用业务方法和更新状态。</p>
+<h2 id="五、异常处理"><a href="#五、异常处理" class="headerlink" title="五、异常处理"></a>五、异常处理</h2><p>协程异常处理要先区分两种场景：当前任务可以失败，还是失败后要影响整个并发流程。</p>
+<p>普通串行任务可以用 <code>try/catch</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">viewModelScope.launch &#123;</span><br><span class="line">    _uiState.value = UiState.Loading</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> <span class="keyword">data</span> = repository.loadData()</span><br><span class="line">        _uiState.value = UiState.Success(<span class="keyword">data</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: IOException) &#123;</span><br><span class="line">        _uiState.value = UiState.Error(<span class="string">&quot;网络异常&quot;</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">        _uiState.value = UiState.Error(<span class="string">&quot;加载失败&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多个任务中，如果希望某个任务失败不影响其他任务，可以使用 <code>supervisorScope</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">loadDashboard</span><span class="params">()</span></span>: Dashboard = supervisorScope &#123;</span><br><span class="line">    <span class="keyword">val</span> profile = async &#123; runCatching &#123; api.getProfile() &#125; &#125;</span><br><span class="line">    <span class="keyword">val</span> message = async &#123; runCatching &#123; api.getMessages() &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Dashboard(</span><br><span class="line">        profile = profile.await().getOrNull(),</span><br><span class="line">        messages = message.await().getOrDefault(emptyList())</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式适合首页、工作台等多个模块相互独立的页面。</p>
+<h2 id="六、取消要可响应"><a href="#六、取消要可响应" class="headerlink" title="六、取消要可响应"></a>六、取消要可响应</h2><p>协程取消是协作式的。挂起函数通常能响应取消，但如果自己写了长循环，就要主动检查。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">parseLargeFile</span><span class="params">(lines: <span class="type">List</span>&lt;<span class="type">String</span>&gt;)</span></span> = withContext(Dispatchers.Default) &#123;</span><br><span class="line">    <span class="keyword">for</span> (line <span class="keyword">in</span> lines) &#123;</span><br><span class="line">        ensureActive()</span><br><span class="line">        parseLine(line)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不要吞掉取消异常：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    repository.loadData()</span><br><span class="line">&#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">    <span class="comment">// 如果这里直接吞掉 CancellationException，取消会失效</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更稳妥的写法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">catch</span> (e: CancellationException) &#123;</span><br><span class="line">    <span class="keyword">throw</span> e</span><br><span class="line">&#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">    _uiState.value = UiState.Error(<span class="string">&quot;加载失败&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="七、Flow-和协程"><a href="#七、Flow-和协程" class="headerlink" title="七、Flow 和协程"></a>七、Flow 和协程</h2><p><code>Flow</code> 适合表达持续变化的数据，例如数据库观察、搜索关键词、分页状态。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> articles: StateFlow&lt;List&lt;Article&gt;&gt; =</span><br><span class="line">    repository.observeArticles()</span><br><span class="line">        .stateIn(</span><br><span class="line">            scope = viewModelScope,</span><br><span class="line">            started = SharingStarted.WhileSubscribed(<span class="number">5000</span>),</span><br><span class="line">            initialValue = emptyList()</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+
+<p>搜索输入可以用防抖：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> result = keywordFlow</span><br><span class="line">    .debounce(<span class="number">300</span>)</span><br><span class="line">    .distinctUntilChanged()</span><br><span class="line">    .flatMapLatest &#123; keyword -&gt;</span><br><span class="line">        repository.search(keyword)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>flatMapLatest</code> 的特点是新关键词到来时取消旧搜索，很适合搜索框场景。</p>
+<h2 id="八、实践建议"><a href="#八、实践建议" class="headerlink" title="八、实践建议"></a>八、实践建议</h2><p>协程代码建议遵守几个习惯：</p>
+<ul>
+<li>不在业务代码里使用 <code>GlobalScope</code>。</li>
+<li>Repository 提供 <code>suspend</code> 或 <code>Flow</code> API。</li>
+<li>ViewModel 负责启动协程。</li>
+<li>长耗时任务放到合适的 Dispatcher。</li>
+<li>不吞掉 <code>CancellationException</code>。</li>
+<li>并发任务优先使用 <code>coroutineScope</code> 或 <code>supervisorScope</code>。</li>
+</ul>
+<h2 id="九、小结"><a href="#九、小结" class="headerlink" title="九、小结"></a>九、小结</h2><p>协程写得好不好，关键不在于用了多少 API，而在于生命周期、异常和取消是否清晰。</p>
+<p>可以用一句话记住：任务属于作用域，失败要有边界，取消必须尊重。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/" title="Kotlin 协程实践：结构化并发、异常处理和取消">https://blog.hansong.icu/2026/06/22/Kotlin_Coroutines_Structured_Concurrency/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Backend_API_Idempotency/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/backend.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/">
+                    后端开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Backend_API_Idempotency/" class="trm-anima-link">
+                    后端接口幂等设计：重复提交、重试、订单和消息消费
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>11:50</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Android_Compose_State/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/android.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Android%E5%BC%80%E5%8F%91/">
+                    Android开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Android_Compose_State/" class="trm-anima-link">
+                    Android Compose 状态管理：State、ViewModel、Flow 与副作用
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>09:20</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、协程解决什么问题"><a rel="nofollow" class="trm-toc-link" href="#一、协程解决什么问题"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、协程解决什么问题</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、结构化并发"><a rel="nofollow" class="trm-toc-link" href="#二、结构化并发"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、结构化并发</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、常用作用域"><a rel="nofollow" class="trm-toc-link" href="#三、常用作用域"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、常用作用域</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、调度器选择"><a rel="nofollow" class="trm-toc-link" href="#四、调度器选择"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、调度器选择</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、异常处理"><a rel="nofollow" class="trm-toc-link" href="#五、异常处理"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、异常处理</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、取消要可响应"><a rel="nofollow" class="trm-toc-link" href="#六、取消要可响应"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、取消要可响应</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、Flow 和协程"><a rel="nofollow" class="trm-toc-link" href="#七、Flow-和协程"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、Flow 和协程</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、实践建议"><a rel="nofollow" class="trm-toc-link" href="#八、实践建议"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、实践建议</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、小结"><a rel="nofollow" class="trm-toc-link" href="#九、小结"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
