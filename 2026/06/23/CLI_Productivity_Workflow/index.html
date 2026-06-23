@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="一、命令行效率的核心不是记命令命令行用得快，不是因为记住了很多冷门参数，而是把高频操作变成稳定的工作流。 日常开发里最常见的操作其实很固定：  找文件。 搜索代码。 查看日志。 执行构建。 连接服务器。 清理临时文件。 重复执行一组检查。  如果每次都从头输入路径、拼参数、复制命令，时间会被这些小摩擦持续消耗。更好的方式是把常用工具组合起来，让命令行成为一个可重复、可沉淀的操作界面。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令行效率工作流：从目录跳转、搜索到可复用脚本">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/23/CLI_Productivity_Workflow/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="一、命令行效率的核心不是记命令命令行用得快，不是因为记住了很多冷门参数，而是把高频操作变成稳定的工作流。 日常开发里最常见的操作其实很固定：  找文件。 搜索代码。 查看日志。 执行构建。 连接服务器。 清理临时文件。 重复执行一组检查。  如果每次都从头输入路径、拼参数、复制命令，时间会被这些小摩擦持续消耗。更好的方式是把常用工具组合起来，让命令行成为一个可重复、可沉淀的操作界面。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-23T04:39:00.000Z">
+<meta property="article:modified_time" content="2026-06-23T04:39:00.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="CLI">
+<meta property="article:tag" content="Shell">
+<meta property="article:tag" content="Productivity">
+<meta name="twitter:card" content="summary">
+
+
+<title >命令行效率工作流：从目录跳转、搜索到可复用脚本</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-23 12:39:00"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/dev-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            命令行效率工作流：从目录跳转、搜索到可复用脚本
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/23
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            12:39
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h2 id="一、命令行效率的核心不是记命令"><a href="#一、命令行效率的核心不是记命令" class="headerlink" title="一、命令行效率的核心不是记命令"></a>一、命令行效率的核心不是记命令</h2><p>命令行用得快，不是因为记住了很多冷门参数，而是把高频操作变成稳定的工作流。</p>
+<p>日常开发里最常见的操作其实很固定：</p>
+<ul>
+<li>找文件。</li>
+<li>搜索代码。</li>
+<li>查看日志。</li>
+<li>执行构建。</li>
+<li>连接服务器。</li>
+<li>清理临时文件。</li>
+<li>重复执行一组检查。</li>
+</ul>
+<p>如果每次都从头输入路径、拼参数、复制命令，时间会被这些小摩擦持续消耗。更好的方式是把常用工具组合起来，让命令行成为一个可重复、可沉淀的操作界面。</p>
+<span id="more"></span>
+
+<h2 id="二、先把目录跳转变快"><a href="#二、先把目录跳转变快" class="headerlink" title="二、先把目录跳转变快"></a>二、先把目录跳转变快</h2><p>很多低效来自目录切换。项目路径一深，反复 <code>cd ../../..</code> 很容易出错。</p>
+<p>可以先准备几个常用别名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> croot=<span class="string">&#x27;cd ~/work&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> cblog=<span class="string">&#x27;cd ~/work/blog&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> ctmp=<span class="string">&#x27;cd /tmp&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果项目很多，可以使用 <code>zoxide</code> 这类基于访问频率的跳转工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">z blog</span><br><span class="line">z android</span><br><span class="line">z backend</span><br></pre></td></tr></table></figure>
+
+<p>它的好处是不用记完整路径，只要这个目录曾经访问过，就可以按关键字跳转。目录跳转越轻，越容易保持专注。</p>
+<h2 id="三、搜索优先用专门工具"><a href="#三、搜索优先用专门工具" class="headerlink" title="三、搜索优先用专门工具"></a>三、搜索优先用专门工具</h2><p>查找代码时，建议优先使用 <code>rg</code>，也就是 ripgrep。它默认会跳过 <code>.git</code>、二进制文件和常见忽略目录，速度比普通递归搜索更适合代码仓库。</p>
+<p>常用方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rg <span class="string">&quot;UserRepository&quot;</span></span><br><span class="line">rg -n <span class="string">&quot;TODO|FIXME&quot;</span></span><br><span class="line">rg --files | rg <span class="string">&quot;Service&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果只想看某类文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rg <span class="string">&quot;CoroutineScope&quot;</span> -g <span class="string">&quot;*.kt&quot;</span></span><br><span class="line">rg <span class="string">&quot;useEffect&quot;</span> -g <span class="string">&quot;*.tsx&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>搜索时不要只记一个命令。更重要的是形成顺序：</p>
+<ol>
+<li>先用 <code>rg --files</code> 缩小文件范围。</li>
+<li>再按关键字定位入口。</li>
+<li>最后打开相关文件阅读上下文。</li>
+</ol>
+<p>这个顺序比直接在 IDE 里全局乱点更稳定，也更容易复盘。</p>
+<h2 id="四、让日志查看有固定套路"><a href="#四、让日志查看有固定套路" class="headerlink" title="四、让日志查看有固定套路"></a>四、让日志查看有固定套路</h2><p>日志排查通常不是看一眼就结束，而是不断过滤、跟踪和定位时间点。</p>
+<p>常用组合：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">tail</span> -f app.log</span><br><span class="line"><span class="built_in">tail</span> -n 200 app.log</span><br><span class="line">rg <span class="string">&quot;ERROR|Exception&quot;</span> app.log</span><br><span class="line">rg <span class="string">&quot;requestId=abc123&quot;</span> app.log</span><br></pre></td></tr></table></figure>
+
+<p>如果日志来自 systemd 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u my-app -n 200 --no-pager</span><br><span class="line">journalctl -u my-app -f</span><br><span class="line">journalctl -u my-app --since <span class="string">&quot;2026-06-23 10:00:00&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>建议给服务排查准备一个小脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">service_name=<span class="string">&quot;<span class="variable">$&#123;1:-my-app&#125;</span>&quot;</span></span><br><span class="line">journalctl -u <span class="string">&quot;<span class="variable">$service_name</span>&quot;</span> -n 200 --no-pager</span><br></pre></td></tr></table></figure>
+
+<p>保存为 <code>logs</code>，以后查看服务日志只需要：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">logs nginx</span><br><span class="line">logs my-app</span><br></pre></td></tr></table></figure>
+
+<p>脚本不需要复杂，关键是稳定、可记、可复制。</p>
+<h2 id="五、把重复命令放进项目脚本"><a href="#五、把重复命令放进项目脚本" class="headerlink" title="五、把重复命令放进项目脚本"></a>五、把重复命令放进项目脚本</h2><p>每个项目都应该有一组标准命令，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm run lint</span><br><span class="line">npm run <span class="built_in">test</span></span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make <span class="built_in">test</span></span><br><span class="line">make build</span><br><span class="line">make deploy</span><br></pre></td></tr></table></figure>
+
+<p>不要让团队成员从文档里复制长命令。长命令适合写进脚本，人的入口应该尽量短。</p>
+<p>例如把本地检查收敛成：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">npm run lint</span><br><span class="line">npm run <span class="built_in">test</span></span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>这样提交前只需要执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./check.sh</span><br></pre></td></tr></table></figure>
+
+<p>如果检查失败，脚本会在第一处错误停止，定位成本也更低。</p>
+<h2 id="六、用历史记录复用经验"><a href="#六、用历史记录复用经验" class="headerlink" title="六、用历史记录复用经验"></a>六、用历史记录复用经验</h2><p>命令行历史记录不是临时缓存，而是个人工作经验的一部分。</p>
+<p>可以用这些方式找回命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">history</span> | rg <span class="string">&quot;docker&quot;</span></span><br><span class="line"><span class="built_in">history</span> | rg <span class="string">&quot;ssh&quot;</span></span><br><span class="line"><span class="built_in">history</span> | rg <span class="string">&quot;journalctl&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以使用 <code>Ctrl + r</code> 做反向搜索。对于很长、很容易输错的命令，应该在验证可用之后马上沉淀成脚本或别名，而不是指望下次还能从历史里翻出来。</p>
+<p>典型例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> gs=<span class="string">&#x27;git status --short&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> gl=<span class="string">&#x27;git log --oneline --decorate --graph -20&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> gp=<span class="string">&#x27;git pull --rebase&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>别名应该只放真正高频的命令。太多别名会增加记忆负担，最后反而没人用。</p>
+<h2 id="七、脚本要有边界"><a href="#七、脚本要有边界" class="headerlink" title="七、脚本要有边界"></a>七、脚本要有边界</h2><p>写脚本时最容易犯的错误，是把一次性的操作写成看起来通用的工具。</p>
+<p>更稳妥的规则是：</p>
+<ul>
+<li>高频重复操作，写脚本。</li>
+<li>有破坏性的操作，要求显式参数。</li>
+<li>会改生产环境的操作，打印目标环境。</li>
+<li>涉及删除、覆盖、发布的操作，先做检查。</li>
+</ul>
+<p>例如部署脚本至少应该打印当前分支和目标环境：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;branch: <span class="subst">$(git branch --show-current)</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;target: production&quot;</span></span><br><span class="line"></span><br><span class="line">npm run build</span><br><span class="line">npm run deploy</span><br></pre></td></tr></table></figure>
+
+<p>脚本不是为了炫技，而是为了减少手工操作的偶然性。</p>
+<h2 id="八、保持工作流可迁移"><a href="#八、保持工作流可迁移" class="headerlink" title="八、保持工作流可迁移"></a>八、保持工作流可迁移</h2><p>个人机器上的配置可以很顺手，但项目里的关键命令不能只依赖个人环境。</p>
+<p>建议区分两类内容：</p>
+<ul>
+<li>个人效率配置：别名、主题、跳转工具、补全工具。</li>
+<li>项目标准入口：<code>package.json</code>、<code>Makefile</code>、<code>scripts/</code>、README。</li>
+</ul>
+<p>个人配置可以提高速度，项目入口负责让其他人也能跑起来。一个好的命令行工作流，应该既让自己快，也不让项目变得难以接手。</p>
+<h2 id="九、小结"><a href="#九、小结" class="headerlink" title="九、小结"></a>九、小结</h2><p>命令行效率的提升，通常来自几个朴素动作：</p>
+<ul>
+<li>让目录跳转更短。</li>
+<li>用 <code>rg</code> 快速缩小搜索范围。</li>
+<li>给日志查看准备固定入口。</li>
+<li>把重复检查写进脚本。</li>
+<li>把长命令沉淀成项目命令。</li>
+<li>对危险操作保持显式和可见。</li>
+</ul>
+<p>工具本身并不神秘。真正重要的是把每天都会重复的动作变成稳定流程，让注意力回到代码、问题和交付本身。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/23/CLI_Productivity_Workflow/" title="命令行效率工作流：从目录跳转、搜索到可复用脚本">https://blog.hansong.icu/2026/06/23/CLI_Productivity_Workflow/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/22/Dev_Environment_Dotfiles/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/dev-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">
+                    开发工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/22/Dev_Environment_Dotfiles/" class="trm-anima-link">
+                    开发环境管理：用 dotfiles 维护终端、编辑器和常用工具
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/22</li>
+                <li>18:46</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、命令行效率的核心不是记命令"><a rel="nofollow" class="trm-toc-link" href="#一、命令行效率的核心不是记命令"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、命令行效率的核心不是记命令</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、先把目录跳转变快"><a rel="nofollow" class="trm-toc-link" href="#二、先把目录跳转变快"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、先把目录跳转变快</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、搜索优先用专门工具"><a rel="nofollow" class="trm-toc-link" href="#三、搜索优先用专门工具"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、搜索优先用专门工具</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、让日志查看有固定套路"><a rel="nofollow" class="trm-toc-link" href="#四、让日志查看有固定套路"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、让日志查看有固定套路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、把重复命令放进项目脚本"><a rel="nofollow" class="trm-toc-link" href="#五、把重复命令放进项目脚本"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、把重复命令放进项目脚本</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、用历史记录复用经验"><a rel="nofollow" class="trm-toc-link" href="#六、用历史记录复用经验"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、用历史记录复用经验</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、脚本要有边界"><a rel="nofollow" class="trm-toc-link" href="#七、脚本要有边界"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、脚本要有边界</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、保持工作流可迁移"><a rel="nofollow" class="trm-toc-link" href="#八、保持工作流可迁移"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、保持工作流可迁移</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、小结"><a rel="nofollow" class="trm-toc-link" href="#九、小结"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
