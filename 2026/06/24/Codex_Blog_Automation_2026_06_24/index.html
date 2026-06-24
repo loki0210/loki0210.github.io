@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="每天写技术博客最容易卡住的地方，往往不是不会写，而是流程太碎：选题、确认仓库格式、创建 Markdown、补 front matter、检查构建、再执行部署。每一步都不复杂，但合在一起就会变成一种阻力。 Codex CLI 适合处理这类重复性内容工作。它可以在当前仓库里阅读已有文章，理解 Hexo 的目录结构和 front matter 约定，然后按同样的风格新增文章。再配合一个小脚本，就可以把“">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用 Codex 自动生成 Hexo 博客文章并一键部署">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/24/Codex_Blog_Automation_2026_06_24/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="每天写技术博客最容易卡住的地方，往往不是不会写，而是流程太碎：选题、确认仓库格式、创建 Markdown、补 front matter、检查构建、再执行部署。每一步都不复杂，但合在一起就会变成一种阻力。 Codex CLI 适合处理这类重复性内容工作。它可以在当前仓库里阅读已有文章，理解 Hexo 的目录结构和 front matter 约定，然后按同样的风格新增文章。再配合一个小脚本，就可以把“">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-24T13:36:25.000Z">
+<meta property="article:modified_time" content="2026-06-24T13:36:25.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Codex">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Automation">
+<meta name="twitter:card" content="summary">
+
+
+<title >用 Codex 自动生成 Hexo 博客文章并一键部署</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-24 21:36:25"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            用 Codex 自动生成 Hexo 博客文章并一键部署
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/24
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            21:36
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>每天写技术博客最容易卡住的地方，往往不是不会写，而是流程太碎：选题、确认仓库格式、创建 Markdown、补 front matter、检查构建、再执行部署。每一步都不复杂，但合在一起就会变成一种阻力。</p>
+<p>Codex CLI 适合处理这类重复性内容工作。它可以在当前仓库里阅读已有文章，理解 Hexo 的目录结构和 front matter 约定，然后按同样的风格新增文章。再配合一个小脚本，就可以把“生成今日文章”和“部署到 GitHub Pages”合成一个稳定入口。</p>
+<span id="more"></span>
+
+<h2 id="一、适合自动化的部分"><a href="#一、适合自动化的部分" class="headerlink" title="一、适合自动化的部分"></a>一、适合自动化的部分</h2><p>博客写作不能完全交给脚本，因为选题判断、经验取舍、事实准确性仍然需要人负责。但下面这些步骤非常适合自动化：</p>
+<ul>
+<li>按日期生成唯一文件名。</li>
+<li>沿用已有文章的 front matter 格式。</li>
+<li>统一分类、标签、封面图。</li>
+<li>根据主题生成初稿。</li>
+<li>避免覆盖已有文章。</li>
+<li>生成后执行 Hexo 构建检查。</li>
+<li>构建通过后调用部署脚本。</li>
+</ul>
+<p>这类自动化的重点不是让 AI “随便写一篇”，而是把仓库约束写清楚，让 Codex 在一个明确边界内工作。</p>
+<h2 id="二、仓库需要先具备的基础"><a href="#二、仓库需要先具备的基础" class="headerlink" title="二、仓库需要先具备的基础"></a>二、仓库需要先具备的基础</h2><p>以 Hexo 博客为例，最小可用结构通常是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">source/_posts/</span><br><span class="line">package.json</span><br><span class="line">deploy.sh</span><br><span class="line">_config.yml</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>source/_posts/</code> 存放文章，<code>package.json</code> 提供构建命令，<code>deploy.sh</code> 封装清理、生成和发布流程。</p>
+<p>当前仓库里的部署脚本已经足够清晰：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm run clean</span><br><span class="line">npm run build</span><br><span class="line">npm run deploy</span><br></pre></td></tr></table></figure>
+
+<p>所以新的自动化脚本不需要重新实现部署，只要在文章生成完成后调用现有 <code>deploy.sh</code> 即可。这样做的好处是职责清楚：Codex 负责内容和文件修改，部署脚本负责发布。</p>
+<h2 id="三、Codex-调用方式"><a href="#三、Codex-调用方式" class="headerlink" title="三、Codex 调用方式"></a>三、Codex 调用方式</h2><p>Codex CLI 的非交互模式可以用 <code>codex exec</code> 执行一次性任务。脚本里推荐用 stdin 传入 prompt，这样长提示词更容易维护，也避免 shell 引号把内容弄乱。</p>
+<p>核心调用形态如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">codex <span class="built_in">exec</span> \</span><br><span class="line">  -C /path/to/blog \</span><br><span class="line">  --sandbox workspace-write \</span><br><span class="line">  --ask-for-approval never \</span><br><span class="line">  <span class="string">&quot;生成今天的 Hexo 博客文章&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>几个参数的含义：</p>
+<ul>
+<li><code>-C</code>：指定 Codex 在哪个仓库工作。</li>
+<li><code>--sandbox workspace-write</code>：允许它修改当前工作区文件。</li>
+<li><code>--ask-for-approval never</code>：适合非交互脚本，失败就直接返回错误。</li>
+<li><code>--search</code>：需要实时信息时再打开，比如写当天 GitHub 热门项目观察。</li>
+</ul>
+<p>如果文章不依赖实时数据，就不应该默认开启搜索。这样生成速度更稳定，也能减少不必要的外部依赖。</p>
+<h2 id="四、prompt-要写清楚什么"><a href="#四、prompt-要写清楚什么" class="headerlink" title="四、prompt 要写清楚什么"></a>四、prompt 要写清楚什么</h2><p>给 Codex 的提示词应该像任务说明，而不是一句“帮我写篇文章”。至少要包含：</p>
+<ul>
+<li>今天的日期和目标文件名规则。</li>
+<li>文章目录：<code>source/_posts/</code>。</li>
+<li>不允许覆盖已有文件。</li>
+<li>front matter 的字段和缩进风格。</li>
+<li>文章主题、分类、标签、封面。</li>
+<li>是否需要实时搜索。</li>
+<li>完成后需要运行什么检查。</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请在 source/_posts 中新增一篇今天的 Hexo 博客文章。</span><br><span class="line">要求：</span><br><span class="line">1. 文件名使用英文、数字和下划线。</span><br><span class="line">2. front matter 必须包含 title、date、cover、categories、tags。</span><br><span class="line">3. 不要修改无关文件。</span><br><span class="line">4. 写完后运行 npm run build 验证。</span><br></pre></td></tr></table></figure>
+
+<p>这类约束越明确，自动化越稳定。Codex 的优势是能读懂上下文，但脚本不应该依赖“它猜得对”。</p>
+<h2 id="五、一键脚本的设计"><a href="#五、一键脚本的设计" class="headerlink" title="五、一键脚本的设计"></a>五、一键脚本的设计</h2><p>一个实用脚本至少要做这些事：</p>
+<ol>
+<li>切换到博客根目录。</li>
+<li>检查 <code>codex</code> 命令是否存在。</li>
+<li>解析用户传入的主题。</li>
+<li>生成明确 prompt。</li>
+<li>调用 <code>codex exec</code>。</li>
+<li>根据参数决定是否部署。</li>
+</ol>
+<p>为了避免误发，脚本最好支持 <code>--no-deploy</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tools/codex-daily-post.sh --no-deploy <span class="string">&quot;写一篇关于 Android 离线优先同步的文章&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>检查没问题后再执行默认部署：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tools/codex-daily-post.sh <span class="string">&quot;写一篇关于 Android 离线优先同步的文章&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果选题需要实时数据，可以打开搜索：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tools/codex-daily-post.sh --search <span class="string">&quot;观察今天 GitHub 上增长最快的 AI 工具&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="六、自动化后的工作方式"><a href="#六、自动化后的工作方式" class="headerlink" title="六、自动化后的工作方式"></a>六、自动化后的工作方式</h2><p>有了脚本后，每天的流程可以简化成一句命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tools/codex-daily-post.sh</span><br></pre></td></tr></table></figure>
+
+<p>默认主题可以写成“根据仓库已有内容延续技术博客风格，生成今天的文章”。如果当天有明确方向，就把主题作为参数传进去。</p>
+<p>这种方式比较适合持续写作：</p>
+<ul>
+<li>没有选题时，让 Codex 根据已有文章延续系列。</li>
+<li>有选题时，用一句话指定方向。</li>
+<li>内容生成后自动构建。</li>
+<li>构建通过再部署。</li>
+</ul>
+<p>真正需要人工投入的地方，变成了检查文章观点、补充个人经验、确认事实和决定是否发布。</p>
+<h2 id="七、需要注意的边界"><a href="#七、需要注意的边界" class="headerlink" title="七、需要注意的边界"></a>七、需要注意的边界</h2><p>自动化写博客不能忽视几个问题：</p>
+<ul>
+<li>涉及“今日”“最新”“排名”时，需要开启实时搜索，并在文中写明抓取时间。</li>
+<li>涉及第三方项目、价格、版本、政策时，要优先查官方来源。</li>
+<li>不要让脚本默认修改历史文章。</li>
+<li>不要把部署逻辑散落在多个脚本里，统一复用 <code>deploy.sh</code>。</li>
+<li>发布前最好保留一次构建检查。</li>
+</ul>
+<p>最稳妥的方式是：生成文章和部署可以自动化，但最终是否发布，仍然由人通过命令开关控制。</p>
+<h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><p>Codex CLI 不只适合写代码，也适合处理技术博客这种“结构明确、上下文固定、重复步骤多”的内容工作。</p>
+<p>把文章生成和 Hexo 部署串起来之后，日常写作会从一串零散操作变成一个明确入口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tools/codex-daily-post.sh <span class="string">&quot;今天想写的主题&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个脚本的价值不在于替代作者，而是把机械流程压缩掉，让精力回到选题、判断和表达上。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/24/Codex_Blog_Automation_2026_06_24/" title="用 Codex 自动生成 Hexo 博客文章并一键部署">https://blog.hansong.icu/2026/06/24/Codex_Blog_Automation_2026_06_24/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/23/GitHub_AI_Tools_2026_06_23/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/23/GitHub_AI_Tools_2026_06_23/" class="trm-anima-link">
+                    今日 GitHub 热门 AI 工具观察：高 Star 项目与增长最快项目
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/23</li>
+                <li>13:00</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、适合自动化的部分"><a rel="nofollow" class="trm-toc-link" href="#一、适合自动化的部分"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、适合自动化的部分</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、仓库需要先具备的基础"><a rel="nofollow" class="trm-toc-link" href="#二、仓库需要先具备的基础"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、仓库需要先具备的基础</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、Codex 调用方式"><a rel="nofollow" class="trm-toc-link" href="#三、Codex-调用方式"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、Codex 调用方式</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、prompt 要写清楚什么"><a rel="nofollow" class="trm-toc-link" href="#四、prompt-要写清楚什么"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、prompt 要写清楚什么</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、一键脚本的设计"><a rel="nofollow" class="trm-toc-link" href="#五、一键脚本的设计"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、一键脚本的设计</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、自动化后的工作方式"><a rel="nofollow" class="trm-toc-link" href="#六、自动化后的工作方式"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、自动化后的工作方式</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、需要注意的边界"><a rel="nofollow" class="trm-toc-link" href="#七、需要注意的边界"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、需要注意的边界</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、总结"><a rel="nofollow" class="trm-toc-link" href="#八、总结"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
