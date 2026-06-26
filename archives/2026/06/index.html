@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-06-26 21:35:09"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-06-26 22:10:56"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（48）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（81）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -369,14 +369,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/26/Linux_Rootfs_Dynamic_Timezone/" class="trm-anima-link">
-                                        在精简 Linux RootFS 中动态设置时区
+                                    <a href="/2026/06/26/Embedded_Linux_Series_32_Device_Identity_Certs/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 32：设备身份、证书烧录和密钥保护
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
                                         <li class="trm-accent-color">06/26</li>
-                                        <li class="trm-accent-color">21:15</li>
+                                        <li class="trm-accent-color">22:12</li>
                                         
                                     </ul>
                                 </div>
@@ -384,7 +384,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>精简 Linux 系统里的时区问题经常被低估。桌面发行版通常有 systemd、timedatectl、完整 tzdata 和图形化配置，但嵌入式 rootfs 里可能只有 BusyBox、少量动态库和几个启动脚本。更常见的情况是 <code>/etc/localtime</code> 位于只读 rootfs 中，运行时不能直接替换；设备还需要通过 MQTT 接收其他设备下发的时区修改协议，并且重启后不能丢失配置。</p>
+                                <p>联网设备必须有清晰的设备身份。设备 ID、SN、MAC、证书和私钥如果管理混乱，会影响 MQTT 连接、云端认证、售后追踪和安全性。身份信息要从生产阶段就设计好。</p>
                             </div>
                         
                     
@@ -399,14 +399,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/26/AI_Code_Review_Checklist_2026_06_26/" class="trm-anima-link">
-                                        AI 代码审查清单：把生成结果变成可合并变更
+                                    <a href="/2026/06/26/Embedded_Linux_Series_31_Language_Choice/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 31：C、C++、Go、Rust 的语言选型
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
                                         <li class="trm-accent-color">06/26</li>
-                                        <li class="trm-accent-color">21:09</li>
+                                        <li class="trm-accent-color">22:11</li>
                                         
                                     </ul>
                                 </div>
@@ -414,8 +414,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>AI 工具已经可以很快生成一个功能、修复一个问题，甚至顺手补上测试。但在真实项目里，“能生成”不等于“能合并”。代码进入主干之前，仍然需要经过可读性、边界条件、兼容性、测试和运维风险的检查。</p>
-<p>更实用的做法，是把 AI 生成代码后的审查过程固定成一张清单。这样每次变更都能从“看起来能跑”推进到“可以被团队维护”，也能减少人工 review 时反复追问上下文的成本。</p>
+                                <p>嵌入式 Linux 不等于只能写 C。驱动和底层库仍以 C 为主，但业务服务、网络通信、配置管理、升级程序可以根据资源和团队能力选择 C++、Go 或 Rust。语言选型要看约束，不要只看偏好。</p>
                             </div>
                         
                     
@@ -430,14 +429,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/26/Android_Performance_Optimization_Practice_2026_06_26/" class="trm-anima-link">
-                                        Android 性能优化实践：从定位问题到建立日常治理
+                                    <a href="/2026/06/26/Embedded_Linux_Series_30_SDK_Project_Structure/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 30：SDK、项目目录和团队协作
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
                                         <li class="trm-accent-color">06/26</li>
-                                        <li class="trm-accent-color">21:04</li>
+                                        <li class="trm-accent-color">22:10</li>
                                         
                                     </ul>
                                 </div>
@@ -445,7 +444,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>Android 性能优化不是上线前临时跑一次 Profiler，也不是看到卡顿后盲目改几行代码。真正稳定的做法，是把性能问题拆成可观测、可复现、可验证的工程流程：先知道慢在哪里，再判断为什么慢，最后用指标证明优化确实有效。</p>
+                                <p>嵌入式项目很容易变成一堆 SDK 压缩包、临时补丁、手工改动和不可复现镜像。项目目录和协作方式如果不规范，团队越多人，问题越难追。</p>
                             </div>
                         
                     
@@ -460,14 +459,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/26/AI_Task_Closure_Workflow_2026_06_26/" class="trm-anima-link">
-                                        AI 协作任务闭环：从生成代码到验证和发布
+                                    <a href="/2026/06/26/Embedded_Linux_Series_29_MTD_UBI_EMMC/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 29：MTD、UBI、eMMC 和文件系统选择
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
                                         <li class="trm-accent-color">06/26</li>
-                                        <li class="trm-accent-color">08:16</li>
+                                        <li class="trm-accent-color">22:09</li>
                                         
                                     </ul>
                                 </div>
@@ -475,8 +474,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>AI 编程工具最容易被低估的能力，不是一次性写出多少代码，而是能不能把一个任务从需求、修改、验证一路推进到可交付状态。很多团队在试用 AI 时，会把关注点放在“代码是不是能生成”，但真正影响效率的，是生成之后的闭环有没有建立起来。</p>
-<p>如果只让 AI 写代码，不让它读项目约束、运行验证命令、说明风险边界，最后节省的时间很可能会被人工复查和返工抵消。更稳定的做法，是把 AI 当成一个可以执行任务的工程协作者，而不是一个只负责补全片段的工具。</p>
+                                <p>嵌入式设备的存储介质差异很大。NOR、NAND、eMMC、SD 卡的特性不同，适合的文件系统和升级方式也不同。选错存储方案，后面会在断电、坏块、寿命和性能上不断补坑。</p>
                             </div>
                         
                     
@@ -491,14 +489,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/25/Hexo_Source_Deploy_Repo_Workflow_2026_06_25/" class="trm-anima-link">
-                                        Hexo 博客源码仓库与发布仓库分离实践
+                                    <a href="/2026/06/26/Embedded_Linux_Series_26_C_Service_Code_Practice/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 26：C 语言服务代码的工程实践
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/25</li>
-                                        <li class="trm-accent-color">21:58</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">22:09</li>
                                         
                                     </ul>
                                 </div>
@@ -506,8 +504,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>Hexo 博客通常会涉及两个不同概念：源码仓库和发布仓库。源码仓库存放 Markdown、主题配置、脚本和静态资源；发布仓库存放 <code>hexo generate</code> 之后生成的 HTML、CSS、JS 和图片。</p>
-<p>如果这两个仓库的边界不清楚，后续维护很容易混乱：源码没有保存，发布内容能访问但无法复现；或者把生成文件提交到源码仓库，导致 diff 变得很吵；再或者把源码误推到 GitHub Pages 仓库，影响线上站点结构。</p>
+                                <p>嵌入式 Linux 上的 C 服务代码，不只是能编译运行就可以。它要长期运行，要处理异常输入，要能记录日志，要能重载配置，要能在资源紧张和网络异常时保持可控。</p>
                             </div>
                         
                     
@@ -522,14 +519,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/25/Codex_Context_Package_Workflow_2026_06_25/" class="trm-anima-link">
-                                        AI 编程上下文包：让 Codex 更稳定理解项目
+                                    <a href="/2026/06/26/Embedded_Linux_Series_28_Device_Nodes_Hotplug/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 28：设备节点、mdev/udev 和热插拔
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/25</li>
-                                        <li class="trm-accent-color">21:55</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">22:08</li>
                                         
                                     </ul>
                                 </div>
@@ -537,8 +534,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>AI 编程工具真正影响效率的地方，不只是“能不能写代码”，而是能不能稳定理解项目上下文。很多时候，同一个需求第一次让 AI 做，结果还可以；过几天换个窗口、换个模型、换个入口，再让它做类似任务，质量就开始波动。</p>
-<p>原因通常不是模型突然变差，而是上下文没有被工程化管理。项目背景、目录约定、构建命令、测试方式、代码风格、风险边界都靠临时口头描述，AI 每次都要重新猜。</p>
+                                <p>应用访问外设时，经常会用到 <code>/dev/ttyS1</code>、<code>/dev/i2c-1</code>、<code>/dev/spidev0.0</code> 这类设备节点。设备节点怎么来的、权限怎么设置、热插拔怎么处理，是 rootfs 设计的一部分。</p>
                             </div>
                         
                     
@@ -553,14 +549,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/24/Codex_Blog_Automation_2026_06_24/" class="trm-anima-link">
-                                        用 Codex 自动生成 Hexo 博客文章并一键部署
+                                    <a href="/2026/06/26/Embedded_Linux_Series_25_Kernel_Config_Modules/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 25：内核配置、模块和裁剪
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/24</li>
-                                        <li class="trm-accent-color">21:36</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">22:08</li>
                                         
                                     </ul>
                                 </div>
@@ -568,8 +564,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>每天写技术博客最容易卡住的地方，往往不是不会写，而是流程太碎：选题、确认仓库格式、创建 Markdown、补 front matter、检查构建、再执行部署。每一步都不复杂，但合在一起就会变成一种阻力。</p>
-<p>Codex CLI 适合处理这类重复性内容工作。它可以在当前仓库里阅读已有文章，理解 Hexo 的目录结构和 front matter 约定，然后按同样的风格新增文章。再配合一个小脚本，就可以把“生成今日文章”和“部署到 GitHub Pages”合成一个稳定入口。</p>
+                                <p>内核配置决定了系统支持哪些驱动、文件系统、网络协议和调试能力。嵌入式 Linux 里，内核不是越全越好，也不是越小越好，而是要和硬件、rootfs、调试需求匹配。</p>
                             </div>
                         
                     
@@ -584,14 +579,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/23/GitHub_AI_Tools_2026_06_23/" class="trm-anima-link">
-                                        今日 GitHub 热门 AI 工具观察：高 Star 项目与增长最快项目
+                                    <a href="/2026/06/26/Embedded_Linux_Series_27_UBoot_Env_Bootscript/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 27：U-Boot 环境变量和启动脚本
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/23</li>
-                                        <li class="trm-accent-color">13:00</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">22:07</li>
                                         
                                     </ul>
                                 </div>
@@ -599,7 +594,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <p>GitHub 上的 AI 项目增长很快，但不同指标代表的含义不一样。累计 Star 更像是长期认可度，适合观察生态里已经被大量开发者验证过的工具；Trending 今日新增 Star 更像是短期热度，适合发现正在爆发的新方向。</p>
+                                <p>U-Boot 是很多嵌入式 Linux 系统的启动核心。它决定从哪里加载 kernel、dtb、rootfs，也决定 OTA A&#x2F;B 分区如何切换。理解 U-Boot 环境变量和启动脚本，是排查启动问题和做升级回滚的基础。</p>
                             </div>
                         
                     
@@ -614,14 +609,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/23/Codex_SQLite_TRACE_Log_Block/" class="trm-anima-link">
-                                        Codex 日志库高频写盘排查：用 SQLite Trigger 拦截 TRACE 写入
+                                    <a href="/2026/06/26/Embedded_Linux_Series_24_Automated_Testing/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 24：自动化测试、冒烟测试和硬件在环
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/23</li>
-                                        <li class="trm-accent-color">12:44</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">22:07</li>
                                         
                                     </ul>
                                 </div>
@@ -629,23 +624,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>本地使用 Codex CLI 时，如果日志级别过细，<code>~/.codex/logs_2.sqlite</code> 可能会持续写入大量 TRACE &#x2F; DEBUG 日志。</p>
-<p>这类问题不一定会立刻表现为程序异常，但会带来几个隐患：</p>
-<ul>
-<li>SQLite 主库文件持续变大。</li>
-<li>WAL 文件频繁增长。</li>
-<li>磁盘出现持续小块写入。</li>
-<li>日志价值不高，但占用大量 IO。</li>
-<li>长时间运行后影响终端工具响应。</li>
-</ul>
-<p>这次排查的目标很明确：</p>
-<ol>
-<li>确认 <code>logs</code> 表是否被 TRACE 日志高频写入。</li>
-<li>如果中招，先备份数据库。</li>
-<li>使用 SQLite trigger 拦截 <code>logs</code> 表 insert。</li>
-<li>对 WAL 执行 checkpoint &#x2F; truncate。</li>
-<li>采样确认 <code>MAX(id)</code> 和 WAL 不再增长。</li>
-</ol>
+                                <p>嵌入式项目也需要自动化测试。只靠人工烧录、人工点功能，很快会被版本迭代拖垮。自动化不一定一开始就复杂，可以先从构建检查、冒烟测试和硬件在环测试做起。</p>
                             </div>
                         
                     
@@ -660,14 +639,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/23/CLI_Productivity_Workflow/" class="trm-anima-link">
-                                        命令行效率工作流：从目录跳转、搜索到可复用脚本
+                                    <a href="/2026/06/26/Embedded_Linux_Series_23_Remote_Diagnostics/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 23：远程诊断、日志导出和现场维护
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/23</li>
-                                        <li class="trm-accent-color">12:39</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">22:06</li>
                                         
                                     </ul>
                                 </div>
@@ -675,18 +654,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、命令行效率的核心不是记命令"><a href="#一、命令行效率的核心不是记命令" class="headerlink" title="一、命令行效率的核心不是记命令"></a>一、命令行效率的核心不是记命令</h2><p>命令行用得快，不是因为记住了很多冷门参数，而是把高频操作变成稳定的工作流。</p>
-<p>日常开发里最常见的操作其实很固定：</p>
-<ul>
-<li>找文件。</li>
-<li>搜索代码。</li>
-<li>查看日志。</li>
-<li>执行构建。</li>
-<li>连接服务器。</li>
-<li>清理临时文件。</li>
-<li>重复执行一组检查。</li>
-</ul>
-<p>如果每次都从头输入路径、拼参数、复制命令，时间会被这些小摩擦持续消耗。更好的方式是把常用工具组合起来，让命令行成为一个可重复、可沉淀的操作界面。</p>
+                                <p>设备部署到现场后，研发很少能直接接触实物。远程诊断能力决定了问题能不能快速闭环。最基本的远程诊断不是远程 shell，而是能安全地导出状态、日志和配置快照。</p>
                             </div>
                         
                     
@@ -702,7 +670,7 @@
 
 
     <div class="trm-pagination">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/2026/06/page/2/">2</a><a class="page-number" href="/archives/2026/06/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2026/06/page/5/">5</a>
+        <span class="page-number current">1</span><a class="page-number" href="/archives/2026/06/page/2/">2</a><a class="page-number" href="/archives/2026/06/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2026/06/page/9/">9</a>
     </div>
 
 

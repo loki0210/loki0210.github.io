@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-06-26 21:35:09"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-06-26 22:10:56"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（48）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（81）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -369,14 +369,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Linux_Dev_Memory_Management/" class="trm-anima-link">
-                                        Linux 开发进阶：内存管理、泄漏排查与常见错误
+                                    <a href="/2026/06/26/Embedded_Linux_Series_02_Cross_Compile/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 02：交叉编译、动态库和部署
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">13:20</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">21:44</li>
                                         
                                     </ul>
                                 </div>
@@ -384,17 +384,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、为什么要重视内存"><a href="#一、为什么要重视内存" class="headerlink" title="一、为什么要重视内存"></a>一、为什么要重视内存</h2><p>Linux 应用运行时间越长，内存问题越容易暴露。短时间测试正常，不代表长期运行稳定。内存泄漏、越界访问、重复释放、use-after-free 都可能导致崩溃、性能下降或系统被 OOM killer 杀死。</p>
-<p>常见内存问题：</p>
-<ul>
-<li>内存泄漏。</li>
-<li>空指针访问。</li>
-<li>数组越界。</li>
-<li>重复释放。</li>
-<li>释放后继续使用。</li>
-<li>栈空间不足。</li>
-<li>内存碎片。</li>
-</ul>
+                                <p>嵌入式 Linux 开发绕不开交叉编译。开发机通常是 x86_64，目标板可能是 ARM、AArch64、MIPS 或 RISC-V。代码在开发机上编译，最终要在目标板上运行，这中间最容易出问题的是架构、动态链接器和依赖库。</p>
                             </div>
                         
                     
@@ -409,14 +399,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Embedded_Debug_JTAG_GDB/" class="trm-anima-link">
-                                        嵌入式调试入门：串口、JTAG、OpenOCD 与 gdbserver
+                                    <a href="/2026/06/26/Embedded_Linux_Series_01_Dev_Environment/" class="trm-anima-link">
+                                        嵌入式 Linux 系列 01：开发环境、串口和第一块板子
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:40</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">21:43</li>
                                         
                                     </ul>
                                 </div>
@@ -424,18 +414,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、嵌入式调试的层次"><a href="#一、嵌入式调试的层次" class="headerlink" title="一、嵌入式调试的层次"></a>一、嵌入式调试的层次</h2><p>嵌入式调试比普通应用复杂，因为问题可能出在硬件、启动链路、内核、驱动、文件系统或应用。</p>
-<p>常见调试手段：</p>
-<ul>
-<li>串口日志。</li>
-<li>LED 状态灯。</li>
-<li>JTAG&#x2F;SWD。</li>
-<li>OpenOCD。</li>
-<li>GDB。</li>
-<li>gdbserver。</li>
-<li>逻辑分析仪。</li>
-<li>示波器。</li>
-</ul>
+                                <p>嵌入式 Linux 入门的第一步，不是改内核，也不是写驱动，而是把开发环境搭起来，把板子稳定连上，把启动日志完整拿到。只要这一步不扎实，后面遇到启动失败、网络不通、应用跑不起来时，就会缺少最基本的排查入口。</p>
                             </div>
                         
                     
@@ -450,14 +429,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Embedded_Linux_Buildroot_Rootfs/" class="trm-anima-link">
-                                        嵌入式 Linux 根文件系统：Buildroot 入门与 RootFS 构建
+                                    <a href="/2026/06/26/Embedded_Linux_From_Entry_To_Development/" class="trm-anima-link">
+                                        嵌入式 Linux 从入门到开发：一条可落地的实践路线
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:39</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">21:36</li>
                                         
                                     </ul>
                                 </div>
@@ -465,17 +444,8 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、RootFS-是什么"><a href="#一、RootFS-是什么" class="headerlink" title="一、RootFS 是什么"></a>一、RootFS 是什么</h2><p>RootFS 是根文件系统，是 Linux 用户态运行的基础。内核启动后，必须挂载 RootFS，然后启动第一个用户态进程。</p>
-<p>RootFS 里通常包含：</p>
-<ul>
-<li>Shell。</li>
-<li>基础命令。</li>
-<li>动态库。</li>
-<li>配置文件。</li>
-<li>设备节点。</li>
-<li>启动脚本。</li>
-<li>应用程序。</li>
-</ul>
+                                <p>学习嵌入式 Linux 最容易遇到的问题，不是资料太少，而是资料太散。今天看驱动，明天看 Buildroot，后天又去研究 U-Boot，结果每个概念都知道一点，但真正拿到一块板子时，还是不知道从哪里开始开发。</p>
+<p>更合理的方式，是按真实项目的开发链路学习：先能把系统跑起来，再能改 rootfs，再能开发应用，最后再深入内核和驱动。</p>
                             </div>
                         
                     
@@ -490,14 +460,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Embedded_Linux_Boot_Process/" class="trm-anima-link">
-                                        嵌入式 Linux 启动流程：BootROM、U-Boot、Kernel、RootFS
+                                    <a href="/2026/06/26/Linux_Rootfs_Dynamic_Timezone/" class="trm-anima-link">
+                                        在精简 Linux RootFS 中动态设置时区
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:38</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">21:15</li>
                                         
                                     </ul>
                                 </div>
@@ -505,9 +475,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、为什么要理解启动流程"><a href="#一、为什么要理解启动流程" class="headerlink" title="一、为什么要理解启动流程"></a>一、为什么要理解启动流程</h2><p>嵌入式 Linux 出问题时，经常不是应用代码的问题，而是系统还没正常启动。比如串口没有输出、内核卡住、根文件系统挂载失败、应用没有自启动。</p>
-<p>理解启动流程可以帮助你定位问题发生在哪一层：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BootROM -&gt; SPL -&gt; U-Boot -&gt; Kernel -&gt; RootFS -&gt; Init -&gt; App</span><br></pre></td></tr></table></figure>
+                                <p>精简 Linux 系统里的时区问题经常被低估。桌面发行版通常有 systemd、timedatectl、完整 tzdata 和图形化配置，但嵌入式 rootfs 里可能只有 BusyBox、少量动态库和几个启动脚本。更常见的情况是 <code>/etc/localtime</code> 位于只读 rootfs 中，运行时不能直接替换；设备还需要通过 MQTT 接收其他设备下发的时区修改协议，并且重启后不能丢失配置。</p>
                             </div>
                         
                     
@@ -522,14 +490,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Linux_Dev_Systemd_Service/" class="trm-anima-link">
-                                        Linux 应用服务化：systemd、日志、开机启动与守护进程
+                                    <a href="/2026/06/26/AI_Code_Review_Checklist_2026_06_26/" class="trm-anima-link">
+                                        AI 代码审查清单：把生成结果变成可合并变更
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:37</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">21:09</li>
                                         
                                     </ul>
                                 </div>
@@ -537,16 +505,8 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、为什么要服务化"><a href="#一、为什么要服务化" class="headerlink" title="一、为什么要服务化"></a>一、为什么要服务化</h2><p>一个程序能在终端运行，不代表适合部署。真正部署到 Linux 设备或服务器时，需要解决：</p>
-<ul>
-<li>开机自动启动。</li>
-<li>异常退出自动重启。</li>
-<li>统一查看日志。</li>
-<li>使用非 root 用户运行。</li>
-<li>控制启动顺序。</li>
-<li>优雅停止。</li>
-</ul>
-<p>Linux 现代发行版通常使用 systemd 管理服务。</p>
+                                <p>AI 工具已经可以很快生成一个功能、修复一个问题，甚至顺手补上测试。但在真实项目里，“能生成”不等于“能合并”。代码进入主干之前，仍然需要经过可读性、边界条件、兼容性、测试和运维风险的检查。</p>
+<p>更实用的做法，是把 AI 生成代码后的审查过程固定成一张清单。这样每次变更都能从“看起来能跑”推进到“可以被团队维护”，也能减少人工 review 时反复追问上下文的成本。</p>
                             </div>
                         
                     
@@ -561,14 +521,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Linux_Dev_Epoll_Reactor/" class="trm-anima-link">
-                                        Linux 网络编程进阶：epoll 与 Reactor 模型
+                                    <a href="/2026/06/26/Android_Performance_Optimization_Practice_2026_06_26/" class="trm-anima-link">
+                                        Android 性能优化实践：从定位问题到建立日常治理
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:36</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">21:04</li>
                                         
                                     </ul>
                                 </div>
@@ -576,15 +536,7 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、为什么需要-epoll"><a href="#一、为什么需要-epoll" class="headerlink" title="一、为什么需要 epoll"></a>一、为什么需要 epoll</h2><p>阻塞 socket 服务端一次只能等待一个连接或一个读写事件。客户端数量少时问题不大，但连接数变多后，多进程和多线程模型会带来上下文切换、内存占用和调度开销。</p>
-<p>Linux 下高并发网络服务常用 <code>epoll</code>。</p>
-<p><code>epoll</code> 适合：</p>
-<ul>
-<li>大量连接。</li>
-<li>多数连接空闲。</li>
-<li>事件驱动服务端。</li>
-<li>长连接服务。</li>
-</ul>
+                                <p>Android 性能优化不是上线前临时跑一次 Profiler，也不是看到卡顿后盲目改几行代码。真正稳定的做法，是把性能问题拆成可观测、可复现、可验证的工程流程：先知道慢在哪里，再判断为什么慢，最后用指标证明优化确实有效。</p>
                             </div>
                         
                     
@@ -599,14 +551,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Linux_Dev_IPC/" class="trm-anima-link">
-                                        Linux 系统编程进阶：IPC 进程间通信入门
+                                    <a href="/2026/06/26/AI_Task_Closure_Workflow_2026_06_26/" class="trm-anima-link">
+                                        AI 协作任务闭环：从生成代码到验证和发布
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:35</li>
+                                        <li class="trm-accent-color">06/26</li>
+                                        <li class="trm-accent-color">08:16</li>
                                         
                                     </ul>
                                 </div>
@@ -614,17 +566,8 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、什么是-IPC"><a href="#一、什么是-IPC" class="headerlink" title="一、什么是 IPC"></a>一、什么是 IPC</h2><p>IPC 是 Inter-Process Communication，也就是进程间通信。Linux 中每个进程默认有独立地址空间，一个进程不能直接访问另一个进程的内存。如果多个进程需要协作，就需要 IPC。</p>
-<p>常见 IPC 方式：</p>
-<ul>
-<li>管道 pipe。</li>
-<li>命名管道 FIFO。</li>
-<li>信号 signal。</li>
-<li>共享内存 shared memory。</li>
-<li>消息队列 message queue。</li>
-<li>Unix Domain Socket。</li>
-<li>TCP&#x2F;UDP socket。</li>
-</ul>
+                                <p>AI 编程工具最容易被低估的能力，不是一次性写出多少代码，而是能不能把一个任务从需求、修改、验证一路推进到可交付状态。很多团队在试用 AI 时，会把关注点放在“代码是不是能生成”，但真正影响效率的，是生成之后的闭环有没有建立起来。</p>
+<p>如果只让 AI 写代码，不让它读项目约束、运行验证命令、说明风险边界，最后节省的时间很可能会被人工复查和返工抵消。更稳定的做法，是把 AI 当成一个可以执行任务的工程协作者，而不是一个只负责补全片段的工具。</p>
                             </div>
                         
                     
@@ -639,14 +582,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Embedded_Linux_Device_Tree_Driver/" class="trm-anima-link">
-                                        嵌入式 Linux 进阶：设备树、驱动和应用层的关系
+                                    <a href="/2026/06/25/Hexo_Source_Deploy_Repo_Workflow_2026_06_25/" class="trm-anima-link">
+                                        Hexo 博客源码仓库与发布仓库分离实践
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:32</li>
+                                        <li class="trm-accent-color">06/25</li>
+                                        <li class="trm-accent-color">21:58</li>
                                         
                                     </ul>
                                 </div>
@@ -654,15 +597,8 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、为什么需要设备树"><a href="#一、为什么需要设备树" class="headerlink" title="一、为什么需要设备树"></a>一、为什么需要设备树</h2><p>在嵌入式 Linux 中，内核需要知道硬件板子上有什么设备、这些设备接在哪些总线上、使用哪些 GPIO、中断、时钟和寄存器地址。</p>
-<p>这些硬件描述不适合全部写死在驱动代码里，所以 Linux 使用设备树描述硬件。</p>
-<p>设备树的作用：</p>
-<ul>
-<li>描述硬件资源。</li>
-<li>把板级差异从驱动中分离出来。</li>
-<li>让同一个驱动适配不同板子。</li>
-<li>让内核启动时创建设备。</li>
-</ul>
+                                <p>Hexo 博客通常会涉及两个不同概念：源码仓库和发布仓库。源码仓库存放 Markdown、主题配置、脚本和静态资源；发布仓库存放 <code>hexo generate</code> 之后生成的 HTML、CSS、JS 和图片。</p>
+<p>如果这两个仓库的边界不清楚，后续维护很容易混乱：源码没有保存，发布内容能访问但无法复现；或者把生成文件提交到源码仓库，导致 diff 变得很吵；再或者把源码误推到 GitHub Pages 仓库，影响线上站点结构。</p>
                             </div>
                         
                     
@@ -677,14 +613,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Embedded_Dev_Peripheral_Bus/" class="trm-anima-link">
-                                        嵌入式外设入门：GPIO、UART、I2C、SPI 怎么理解
+                                    <a href="/2026/06/25/Codex_Context_Package_Workflow_2026_06_25/" class="trm-anima-link">
+                                        AI 编程上下文包：让 Codex 更稳定理解项目
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:31</li>
+                                        <li class="trm-accent-color">06/25</li>
+                                        <li class="trm-accent-color">21:55</li>
                                         
                                     </ul>
                                 </div>
@@ -692,17 +628,8 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、为什么外设总线重要"><a href="#一、为什么外设总线重要" class="headerlink" title="一、为什么外设总线重要"></a>一、为什么外设总线重要</h2><p>嵌入式开发经常要和硬件打交道。传感器、屏幕、Flash、按键、LED、通信模块都需要通过某种接口和主控芯片连接。</p>
-<p>最常见的外设接口：</p>
-<ul>
-<li>GPIO。</li>
-<li>UART。</li>
-<li>I2C。</li>
-<li>SPI。</li>
-<li>PWM。</li>
-<li>ADC。</li>
-</ul>
-<p>理解这些接口，是从应用开发走向板级开发和驱动开发的基础。</p>
+                                <p>AI 编程工具真正影响效率的地方，不只是“能不能写代码”，而是能不能稳定理解项目上下文。很多时候，同一个需求第一次让 AI 做，结果还可以；过几天换个窗口、换个模型、换个入口，再让它做类似任务，质量就开始波动。</p>
+<p>原因通常不是模型突然变差，而是上下文没有被工程化管理。项目背景、目录约定、构建命令、测试方式、代码风格、风险边界都靠临时口头描述，AI 每次都要重新猜。</p>
                             </div>
                         
                     
@@ -717,14 +644,14 @@
                         <div class="trm-card-header">
                             <div class="trm-left-side">
                                 <h6>
-                                    <a href="/2026/06/21/Embedded_Dev_Cross_Compile_CMake/" class="trm-anima-link">
-                                        嵌入式开发进阶：交叉编译、CMake 工具链与部署
+                                    <a href="/2026/06/24/Codex_Blog_Automation_2026_06_24/" class="trm-anima-link">
+                                        用 Codex 自动生成 Hexo 博客文章并一键部署
                                     </a>
                                 </h6>
                                 <div class="trm-text-sm trm-accent-color trm-mt-15">
                                     <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">06/21</li>
-                                        <li class="trm-accent-color">11:30</li>
+                                        <li class="trm-accent-color">06/24</li>
+                                        <li class="trm-accent-color">21:36</li>
                                         
                                     </ul>
                                 </div>
@@ -732,17 +659,8 @@
                         </div>
                         
                             <div class="trm-publication trm-mt-15">
-                                <h2 id="一、什么是交叉编译"><a href="#一、什么是交叉编译" class="headerlink" title="一、什么是交叉编译"></a>一、什么是交叉编译</h2><p>交叉编译是指在一种平台上编译另一种平台运行的程序。比如在 x86_64 Ubuntu 电脑上编译 ARM 开发板运行的程序。</p>
-<p>常见组合：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">开发机：x86_64 Linux</span><br><span class="line">目标板：ARM Linux</span><br></pre></td></tr></table></figure>
-
-<p>为什么需要交叉编译：</p>
-<ul>
-<li>开发板性能弱，编译慢。</li>
-<li>开发板存储小，不适合安装完整工具链。</li>
-<li>CI&#x2F;CD 通常运行在服务器上。</li>
-<li>需要统一构建环境。</li>
-</ul>
+                                <p>每天写技术博客最容易卡住的地方，往往不是不会写，而是流程太碎：选题、确认仓库格式、创建 Markdown、补 front matter、检查构建、再执行部署。每一步都不复杂，但合在一起就会变成一种阻力。</p>
+<p>Codex CLI 适合处理这类重复性内容工作。它可以在当前仓库里阅读已有文章，理解 Hexo 的目录结构和 front matter 约定，然后按同样的风格新增文章。再配合一个小脚本，就可以把“生成今日文章”和“部署到 GitHub Pages”合成一个稳定入口。</p>
                             </div>
                         
                     
@@ -758,7 +676,7 @@
 
 
     <div class="trm-pagination">
-        <a class="page-number" href="/archives/2026/06/">1</a><a class="page-number" href="/archives/2026/06/page/2/">2</a><a class="page-number" href="/archives/2026/06/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/archives/2026/06/page/5/">5</a>
+        <a class="page-number" href="/archives/2026/06/">1</a><a class="page-number" href="/archives/2026/06/page/2/">2</a><a class="page-number" href="/archives/2026/06/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/archives/2026/06/page/5/">5</a><a class="page-number" href="/archives/2026/06/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2026/06/page/9/">9</a>
     </div>
 
 
