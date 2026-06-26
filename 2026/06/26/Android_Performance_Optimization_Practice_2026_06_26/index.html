@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="Android 性能优化不是上线前临时跑一次 Profiler，也不是看到卡顿后盲目改几行代码。真正稳定的做法，是把性能问题拆成可观测、可复现、可验证的工程流程：先知道慢在哪里，再判断为什么慢，最后用指标证明优化确实有效。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 性能优化实践：从定位问题到建立日常治理">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/26/Android_Performance_Optimization_Practice_2026_06_26/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="Android 性能优化不是上线前临时跑一次 Profiler，也不是看到卡顿后盲目改几行代码。真正稳定的做法，是把性能问题拆成可观测、可复现、可验证的工程流程：先知道慢在哪里，再判断为什么慢，最后用指标证明优化确实有效。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-26T13:04:42.000Z">
+<meta property="article:modified_time" content="2026-06-26T13:04:42.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="工程实践">
+<meta name="twitter:card" content="summary">
+
+
+<title >Android 性能优化实践：从定位问题到建立日常治理</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-26 21:04:42"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/android.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Android 性能优化实践：从定位问题到建立日常治理
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/26
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            21:04
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>Android 性能优化不是上线前临时跑一次 Profiler，也不是看到卡顿后盲目改几行代码。真正稳定的做法，是把性能问题拆成可观测、可复现、可验证的工程流程：先知道慢在哪里，再判断为什么慢，最后用指标证明优化确实有效。</p>
+<span id="more"></span>
+
+<h2 id="一、先定义性能目标"><a href="#一、先定义性能目标" class="headerlink" title="一、先定义性能目标"></a>一、先定义性能目标</h2><p>性能优化最容易踩的坑，是一开始就讨论“怎么优化”，却没有定义“优化到什么程度”。</p>
+<p>在项目里可以先固定几类指标：</p>
+<ul>
+<li>启动耗时：冷启动、温启动、首屏可交互时间。</li>
+<li>页面流畅度：掉帧、长帧、列表滑动是否稳定。</li>
+<li>内存表现：峰值内存、频繁 GC、大图和缓存占用。</li>
+<li>网络链路：接口耗时、重试、弱网下的用户等待时间。</li>
+<li>包体体积：APK&#x2F;AAB 大小、so、资源、重复依赖。</li>
+<li>耗电和后台任务：定位、轮询、WorkManager、前台服务。</li>
+</ul>
+<p>指标不需要一开始就非常复杂，但必须能被重复测量。否则优化结果只能依赖主观体感，很难在版本迭代中持续保持。</p>
+<h2 id="二、启动优化：减少主线程和首屏负担"><a href="#二、启动优化：减少主线程和首屏负担" class="headerlink" title="二、启动优化：减少主线程和首屏负担"></a>二、启动优化：减少主线程和首屏负担</h2><p>启动慢通常不是单点问题，而是一组初始化逻辑叠加后的结果。</p>
+<p>常见问题包括：</p>
+<ul>
+<li><code>Application.onCreate()</code> 初始化过多 SDK。</li>
+<li>主线程做磁盘 IO、数据库打开、JSON 解析。</li>
+<li>首屏布局层级过深或包含复杂自定义 View。</li>
+<li>首页一次性请求太多接口。</li>
+<li>启动时加载大图、字体、动态配置。</li>
+</ul>
+<p>实践上可以按优先级处理：</p>
+<ol>
+<li>只保留首屏必须初始化的逻辑。</li>
+<li>非必要 SDK 延迟到用户真正使用前。</li>
+<li>IO 操作放到后台线程，并控制结果回主线程的时机。</li>
+<li>首页数据分层加载，先展示骨架或缓存，再刷新网络数据。</li>
+<li>用 Baseline Profile 优化核心启动路径和高频页面路径。</li>
+</ol>
+<p>一个简单的延迟初始化示例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">App</span> : <span class="type">Application</span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate()</span><br><span class="line"></span><br><span class="line">        initCrashReporter()</span><br><span class="line">        initLogger()</span><br><span class="line"></span><br><span class="line">        ProcessLifecycleOwner.<span class="keyword">get</span>().lifecycle.addObserver(</span><br><span class="line">            <span class="keyword">object</span> : DefaultLifecycleObserver &#123;</span><br><span class="line">                <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onStart</span><span class="params">(owner: <span class="type">LifecycleOwner</span>)</span></span> &#123;</span><br><span class="line">                    AppScope.launch &#123;</span><br><span class="line">                        initNonCriticalSdk()</span><br><span class="line">                    &#125;</span><br><span class="line">                    owner.lifecycle.removeObserver(<span class="keyword">this</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的关键不是“全部异步”，而是明确哪些初始化真的影响首屏，哪些可以后移。如果把所有任务同时丢到线程池，也可能造成 CPU 争抢，反而影响启动。</p>
+<h2 id="三、卡顿优化：把主线程当成稀缺资源"><a href="#三、卡顿优化：把主线程当成稀缺资源" class="headerlink" title="三、卡顿优化：把主线程当成稀缺资源"></a>三、卡顿优化：把主线程当成稀缺资源</h2><p>Android 的 UI 渲染依赖主线程协作完成。主线程被长时间占用，就会出现掉帧、点击无响应和动画不顺滑。</p>
+<p>排查卡顿时可以重点看：</p>
+<ul>
+<li>主线程是否有耗时方法。</li>
+<li>RecyclerView 是否频繁创建对象。</li>
+<li>图片解码是否发生在主线程。</li>
+<li><code>onBindViewHolder()</code> 是否做了复杂计算。</li>
+<li>自定义 View 的 <code>onDraw()</code> 是否分配对象。</li>
+<li>是否存在同步锁竞争。</li>
+</ul>
+<p>列表页面是最常见的卡顿来源。优化时可以先从绑定逻辑入手：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ArticleAdapter</span> : <span class="type">ListAdapter</span>&lt;<span class="type">Article, ArticleViewHolder</span>&gt;(DIFF) &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ArticleViewHolder</span>, position: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> item = getItem(position)</span><br><span class="line">        holder.title.text = item.title</span><br><span class="line">        holder.summary.text = item.summary</span><br><span class="line">        holder.cover.load(item.coverUrl) &#123;</span><br><span class="line">            crossfade(<span class="literal">false</span>)</span><br><span class="line">            placeholder(R.drawable.placeholder_cover)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>列表绑定中应该避免：</p>
+<ul>
+<li>每次绑定都格式化复杂时间。</li>
+<li>每次绑定都创建新的正则、画笔、监听器。</li>
+<li>在绑定阶段同步查询数据库。</li>
+<li>在绑定阶段直接解码 Bitmap。</li>
+<li>使用 <code>notifyDataSetChanged()</code> 刷新整个列表。</li>
+</ul>
+<p>如果数据量较大，优先使用 <code>ListAdapter</code>、<code>DiffUtil</code> 或 Paging，让刷新范围尽可能小。</p>
+<h2 id="四、内存优化：重点治理泄漏和大对象"><a href="#四、内存优化：重点治理泄漏和大对象" class="headerlink" title="四、内存优化：重点治理泄漏和大对象"></a>四、内存优化：重点治理泄漏和大对象</h2><p>内存问题的表现不一定是立刻崩溃，更多时候是页面越用越卡、GC 频繁、图片列表抖动。</p>
+<p>常见风险包括：</p>
+<ul>
+<li>Activity 或 Fragment 被单例、回调、Handler 持有。</li>
+<li>协程作用域超过页面生命周期。</li>
+<li>Bitmap 缓存没有边界。</li>
+<li>WebView、播放器、地图组件释放不彻底。</li>
+<li>大列表一次性加载完整数据。</li>
+</ul>
+<p>页面里的协程建议绑定生命周期：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ArticleFragment</span> : <span class="type">Fragment</span>(R.layout.fragment_article) &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onViewCreated</span><span class="params">(view: <span class="type">View</span>, savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        viewLifecycleOwner.lifecycleScope.launch &#123;</span><br><span class="line">            repeatOnLifecycle(Lifecycle.State.STARTED) &#123;</span><br><span class="line">                viewModel.uiState.collect &#123; state -&gt;</span><br><span class="line">                    render(state)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用 <code>viewLifecycleOwner</code>，可以避免 Fragment View 销毁后仍继续更新旧 View。对于 ViewBinding，也要在 <code>onDestroyView()</code> 里释放引用。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onDestroyView</span><span class="params">()</span></span> &#123;</span><br><span class="line">    binding = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">super</span>.onDestroyView()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果项目里图片很多，需要检查图片加载库的内存缓存、磁盘缓存、缩略图策略和列表预加载策略。大图展示页最好按目标尺寸加载，不要把原图完整解码到内存。</p>
+<h2 id="五、网络优化：减少用户等待"><a href="#五、网络优化：减少用户等待" class="headerlink" title="五、网络优化：减少用户等待"></a>五、网络优化：减少用户等待</h2><p>网络性能不只看接口平均耗时，还要看弱网、失败重试和页面串行等待。</p>
+<p>可以从几个方向入手：</p>
+<ul>
+<li>合并首屏必要接口，减少串行请求。</li>
+<li>非关键数据延迟加载。</li>
+<li>对稳定数据做本地缓存。</li>
+<li>请求失败时保留旧数据，而不是清空页面。</li>
+<li>给长请求设置合理超时。</li>
+<li>避免重复点击触发重复请求。</li>
+</ul>
+<p>Repository 层可以统一处理缓存和刷新：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UserRepository</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> dao: UserDao,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> api: UserApi</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">observeUser</span><span class="params">(userId: <span class="type">String</span>)</span></span>: Flow&lt;UserEntity?&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> dao.observeById(userId)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">refreshUser</span><span class="params">(userId: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> remote = api.getUser(userId)</span><br><span class="line">        dao.upsert(remote.toEntity())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>UI 先展示本地数据，再触发远端刷新。这样即使网络较慢，用户也不会一直面对空白页面。</p>
+<h2 id="六、布局优化：少嵌套，少重复测量"><a href="#六、布局优化：少嵌套，少重复测量" class="headerlink" title="六、布局优化：少嵌套，少重复测量"></a>六、布局优化：少嵌套，少重复测量</h2><p>布局性能问题常出现在复杂首页、动态表单、嵌套列表和弹窗里。</p>
+<p>建议优先检查：</p>
+<ul>
+<li>是否存在没有必要的多层嵌套。</li>
+<li>ConstraintLayout 是否能替代多层 LinearLayout。</li>
+<li>RecyclerView 是否嵌套 RecyclerView。</li>
+<li>图片是否设置了明确尺寸。</li>
+<li>文本是否因为宽高不稳定导致反复测量。</li>
+<li>是否过度使用 <code>wrap_content</code> 造成额外测量成本。</li>
+</ul>
+<p>优化布局时不要只追求“层级越少越好”，还要保持结构可维护。一个清晰的布局，比为了少一层而写出难维护的约束关系更可靠。</p>
+<h2 id="七、包体优化：从依赖和资源开始"><a href="#七、包体优化：从依赖和资源开始" class="headerlink" title="七、包体优化：从依赖和资源开始"></a>七、包体优化：从依赖和资源开始</h2><p>包体变大通常来自三类内容：依赖、资源、Native 库。</p>
+<p>可以固定做这些检查：</p>
+<ul>
+<li>开启 R8 和资源压缩。</li>
+<li>删除无用图片、无用语言包、重复资源。</li>
+<li>检查第三方 SDK 是否引入过多传递依赖。</li>
+<li>按 ABI 控制 so 输出。</li>
+<li>大资源放到服务端或动态下发。</li>
+<li>使用矢量图替代简单 PNG。</li>
+</ul>
+<p>Gradle 中常见配置：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            isMinifyEnabled = <span class="literal">true</span></span><br><span class="line">            isShrinkResources = <span class="literal">true</span></span><br><span class="line">            proguardFiles(</span><br><span class="line">                getDefaultProguardFile(<span class="string">&quot;proguard-android-optimize.txt&quot;</span>),</span><br><span class="line">                <span class="string">&quot;proguard-rules.pro&quot;</span></span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>包体优化要配合回归测试。尤其是混淆和资源压缩，必须覆盖反射、WebView JS 调用、路由跳转、序列化等路径。</p>
+<h2 id="八、建立日常治理机制"><a href="#八、建立日常治理机制" class="headerlink" title="八、建立日常治理机制"></a>八、建立日常治理机制</h2><p>性能优化最怕“一次性运动”。真正有效的方式，是把性能指标放进日常开发流程。</p>
+<p>可以建立一套轻量机制：</p>
+<ul>
+<li>每次发版前记录启动耗时、包体大小、核心页面帧率。</li>
+<li>新增重型 SDK 必须说明初始化时机和包体影响。</li>
+<li>大图、长列表、复杂自定义 View 合入前做专项检查。</li>
+<li>对启动链路和首页链路做基准测试。</li>
+<li>线上采集卡顿、ANR、OOM 和慢请求。</li>
+<li>性能问题进入缺陷管理，而不是只在群里口头提醒。</li>
+</ul>
+<p>对于团队来说，性能优化的目标不是让某一次测试数据漂亮，而是让性能退化能被及时发现、及时止损。</p>
+<h2 id="九、一个实用排查顺序"><a href="#九、一个实用排查顺序" class="headerlink" title="九、一个实用排查顺序"></a>九、一个实用排查顺序</h2><p>如果接手一个已经变慢的 Android 项目，可以按这个顺序推进：</p>
+<ol>
+<li>先测冷启动、首页加载、核心列表滑动、内存峰值。</li>
+<li>用 Profiler、Perfetto 或系统 Trace 找主线程长任务。</li>
+<li>清理 <code>Application</code> 中非必要初始化。</li>
+<li>优化首页数据加载顺序。</li>
+<li>排查列表绑定、图片加载和局部刷新。</li>
+<li>用 LeakCanary 检查核心页面泄漏。</li>
+<li>分析 APK，处理明显的大资源和冗余依赖。</li>
+<li>把关键指标写入发版检查清单。</li>
+</ol>
+<p>这个顺序的好处是先处理用户最容易感知的问题，再处理长期治理问题。每一步都能产生可验证的结果。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Android 性能优化的核心是工程化，而不是技巧堆叠。</p>
+<p>启动、卡顿、内存、网络、布局、包体都可以优化，但优先级应该由用户体验和数据决定。先建立指标，再定位瓶颈，最后用测试和线上监控确认效果。只有这样，性能优化才不会停留在“感觉变快了”，而是变成项目可以长期复用的能力。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/26/Android_Performance_Optimization_Practice_2026_06_26/" title="Android 性能优化实践：从定位问题到建立日常治理">https://blog.hansong.icu/2026/06/26/Android_Performance_Optimization_Practice_2026_06_26/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/26/AI_Code_Review_Checklist_2026_06_26/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/26/AI_Code_Review_Checklist_2026_06_26/" class="trm-anima-link">
+                    AI 代码审查清单：把生成结果变成可合并变更
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/26</li>
+                <li>21:09</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/26/AI_Task_Closure_Workflow_2026_06_26/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/26/AI_Task_Closure_Workflow_2026_06_26/" class="trm-anima-link">
+                    AI 协作任务闭环：从生成代码到验证和发布
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/26</li>
+                <li>08:16</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先定义性能目标"><a rel="nofollow" class="trm-toc-link" href="#一、先定义性能目标"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先定义性能目标</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、启动优化：减少主线程和首屏负担"><a rel="nofollow" class="trm-toc-link" href="#二、启动优化：减少主线程和首屏负担"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、启动优化：减少主线程和首屏负担</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、卡顿优化：把主线程当成稀缺资源"><a rel="nofollow" class="trm-toc-link" href="#三、卡顿优化：把主线程当成稀缺资源"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、卡顿优化：把主线程当成稀缺资源</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、内存优化：重点治理泄漏和大对象"><a rel="nofollow" class="trm-toc-link" href="#四、内存优化：重点治理泄漏和大对象"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、内存优化：重点治理泄漏和大对象</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、网络优化：减少用户等待"><a rel="nofollow" class="trm-toc-link" href="#五、网络优化：减少用户等待"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、网络优化：减少用户等待</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、布局优化：少嵌套，少重复测量"><a rel="nofollow" class="trm-toc-link" href="#六、布局优化：少嵌套，少重复测量"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、布局优化：少嵌套，少重复测量</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、包体优化：从依赖和资源开始"><a rel="nofollow" class="trm-toc-link" href="#七、包体优化：从依赖和资源开始"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、包体优化：从依赖和资源开始</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、建立日常治理机制"><a rel="nofollow" class="trm-toc-link" href="#八、建立日常治理机制"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、建立日常治理机制</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、一个实用排查顺序"><a rel="nofollow" class="trm-toc-link" href="#九、一个实用排查顺序"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、一个实用排查顺序</span></a></li><li class="trm-toc-item trm-toc-level-2" title="总结"><a rel="nofollow" class="trm-toc-link" href="#总结"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
