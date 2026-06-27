@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="重构最怕的不是代码改得多，而是改完以后说不清楚行为有没有变化。AI 工具能很快移动代码、抽函数、改命名、补类型，但如果缺少边界和验证，大规模重构很容易从“改善结构”变成“引入不确定性”。 更稳妥的做法，是把 AI 当成一个执行力很强的工程助手，让它在明确目标、有限范围和可重复验证的约束下工作。重构不应该一次性追求“变得优雅”，而应该被拆成一组可以审查、可以回滚、可以证明行为不变的小步骤。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 辅助重构：把大改动拆成可验证的小步骤">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/27/AI_Refactoring_Workflow_2026_06_27/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="重构最怕的不是代码改得多，而是改完以后说不清楚行为有没有变化。AI 工具能很快移动代码、抽函数、改命名、补类型，但如果缺少边界和验证，大规模重构很容易从“改善结构”变成“引入不确定性”。 更稳妥的做法，是把 AI 当成一个执行力很强的工程助手，让它在明确目标、有限范围和可重复验证的约束下工作。重构不应该一次性追求“变得优雅”，而应该被拆成一组可以审查、可以回滚、可以证明行为不变的小步骤。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-27T01:31:40.000Z">
+<meta property="article:modified_time" content="2026-06-27T01:31:40.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Workflow">
+<meta property="article:tag" content="Engineering">
+<meta property="article:tag" content="Refactoring">
+<meta name="twitter:card" content="summary">
+
+
+<title >AI 辅助重构：把大改动拆成可验证的小步骤</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-27 09:31:40"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            AI 辅助重构：把大改动拆成可验证的小步骤
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/27
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:31
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>重构最怕的不是代码改得多，而是改完以后说不清楚行为有没有变化。AI 工具能很快移动代码、抽函数、改命名、补类型，但如果缺少边界和验证，大规模重构很容易从“改善结构”变成“引入不确定性”。</p>
+<p>更稳妥的做法，是把 AI 当成一个执行力很强的工程助手，让它在明确目标、有限范围和可重复验证的约束下工作。重构不应该一次性追求“变得优雅”，而应该被拆成一组可以审查、可以回滚、可以证明行为不变的小步骤。</p>
+<span id="more"></span>
+
+<h2 id="一、先判断是不是应该重构"><a href="#一、先判断是不是应该重构" class="headerlink" title="一、先判断是不是应该重构"></a>一、先判断是不是应该重构</h2><p>不是所有看起来不舒服的代码都值得马上重构。重构应该服务于具体目标，而不是单纯追求形式整洁。</p>
+<p>比较值得启动重构的场景包括：</p>
+<ul>
+<li>同一段业务规则在多个位置重复出现。</li>
+<li>一个函数同时负责校验、计算、存储和展示。</li>
+<li>新需求每次都要改很多无关文件。</li>
+<li>异常路径散落在调用链里，问题难以定位。</li>
+<li>测试很难编写，因为逻辑和外部依赖耦合太紧。</li>
+<li>命名和模块边界已经无法表达真实业务含义。</li>
+</ul>
+<p>如果只是局部命名不喜欢，或者短期不会继续演进，重构的收益可能不够高。AI 让修改成本下降了，但 review、测试和回归风险并不会自动消失。</p>
+<h2 id="二、给-AI-一个明确的重构目标"><a href="#二、给-AI-一个明确的重构目标" class="headerlink" title="二、给 AI 一个明确的重构目标"></a>二、给 AI 一个明确的重构目标</h2><p>“帮我重构这段代码”太宽泛，AI 很容易顺手做过头。更好的任务描述应该包含目标、范围和禁止事项。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">请只重构订单金额计算逻辑。</span><br><span class="line">目标是把折扣、运费、积分抵扣拆成独立函数，保持外部接口不变。</span><br><span class="line">不要修改数据库结构、接口字段和 UI 文案。</span><br><span class="line">完成后补充或调整现有单元测试。</span><br></pre></td></tr></table></figure>
+
+<p>这类说明会让 AI 知道什么可以动，什么不能动。尤其是“保持外部接口不变”很重要，它能把任务限制在内部结构调整，而不是演变成一次行为变更。</p>
+<p>如果重构涉及多个模块，可以进一步要求分阶段：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第一步只提取纯函数，不改变调用方。</span><br><span class="line">第二步补测试覆盖边界输入。</span><br><span class="line">第三步再替换旧实现。</span><br><span class="line">每一步完成后都运行测试。</span><br></pre></td></tr></table></figure>
+
+<p>AI 很适合执行这种机械但需要细心的步骤。人负责判断方向，AI 负责把小步骤做完整。</p>
+<h2 id="三、先建立行为保护网"><a href="#三、先建立行为保护网" class="headerlink" title="三、先建立行为保护网"></a>三、先建立行为保护网</h2><p>重构的核心原则是：结构可以变，行为不能无意变化。要做到这一点，最好在动代码之前先有保护网。</p>
+<p>保护网不一定一开始就很完整，但至少要覆盖最关键的业务假设：</p>
+<ul>
+<li>正常输入得到稳定结果。</li>
+<li>空值、非法值和边界值不会导致崩溃。</li>
+<li>失败路径返回可预期错误。</li>
+<li>重复调用不会产生额外副作用。</li>
+<li>对外接口的响应结构不变化。</li>
+</ul>
+<p>对于纯逻辑代码，优先补单元测试。对于 Android 项目，可以先覆盖 ViewModel、Repository、格式化器、状态转换等不依赖 UI 的部分。对于后端服务，可以覆盖参数解析、权限判断、幂等逻辑和错误码。</p>
+<p>如果当前代码很难测试，也不要一上来大拆。可以先加几条高价值的黑盒测试，固定住外部行为，然后再逐步把内部逻辑抽出来。</p>
+<h2 id="四、每次只改一种事情"><a href="#四、每次只改一种事情" class="headerlink" title="四、每次只改一种事情"></a>四、每次只改一种事情</h2><p>重构最容易失控的地方，是在同一个提交里混合太多类型的变化。</p>
+<p>常见的混合包括：</p>
+<ul>
+<li>改命名的同时改业务逻辑。</li>
+<li>移动文件的同时升级依赖。</li>
+<li>抽象公共模块的同时改接口返回值。</li>
+<li>格式化全文件的同时修 bug。</li>
+<li>删除旧代码的同时替换调用链。</li>
+</ul>
+<p>这些改动放在一起，review 会变得很痛苦。审查者很难判断某一行变化到底是行为修复、结构调整，还是格式化带来的噪音。</p>
+<p>更稳的拆法是：</p>
+<ol>
+<li>先补测试，证明当前行为。</li>
+<li>再做纯移动、纯命名、纯提取函数这类机械改动。</li>
+<li>然后替换调用方。</li>
+<li>最后删除旧实现。</li>
+</ol>
+<p>每一步都应该能独立构建或通过测试。如果其中一步出问题，也更容易回滚。</p>
+<h2 id="五、让-AI-输出可审查的-diff"><a href="#五、让-AI-输出可审查的-diff" class="headerlink" title="五、让 AI 输出可审查的 diff"></a>五、让 AI 输出可审查的 diff</h2><p>AI 一次性改太多文件时，最重要的不是它“看起来完成了”，而是 diff 是否容易审查。</p>
+<p>可以在任务里明确要求：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">请控制单次改动范围。</span><br><span class="line">如果需要修改超过 5 个文件，先说明拆分方案。</span><br><span class="line">不要做无关格式化。</span><br><span class="line">不要重排 import 以外的无关代码。</span><br></pre></td></tr></table></figure>
+
+<p>完成后还可以让 AI 自查一次：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请检查这次 diff 是否存在无关改动。</span><br><span class="line">请按文件说明每处修改的目的。</span><br><span class="line">请指出是否有外部行为变化。</span><br></pre></td></tr></table></figure>
+
+<p>这一步的价值在于把“代码变化”翻译成“工程意图”。如果 AI 自己都无法清楚说明某个文件为什么被改动，通常说明这部分变化需要重新拆分。</p>
+<h2 id="六、处理遗留代码要先隔离副作用"><a href="#六、处理遗留代码要先隔离副作用" class="headerlink" title="六、处理遗留代码要先隔离副作用"></a>六、处理遗留代码要先隔离副作用</h2><p>遗留代码难重构，通常不是因为语法复杂，而是因为副作用太多。一个函数里可能同时读配置、访问数据库、发网络请求、写日志、更新 UI 状态。</p>
+<p>面对这种代码，第一步不是直接抽象接口，而是先识别副作用边界：</p>
+<ul>
+<li>哪些输入来自外部环境。</li>
+<li>哪些输出会改变持久化数据。</li>
+<li>哪些调用可能失败或超时。</li>
+<li>哪些状态依赖调用顺序。</li>
+<li>哪些逻辑可以变成纯函数。</li>
+</ul>
+<p>可以先让 AI 只做分析，不做修改：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请阅读这个模块，列出纯计算逻辑和外部副作用。</span><br><span class="line">先不要修改代码。</span><br><span class="line">请指出哪些部分适合先提取为可测试函数。</span><br></pre></td></tr></table></figure>
+
+<p>等边界清楚后，再让它做最小提取。比如把金额计算、状态判断、文本格式化先抽出来，数据库和网络访问仍然留在原位置。这样风险会小很多。</p>
+<h2 id="七、命名重构要保持业务语义"><a href="#七、命名重构要保持业务语义" class="headerlink" title="七、命名重构要保持业务语义"></a>七、命名重构要保持业务语义</h2><p>AI 很擅长批量改名，但命名不是单纯把变量变长。好的命名应该表达业务语义，而不是只描述技术形状。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data -&gt; orderSummary</span><br><span class="line">result -&gt; paymentDecision</span><br><span class="line">flag -&gt; shouldRetry</span><br><span class="line">list -&gt; pendingInvoices</span><br></pre></td></tr></table></figure>
+
+<p>命名重构时要注意两点：</p>
+<ul>
+<li>不要把领域概念改成模糊的技术词。</li>
+<li>不要为了统一风格破坏已有公共 API。</li>
+</ul>
+<p>如果命名会影响序列化字段、数据库列、路由参数、前端埋点或第三方协议，就不能当作普通变量重命名处理。AI 批量替换前，必须先确认这些边界。</p>
+<h2 id="八、验证不只跑一次"><a href="#八、验证不只跑一次" class="headerlink" title="八、验证不只跑一次"></a>八、验证不只跑一次</h2><p>重构后的验证应该分层，而不是只在最后跑一次构建。</p>
+<p>比较实用的节奏是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">小步骤完成后：运行相关单元测试。</span><br><span class="line">调用链替换后：运行模块测试。</span><br><span class="line">公共接口变化后：运行集成测试或构建。</span><br><span class="line">最终完成后：运行项目约定的完整验证命令。</span><br></pre></td></tr></table></figure>
+
+<p>对于博客、前端或脚本项目，构建命令就是最低要求。对于应用项目，还要结合单元测试、静态检查、打包和关键页面手动验证。</p>
+<p>如果某些验证因为环境缺失无法执行，结果说明里要写清楚：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">已运行 npm run build，通过。</span><br><span class="line">未运行端到端测试，因为本地没有测试服务依赖。</span><br></pre></td></tr></table></figure>
+
+<p>这比一句“应该没问题”可靠得多。</p>
+<h2 id="九、保留回滚路径"><a href="#九、保留回滚路径" class="headerlink" title="九、保留回滚路径"></a>九、保留回滚路径</h2><p>好的重构应该能被回滚。不是说一定会失败，而是要避免把风险绑死在一个巨大提交里。</p>
+<p>可以用几种方式保留回滚空间：</p>
+<ul>
+<li>分多次提交，每次只做一种变化。</li>
+<li>保持旧接口一段时间，先让新实现并行接入。</li>
+<li>对高风险路径加开关或灰度条件。</li>
+<li>删除旧实现前确认调用方已经全部迁移。</li>
+<li>在变更说明里写清楚验证范围和风险点。</li>
+</ul>
+<p>AI 可以帮助生成迁移清单，但最终仍然要由维护者判断是否可以删除旧逻辑。尤其是被反射、配置、脚本或第三方调用的代码，不能只靠静态搜索下结论。</p>
+<h2 id="十、一个可复用的重构提示词"><a href="#十、一个可复用的重构提示词" class="headerlink" title="十、一个可复用的重构提示词"></a>十、一个可复用的重构提示词</h2><p>日常可以把下面这段作为起点：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">请以小步重构方式处理这个模块。</span><br><span class="line">目标：改善结构和可测试性，保持外部行为不变。</span><br><span class="line">要求：</span><br><span class="line">1. 先阅读相关文件，说明当前边界和风险。</span><br><span class="line">2. 只修改完成目标所需的文件。</span><br><span class="line">3. 不做无关格式化、依赖升级或命名风格调整。</span><br><span class="line">4. 优先提取纯函数和明确副作用边界。</span><br><span class="line">5. 补充或调整能证明行为不变的测试。</span><br><span class="line">6. 完成后运行项目约定验证命令。</span><br><span class="line">7. 最后说明改了什么、验证结果和残留风险。</span><br></pre></td></tr></table></figure>
+
+<p>这段提示词的重点不是让 AI 变得保守，而是让它把重构当成工程交付，而不是代码美化。</p>
+<h2 id="十一、总结"><a href="#十一、总结" class="headerlink" title="十一、总结"></a>十一、总结</h2><p>AI 让重构的执行速度变快，但重构的本质没有变：先理解行为，再改善结构，最后用验证证明没有引入意外变化。</p>
+<p>真正可靠的 AI 辅助重构，应该具备三个特征：</p>
+<ul>
+<li>目标明确，知道为什么改。</li>
+<li>步骤足够小，每一步都能审查。</li>
+<li>验证可重复，结果能被复盘。</li>
+</ul>
+<p>当重构被拆成可验证的小步骤后，AI 的优势会非常明显。它可以承担大量重复、细碎、容易疲劳的修改工作，而开发者把注意力放在边界、风险和设计判断上。这样的协作方式，才更适合长期维护的真实项目。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/27/AI_Refactoring_Workflow_2026_06_27/" title="AI 辅助重构：把大改动拆成可验证的小步骤">https://blog.hansong.icu/2026/06/27/AI_Refactoring_Workflow_2026_06_27/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/26/Embedded_Linux_Series_32_Device_Identity_Certs/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/embedded.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">
+                    嵌入式开发
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/26/Embedded_Linux_Series_32_Device_Identity_Certs/" class="trm-anima-link">
+                    嵌入式 Linux 系列 32：设备身份、证书烧录和密钥保护
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/26</li>
+                <li>22:12</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先判断是不是应该重构"><a rel="nofollow" class="trm-toc-link" href="#一、先判断是不是应该重构"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先判断是不是应该重构</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、给 AI 一个明确的重构目标"><a rel="nofollow" class="trm-toc-link" href="#二、给-AI-一个明确的重构目标"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、给 AI 一个明确的重构目标</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、先建立行为保护网"><a rel="nofollow" class="trm-toc-link" href="#三、先建立行为保护网"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、先建立行为保护网</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、每次只改一种事情"><a rel="nofollow" class="trm-toc-link" href="#四、每次只改一种事情"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、每次只改一种事情</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、让 AI 输出可审查的 diff"><a rel="nofollow" class="trm-toc-link" href="#五、让-AI-输出可审查的-diff"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、让 AI 输出可审查的 diff</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、处理遗留代码要先隔离副作用"><a rel="nofollow" class="trm-toc-link" href="#六、处理遗留代码要先隔离副作用"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、处理遗留代码要先隔离副作用</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、命名重构要保持业务语义"><a rel="nofollow" class="trm-toc-link" href="#七、命名重构要保持业务语义"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、命名重构要保持业务语义</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、验证不只跑一次"><a rel="nofollow" class="trm-toc-link" href="#八、验证不只跑一次"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、验证不只跑一次</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、保留回滚路径"><a rel="nofollow" class="trm-toc-link" href="#九、保留回滚路径"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、保留回滚路径</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十、一个可复用的重构提示词"><a rel="nofollow" class="trm-toc-link" href="#十、一个可复用的重构提示词"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、一个可复用的重构提示词</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十一、总结"><a rel="nofollow" class="trm-toc-link" href="#十一、总结"><span class="trm-toc-number">11.</span> <span class="trm-toc-text">十一、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
