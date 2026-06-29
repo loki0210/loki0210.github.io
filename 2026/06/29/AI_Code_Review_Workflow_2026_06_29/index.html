@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="代码审查最重要的价值，不是把变量名挑得更整齐，而是尽早发现行为风险、边界遗漏和维护成本。AI 工具可以快速阅读 diff、追踪调用链、补充测试思路，但如果直接问“这段代码有没有问题”，得到的答案往往很泛，甚至会把风格偏好包装成严重缺陷。 更稳定的做法，是把 AI 放进一个明确的审查流程里：先限定审查范围，再按风险分层阅读，最后把发现的问题转成可执行的整改项。这样它不是替代人工判断，而是帮助维护者更">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 辅助代码审查：从 diff 到可执行整改">
+<meta property="og:url" content="https://blog.hansong.icu/2026/06/29/AI_Code_Review_Workflow_2026_06_29/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="代码审查最重要的价值，不是把变量名挑得更整齐，而是尽早发现行为风险、边界遗漏和维护成本。AI 工具可以快速阅读 diff、追踪调用链、补充测试思路，但如果直接问“这段代码有没有问题”，得到的答案往往很泛，甚至会把风格偏好包装成严重缺陷。 更稳定的做法，是把 AI 放进一个明确的审查流程里：先限定审查范围，再按风险分层阅读，最后把发现的问题转成可执行的整改项。这样它不是替代人工判断，而是帮助维护者更">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-06-29T13:57:24.000Z">
+<meta property="article:modified_time" content="2026-06-29T13:57:24.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Code Review">
+<meta property="article:tag" content="Workflow">
+<meta property="article:tag" content="Engineering">
+<meta name="twitter:card" content="summary">
+
+
+<title >AI 辅助代码审查：从 diff 到可执行整改</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-29 21:57:24"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            AI 辅助代码审查：从 diff 到可执行整改
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            06/29
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            21:57
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>代码审查最重要的价值，不是把变量名挑得更整齐，而是尽早发现行为风险、边界遗漏和维护成本。AI 工具可以快速阅读 diff、追踪调用链、补充测试思路，但如果直接问“这段代码有没有问题”，得到的答案往往很泛，甚至会把风格偏好包装成严重缺陷。</p>
+<p>更稳定的做法，是把 AI 放进一个明确的审查流程里：先限定审查范围，再按风险分层阅读，最后把发现的问题转成可执行的整改项。这样它不是替代人工判断，而是帮助维护者更快看清变化背后的影响面。</p>
+<span id="more"></span>
+
+<h2 id="一、先明确审查目标"><a href="#一、先明确审查目标" class="headerlink" title="一、先明确审查目标"></a>一、先明确审查目标</h2><p>同一份 diff，在不同目标下需要看的重点并不一样。</p>
+<p>如果目标是上线前风险审查，重点应该放在：</p>
+<ul>
+<li>是否改变核心业务行为。</li>
+<li>是否存在崩溃、数据丢失、权限绕过。</li>
+<li>失败路径是否被正确处理。</li>
+<li>是否缺少关键测试或回滚方案。</li>
+</ul>
+<p>如果目标是长期维护审查，重点可以放在：</p>
+<ul>
+<li>模块边界是否变清晰。</li>
+<li>命名是否表达真实业务含义。</li>
+<li>重复逻辑是否被收敛。</li>
+<li>新抽象是否真的降低复杂度。</li>
+</ul>
+<p>如果目标没有说清楚，AI 很容易把所有维度混在一起，输出一堆优先级不明的建议。审查前可以先写一句：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请以发布风险为主审查这次 diff，优先指出会导致错误行为、崩溃、数据问题和缺失测试的地方。风格建议只有在影响可维护性时再提。</span><br></pre></td></tr></table></figure>
+
+<p>这句话会把 AI 的注意力从“挑毛病”拉回“找风险”。</p>
+<h2 id="二、让-AI-先读上下文"><a href="#二、让-AI-先读上下文" class="headerlink" title="二、让 AI 先读上下文"></a>二、让 AI 先读上下文</h2><p>只看 diff 可能不够。很多问题隐藏在调用关系、配置约定和历史兼容里。</p>
+<p>例如一个接口字段从 <code>status</code> 改成 <code>state</code>，diff 本身看起来只是命名调整，但实际可能影响：</p>
+<ul>
+<li>服务端序列化字段。</li>
+<li>客户端解析逻辑。</li>
+<li>数据库存量数据。</li>
+<li>埋点和报表。</li>
+<li>第三方回调协议。</li>
+</ul>
+<p>因此审查时应该让 AI 先读取相邻上下文：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请先阅读本次变更文件、直接调用方、相关测试和配置文件。</span><br><span class="line">先总结你看到的调用链和外部约束，再进入问题清单。</span><br></pre></td></tr></table></figure>
+
+<p>这个步骤能减少“只根据片段猜测”的问题。尤其是 Android、后端服务、嵌入式 Linux 这类工程，很多约束不在单个文件里，而在生命周期、服务启动顺序、线程模型、部署脚本或设备环境中。</p>
+<h2 id="三、按风险分层审查"><a href="#三、按风险分层审查" class="headerlink" title="三、按风险分层审查"></a>三、按风险分层审查</h2><p>AI 输出的问题需要分层，否则 review 很难推进。比较实用的分层方式是：</p>
+<ul>
+<li>必须修复：会导致错误结果、崩溃、安全问题、数据破坏或构建失败。</li>
+<li>建议修复：现在不一定出错，但会增加边界风险或维护成本。</li>
+<li>可选优化：风格、命名、拆分方式、局部可读性。</li>
+</ul>
+<p>审查时可以要求它使用固定结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">请按严重程度列出发现：</span><br><span class="line">1. 问题标题</span><br><span class="line">2. 文件和行号</span><br><span class="line">3. 触发条件</span><br><span class="line">4. 影响</span><br><span class="line">5. 建议修改</span><br><span class="line">如果没有高风险问题，请明确说明。</span><br></pre></td></tr></table></figure>
+
+<p>这比单纯列出“建议”更适合工程协作。因为每个问题都必须回答“什么时候发生”和“会造成什么影响”，不能只停留在感觉层面。</p>
+<h2 id="四、重点看行为变化"><a href="#四、重点看行为变化" class="headerlink" title="四、重点看行为变化"></a>四、重点看行为变化</h2><p>代码审查的核心是行为变化。AI 很擅长发现明显异常，但也容易漏掉“看起来合理、实际改变语义”的地方。</p>
+<p>常见风险包括：</p>
+<ul>
+<li>默认值变化导致旧数据表现不同。</li>
+<li>异常被吞掉，调用方无法感知失败。</li>
+<li>同步逻辑改成异步后，调用顺序变化。</li>
+<li>缓存 key 或过期策略改变。</li>
+<li>分页、排序、过滤条件出现边界差异。</li>
+<li>Android 生命周期回调中引入了重复注册或泄漏。</li>
+</ul>
+<p>例如下面这种修改看起来是在简化逻辑：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> name = user.name ?: <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>但如果旧逻辑会在 <code>name == null</code> 时显示“未登录”，新逻辑就改变了 UI 语义。空字符串不是无害默认值，它可能绕过了调用方对缺失状态的判断。</p>
+<p>审查提示可以写得更直接：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请重点检查这次修改是否改变了空值、异常、默认值、排序、缓存和重试行为。</span><br><span class="line">不要只评价代码是否更简洁。</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、测试不是数量问题"><a href="#五、测试不是数量问题" class="headerlink" title="五、测试不是数量问题"></a>五、测试不是数量问题</h2><p>AI 经常会建议“增加单元测试”，但这句话本身价值有限。更有用的是指出缺哪一种测试。</p>
+<p>可以按行为路径拆分：</p>
+<ul>
+<li>正常路径：常见输入能得到预期结果。</li>
+<li>边界路径：空值、空列表、最大值、最小值、非法格式。</li>
+<li>失败路径：网络失败、磁盘失败、权限失败、服务不可用。</li>
+<li>并发路径：重复点击、重复请求、生命周期切换、取消任务。</li>
+<li>回归路径：修复过的问题不会再次出现。</li>
+</ul>
+<p>例如一个 Repository 增加缓存逻辑，测试建议不应该只是“补测试”，而应该具体到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">需要覆盖：</span><br><span class="line">1. 首次请求走网络并写入缓存。</span><br><span class="line">2. 网络失败时返回旧缓存。</span><br><span class="line">3. 强制刷新时不读取过期缓存。</span><br><span class="line">4. 并发请求不会重复写入互相覆盖。</span><br></pre></td></tr></table></figure>
+
+<p>这种建议更容易被开发者直接转成测试用例。</p>
+<h2 id="六、让-AI-做第二遍自查"><a href="#六、让-AI-做第二遍自查" class="headerlink" title="六、让 AI 做第二遍自查"></a>六、让 AI 做第二遍自查</h2><p>当 AI 给出修改建议后，可以让它再做一遍反向检查：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请重新检查上面的发现，删除没有明确触发条件或影响不足的问题。</span><br><span class="line">保留的问题必须能说明具体文件、具体场景和具体后果。</span><br></pre></td></tr></table></figure>
+
+<p>这个步骤很有用。第一次输出通常偏发散，第二次会收敛掉一些“可能更优雅”的建议。代码审查不需要把所有想法都塞进评论里，真正重要的是让开发者知道哪些问题必须处理。</p>
+<p>如果 AI 声称某个问题存在，还可以继续追问：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请说明这个问题是否能从当前代码直接推导出来。</span><br><span class="line">如果只是推测，请标记为假设，并说明需要补充查看哪个文件才能确认。</span><br></pre></td></tr></table></figure>
+
+<p>这能避免把不确定判断当成确定缺陷。</p>
+<h2 id="七、把评论改成整改清单"><a href="#七、把评论改成整改清单" class="headerlink" title="七、把评论改成整改清单"></a>七、把评论改成整改清单</h2><p>审查结束后，问题清单还需要变成行动清单。比较适合落地的格式是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">必须修改：</span><br><span class="line">- 修复 xxx 条件下的空指针崩溃。</span><br><span class="line">- 恢复 xxx 接口的失败返回语义。</span><br><span class="line">- 增加 xxx 边界测试。</span><br><span class="line"></span><br><span class="line">建议修改：</span><br><span class="line">- 将重复的状态判断提取到 xxx。</span><br><span class="line">- 为 xxx 增加日志，方便线上定位。</span><br><span class="line"></span><br><span class="line">暂不处理：</span><br><span class="line">- xxx 命名调整，当前不影响行为，可放到后续重构。</span><br></pre></td></tr></table></figure>
+
+<p>这样 review 不会停在讨论阶段。开发者可以按优先级逐项处理，审查者也能快速确认是否闭环。</p>
+<p>对于较大的变更，整改清单还可以按提交拆分：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第一步：补测试，固定当前行为。</span><br><span class="line">第二步：修复失败路径和空值处理。</span><br><span class="line">第三步：整理重复逻辑，不改变接口。</span><br><span class="line">第四步：运行构建和相关测试。</span><br></pre></td></tr></table></figure>
+
+<p>AI 很适合帮助做这种拆分，但是否拆得合理，仍然需要维护者结合发布节奏和风险判断。</p>
+<h2 id="八、适合日常使用的审查提示"><a href="#八、适合日常使用的审查提示" class="headerlink" title="八、适合日常使用的审查提示"></a>八、适合日常使用的审查提示</h2><p>下面是一段可以复用的提示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">请审查当前变更。</span><br><span class="line"></span><br><span class="line">目标：</span><br><span class="line">以工程风险为主，不做泛泛的风格点评。</span><br><span class="line"></span><br><span class="line">请先做：</span><br><span class="line">1. 阅读 diff 涉及文件、直接调用方和相关测试。</span><br><span class="line">2. 总结本次变更的意图和影响范围。</span><br><span class="line"></span><br><span class="line">请重点检查：</span><br><span class="line">1. 行为变化、兼容性、空值和异常路径。</span><br><span class="line">2. 并发、生命周期、资源释放和重复调用。</span><br><span class="line">3. 缓存、排序、分页、权限和数据一致性。</span><br><span class="line">4. 是否缺少能证明行为正确的测试。</span><br><span class="line"></span><br><span class="line">输出要求：</span><br><span class="line">1. findings 放在最前面，按严重程度排序。</span><br><span class="line">2. 每个问题包含文件位置、触发条件、影响和建议。</span><br><span class="line">3. 不确定的判断标记为假设。</span><br><span class="line">4. 如果没有明确问题，请直接说明，并指出剩余风险。</span><br></pre></td></tr></table></figure>
+
+<p>这段提示的重点是把 AI 的输出限制在可审查、可验证、可执行的范围内。</p>
+<h2 id="九、不要把-AI-评论直接当结论"><a href="#九、不要把-AI-评论直接当结论" class="headerlink" title="九、不要把 AI 评论直接当结论"></a>九、不要把 AI 评论直接当结论</h2><p>AI 辅助审查可以提高覆盖面，但它不能替代维护者对业务语义的判断。尤其是以下场景，必须人工确认：</p>
+<ul>
+<li>业务规则是否符合产品预期。</li>
+<li>接口兼容是否符合历史约定。</li>
+<li>权限和数据边界是否符合组织要求。</li>
+<li>线上发布是否需要灰度、回滚或监控。</li>
+<li>测试覆盖是否足以支撑发布风险。</li>
+</ul>
+<p>更好的协作方式是：AI 负责扩大检查范围和整理问题，人负责确认事实、判断优先级和决定取舍。</p>
+<h2 id="十、总结"><a href="#十、总结" class="headerlink" title="十、总结"></a>十、总结</h2><p>AI 辅助代码审查的关键，不是让工具多说几条建议，而是让它在正确的问题框架里工作。</p>
+<p>一个稳定的流程可以概括为：</p>
+<ol>
+<li>明确审查目标。</li>
+<li>读取 diff 之外的上下文。</li>
+<li>按风险分层输出问题。</li>
+<li>关注行为变化和测试缺口。</li>
+<li>把评论整理成整改清单。</li>
+<li>最后用构建和测试验证闭环。</li>
+</ol>
+<p>当审查流程足够清晰，AI 的价值会从“生成评论”变成“提升发现风险的密度”。这对个人项目和团队协作都很实用，因为真正节省时间的不是少写几句 review，而是少放过一次难以定位的线上问题。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/06/29/AI_Code_Review_Workflow_2026_06_29/" title="AI 辅助代码审查：从 diff 到可执行整改">https://blog.hansong.icu/2026/06/29/AI_Code_Review_Workflow_2026_06_29/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/06/27/AI_Context_Engineering_Practice_2026_06_27/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/06/27/AI_Context_Engineering_Practice_2026_06_27/" class="trm-anima-link">
+                    AI 上下文工程实践：让工具读懂项目而不是只回答问题
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/06/27</li>
+                <li>16:03</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先明确审查目标"><a rel="nofollow" class="trm-toc-link" href="#一、先明确审查目标"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先明确审查目标</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、让 AI 先读上下文"><a rel="nofollow" class="trm-toc-link" href="#二、让-AI-先读上下文"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、让 AI 先读上下文</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、按风险分层审查"><a rel="nofollow" class="trm-toc-link" href="#三、按风险分层审查"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、按风险分层审查</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、重点看行为变化"><a rel="nofollow" class="trm-toc-link" href="#四、重点看行为变化"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、重点看行为变化</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、测试不是数量问题"><a rel="nofollow" class="trm-toc-link" href="#五、测试不是数量问题"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、测试不是数量问题</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、让 AI 做第二遍自查"><a rel="nofollow" class="trm-toc-link" href="#六、让-AI-做第二遍自查"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、让 AI 做第二遍自查</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、把评论改成整改清单"><a rel="nofollow" class="trm-toc-link" href="#七、把评论改成整改清单"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、把评论改成整改清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、适合日常使用的审查提示"><a rel="nofollow" class="trm-toc-link" href="#八、适合日常使用的审查提示"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、适合日常使用的审查提示</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、不要把 AI 评论直接当结论"><a rel="nofollow" class="trm-toc-link" href="#九、不要把-AI-评论直接当结论"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、不要把 AI 评论直接当结论</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十、总结"><a rel="nofollow" class="trm-toc-link" href="#十、总结"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
