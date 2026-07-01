@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="Hexo 适合做个人技术博客，GitHub Pages 适合托管静态站点。两者组合起来之后，日常维护可以很轻：本地写 Markdown，Hexo 生成静态文件，再把生成结果发布到 GitHub Pages。 这篇文章记录一套从零配置流程：如何创建 GitHub Pages 仓库、如何配置 Hexo、如何发布站点、如何绑定自定义域名，以及可以尝试哪些免费的域名或子域名服务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo 部署到 GitHub Pages 与免费域名配置完整指南">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/01/Hexo_GitHub_Pages_Free_Domain_Guide_2026_07_01/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="Hexo 适合做个人技术博客，GitHub Pages 适合托管静态站点。两者组合起来之后，日常维护可以很轻：本地写 Markdown，Hexo 生成静态文件，再把生成结果发布到 GitHub Pages。 这篇文章记录一套从零配置流程：如何创建 GitHub Pages 仓库、如何配置 Hexo、如何发布站点、如何绑定自定义域名，以及可以尝试哪些免费的域名或子域名服务。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-01T01:34:23.000Z">
+<meta property="article:modified_time" content="2026-07-01T01:34:23.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Deploy">
+<meta property="article:tag" content="GitHub Pages">
+<meta property="article:tag" content="Domain">
+<meta name="twitter:card" content="summary">
+
+
+<title >Hexo 部署到 GitHub Pages 与免费域名配置完整指南</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-01 09:34:23"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/blogging.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Hexo 部署到 GitHub Pages 与免费域名配置完整指南
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/01
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:34
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>Hexo 适合做个人技术博客，GitHub Pages 适合托管静态站点。两者组合起来之后，日常维护可以很轻：本地写 Markdown，Hexo 生成静态文件，再把生成结果发布到 GitHub Pages。</p>
+<p>这篇文章记录一套从零配置流程：如何创建 GitHub Pages 仓库、如何配置 Hexo、如何发布站点、如何绑定自定义域名，以及可以尝试哪些免费的域名或子域名服务。</p>
+<span id="more"></span>
+
+<p>信息核对时间：2026-07-01。</p>
+<h2 id="一、先理解两个仓库"><a href="#一、先理解两个仓库" class="headerlink" title="一、先理解两个仓库"></a>一、先理解两个仓库</h2><p>维护 Hexo 博客时，最好把仓库分成两类：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">blog-source</span><br><span class="line">  _config.yml</span><br><span class="line">  package.json</span><br><span class="line">  package-lock.json</span><br><span class="line">  source/</span><br><span class="line">  scaffolds/</span><br><span class="line">  tools/</span><br><span class="line">  deploy.sh</span><br><span class="line"></span><br><span class="line">username.github.io</span><br><span class="line">  index.html</span><br><span class="line">  archives/</span><br><span class="line">  categories/</span><br><span class="line">  tags/</span><br><span class="line">  2026/</span><br><span class="line">  css/</span><br><span class="line">  js/</span><br><span class="line">  CNAME</span><br></pre></td></tr></table></figure>
+
+<p><code>blog-source</code> 是源码仓库，用来保存 Markdown 文章、图片、主题配置、脚本和依赖锁定文件。换电脑时 clone 这个仓库即可继续写文章。</p>
+<p><code>username.github.io</code> 是发布仓库，用来保存 Hexo 生成后的静态文件。GitHub Pages 读取这个仓库里的 HTML、CSS、JS 和图片，然后对外提供访问。</p>
+<p>不要把 <code>public/</code>、<code>.deploy_git/</code>、<code>node_modules/</code> 提交进源码仓库。它们都可以重新生成，提交进去只会让 diff 变得很吵。</p>
+<p>推荐 <code>.gitignore</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">node_modules/</span><br><span class="line">public/</span><br><span class="line">.deploy_git/</span><br><span class="line">db.json</span><br><span class="line">.DS_Store</span><br><span class="line">.env</span><br><span class="line">.env.*</span><br><span class="line">npm-debug.log*</span><br><span class="line">yarn-debug.log*</span><br><span class="line">yarn-error.log*</span><br></pre></td></tr></table></figure>
+
+<p><code>package-lock.json</code> 建议提交。新电脑执行 <code>npm ci</code> 时，可以安装到一致的依赖版本。</p>
+<h2 id="二、准备-GitHub-Pages-仓库"><a href="#二、准备-GitHub-Pages-仓库" class="headerlink" title="二、准备 GitHub Pages 仓库"></a>二、准备 GitHub Pages 仓库</h2><p>假设 GitHub 用户名是 <code>username</code>，需要创建一个仓库：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username.github.io</span><br></pre></td></tr></table></figure>
+
+<p>这是用户站点仓库。发布完成后，默认访问地址通常是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://username.github.io/</span><br></pre></td></tr></table></figure>
+
+<p>注意几点：</p>
+<ul>
+<li>仓库名必须和 GitHub 用户名匹配，格式是 <code>username.github.io</code>。</li>
+<li>如果只是个人公开博客，通常把仓库设为 public。</li>
+<li>如果使用私有仓库发布 GitHub Pages，需要确认当前 GitHub 账号套餐是否支持。</li>
+<li>不要把 Hexo 源码直接塞进这个仓库，发布仓库只放生成后的静态文件。</li>
+</ul>
+<p>如果你已经有一个发布仓库，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loki0210.github.io</span><br></pre></td></tr></table></figure>
+
+<p>那么 Hexo 的 <code>deploy.repo</code> 就应该指向它。</p>
+<h2 id="三、初始化-Hexo-项目"><a href="#三、初始化-Hexo-项目" class="headerlink" title="三、初始化 Hexo 项目"></a>三、初始化 Hexo 项目</h2><p>新建项目时可以这样做：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p>已有项目则直接安装依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm ci</span><br></pre></td></tr></table></figure>
+
+<p>常用脚本可以写进 <code>package.json</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hexo generate&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;clean&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hexo clean&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;deploy&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hexo deploy&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;server&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hexo server&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>本地预览：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run server</span><br></pre></td></tr></table></figure>
+
+<p>默认访问：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:4000/</span><br></pre></td></tr></table></figure>
+
+<p>构建检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>如果构建失败，优先检查 Markdown front matter、图片路径、主题配置和依赖版本。</p>
+<h2 id="四、安装-Git-部署插件"><a href="#四、安装-Git-部署插件" class="headerlink" title="四、安装 Git 部署插件"></a>四、安装 Git 部署插件</h2><p>Hexo 发布到 GitHub Pages 常见做法有两种：</p>
+<ul>
+<li>使用 GitHub Actions，把源码推到 GitHub 后自动构建。</li>
+<li>使用 <code>hexo-deployer-git</code>，在本地生成静态文件并推到发布仓库。</li>
+</ul>
+<p>如果想保持流程简单，可以使用第二种：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p>然后在 <code>_config.yml</code> 配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">https://username.github.io</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">message:</span> <span class="string">&quot;Site updated: <span class="template-variable">&#123;&#123; now(&#x27;yyyy-MM-dd HH:mm:ss&#x27;) &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果发布仓库默认分支是 <code>main</code>，就把 <code>branch</code> 改成 <code>main</code>。重点是 GitHub Pages 设置里选择的发布分支要和这里一致。</p>
+<p>发布命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm run clean</span><br><span class="line">npm run build</span><br><span class="line">npm run deploy</span><br></pre></td></tr></table></figure>
+
+<p>也可以写一个 <code>deploy.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">npm run clean</span><br><span class="line">npm run build</span><br><span class="line">npm run deploy</span><br></pre></td></tr></table></figure>
+
+<p>给脚本加执行权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x deploy.sh</span><br></pre></td></tr></table></figure>
+
+<p>以后发布只需要：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./deploy.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、配置-GitHub-SSH-推送"><a href="#五、配置-GitHub-SSH-推送" class="headerlink" title="五、配置 GitHub SSH 推送"></a>五、配置 GitHub SSH 推送</h2><p>如果使用 SSH 地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git@github.com:username/username.github.io.git</span><br></pre></td></tr></table></figure>
+
+<p>本机需要有 GitHub SSH key。</p>
+<p>检查是否已经登录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>正常会看到类似提示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hi username! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
+
+<p>如果没有 SSH key，可以生成：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t ed25519 -C <span class="string">&quot;your-email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后把公钥内容添加到 GitHub：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_ed25519.pub</span><br></pre></td></tr></table></figure>
+
+<p>GitHub 路径：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Settings -&gt; SSH and GPG keys -&gt; New SSH key</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、第一次发布"><a href="#六、第一次发布" class="headerlink" title="六、第一次发布"></a>六、第一次发布</h2><p>确认 <code>_config.yml</code> 里的站点地址：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">https://username.github.io</span></span><br></pre></td></tr></table></figure>
+
+<p>如果还没有自定义域名，先使用 GitHub Pages 默认域名。</p>
+<p>执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm run clean</span><br><span class="line">npm run build</span><br><span class="line">npm run deploy</span><br></pre></td></tr></table></figure>
+
+<p>部署成功后，打开：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://username.github.io/</span><br></pre></td></tr></table></figure>
+
+<p>如果 404，按顺序检查：</p>
+<ul>
+<li>发布仓库是不是 <code>username.github.io</code>。</li>
+<li><code>_config.yml</code> 的 <code>deploy.repo</code> 是否指向发布仓库。</li>
+<li><code>branch</code> 是否和 GitHub Pages 设置一致。</li>
+<li>GitHub Pages 是否已经启用。</li>
+<li>发布仓库里是否真的出现了 <code>index.html</code>。</li>
+<li>DNS 或 Pages 生效是否还在等待。</li>
+</ul>
+<h2 id="七、源码仓库也要推到-GitHub"><a href="#七、源码仓库也要推到-GitHub" class="headerlink" title="七、源码仓库也要推到 GitHub"></a>七、源码仓库也要推到 GitHub</h2><p>发布仓库能访问，不代表源码已经保存。源码仓库需要单独推送。</p>
+<p>创建源码仓库，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blog-source</span><br></pre></td></tr></table></figure>
+
+<p>本地设置远端：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@github.com:username/blog-source.git</span><br></pre></td></tr></table></figure>
+
+<p>如果当前远端还指向模板仓库，可以改掉：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote set-url origin git@github.com:username/blog-source.git</span><br></pre></td></tr></table></figure>
+
+<p>提交源码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Update blog source&quot;</span></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+
+<p>换电脑时：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:username/blog-source.git</span><br><span class="line"><span class="built_in">cd</span> blog-source</span><br><span class="line">npm ci</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>日常写作流程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 新增或修改文章</span></span><br><span class="line">npm run build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 保存源码</span></span><br><span class="line">git add <span class="built_in">source</span>/_posts <span class="built_in">source</span>/assets <span class="built_in">source</span>/img _config.yml _config.async.yml</span><br><span class="line">git commit -m <span class="string">&quot;Update blog posts&quot;</span></span><br><span class="line">git push</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 发布站点</span></span><br><span class="line">./deploy.sh</span><br></pre></td></tr></table></figure>
+
+<p>源码提交和站点发布最好分开执行。这样即使部署失败，源码也不会丢。</p>
+<h2 id="八、绑定自定义域名"><a href="#八、绑定自定义域名" class="headerlink" title="八、绑定自定义域名"></a>八、绑定自定义域名</h2><p>GitHub Pages 默认域名可用，但个人博客通常会绑定自己的域名，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blog.example.com</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-在-GitHub-Pages-设置里填写域名"><a href="#1-在-GitHub-Pages-设置里填写域名" class="headerlink" title="1. 在 GitHub Pages 设置里填写域名"></a>1. 在 GitHub Pages 设置里填写域名</h3><p>进入发布仓库：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username.github.io -&gt; Settings -&gt; Pages</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>Custom domain</code> 填写：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blog.example.com</span><br></pre></td></tr></table></figure>
+
+<p>保存后，GitHub 会检查 DNS，并在条件满足后签发 HTTPS 证书。</p>
+<h3 id="2-在-Hexo-里保留-CNAME"><a href="#2-在-Hexo-里保留-CNAME" class="headerlink" title="2. 在 Hexo 里保留 CNAME"></a>2. 在 Hexo 里保留 CNAME</h3><p>Hexo 每次构建都会重建 <code>public/</code>。如果手动在发布仓库里改 <code>CNAME</code>，下次 deploy 可能被覆盖。</p>
+<p>更稳的做法是在源码仓库创建：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source/CNAME</span><br></pre></td></tr></table></figure>
+
+<p>内容只有一行：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blog.example.com</span><br></pre></td></tr></table></figure>
+
+<p>构建时 Hexo 会把它复制到 <code>public/CNAME</code>，部署后发布仓库也会保留这个文件。</p>
+<p>同时把 <code>_config.yml</code> 的 <code>url</code> 改成正式域名：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">https://blog.example.com</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-子域名-DNS-配置"><a href="#3-子域名-DNS-配置" class="headerlink" title="3. 子域名 DNS 配置"></a>3. 子域名 DNS 配置</h3><p>如果使用 <code>blog.example.com</code> 或 <code>www.example.com</code>，DNS 推荐配置 <code>CNAME</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">类型: CNAME</span><br><span class="line">主机记录: blog</span><br><span class="line">记录值: username.github.io</span><br></pre></td></tr></table></figure>
+
+<p>注意记录值不要带仓库名。应该是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username.github.io</span><br></pre></td></tr></table></figure>
+
+<p>不是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username.github.io/blog</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-根域名-DNS-配置"><a href="#4-根域名-DNS-配置" class="headerlink" title="4. 根域名 DNS 配置"></a>4. 根域名 DNS 配置</h3><p>如果使用根域名：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com</span><br></pre></td></tr></table></figure>
+
+<p>GitHub Pages 支持把根域名指向 GitHub Pages 的 A 记录：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">185.199.108.153</span><br><span class="line">185.199.109.153</span><br><span class="line">185.199.110.153</span><br><span class="line">185.199.111.153</span><br></pre></td></tr></table></figure>
+
+<p>可以额外配置 IPv6 的 AAAA 记录：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2606:50c0:8000::153</span><br><span class="line">2606:50c0:8001::153</span><br><span class="line">2606:50c0:8002::153</span><br><span class="line">2606:50c0:8003::153</span><br></pre></td></tr></table></figure>
+
+<p>实际配置时以 GitHub 官方文档为准。</p>
+<h3 id="5-不要随便配-wildcard"><a href="#5-不要随便配-wildcard" class="headerlink" title="5. 不要随便配 wildcard"></a>5. 不要随便配 wildcard</h3><p>不要为了省事配置：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*.example.com</span><br></pre></td></tr></table></figure>
+
+<p>通配符 DNS 容易带来子域名接管风险。只配置你真实使用的域名。</p>
+<h3 id="6-开启-HTTPS"><a href="#6-开启-HTTPS" class="headerlink" title="6. 开启 HTTPS"></a>6. 开启 HTTPS</h3><p>DNS 生效后，GitHub Pages 会做自动检查。检查通过后会申请证书。<code>Enforce HTTPS</code> 有时不会立刻可点，等一段时间再回来检查。</p>
+<p>如果 HTTPS 一直失败，检查：</p>
+<ul>
+<li>DNS 是否指向 GitHub Pages。</li>
+<li><code>source/CNAME</code> 是否和 GitHub Pages 设置里的域名一致。</li>
+<li>是否存在旧的 A、AAAA、CNAME 冲突记录。</li>
+<li>是否把 CNAME 指到了错误的仓库路径。</li>
+<li>是否配置了不必要的通配符记录。</li>
+</ul>
+<h2 id="九、几个免费的域名或子域名申请网站"><a href="#九、几个免费的域名或子域名申请网站" class="headerlink" title="九、几个免费的域名或子域名申请网站"></a>九、几个免费的域名或子域名申请网站</h2><p>免费域名要先说清楚：很多所谓“免费域名”其实是免费子域名，不是你完全拥有的顶级域名。适合个人博客、测试项目、开源项目展示，但不适合重要商业站点。</p>
+<h3 id="1-EU-org"><a href="#1-EU-org" class="headerlink" title="1. EU.org"></a>1. EU.org</h3><p>地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://nic.eu.org/</span><br></pre></td></tr></table></figure>
+
+<p>EU.org 提供免费的 <code>*.eu.org</code> 子域名注册。它不是欧盟官方服务，也不是传统意义上的独立顶级域名注册，但对个人博客来说已经足够像一个正常域名。</p>
+<p>特点：</p>
+<ul>
+<li>免费。</li>
+<li>需要先准备可用的 nameserver。</li>
+<li>申请需要人工审核，通常不是即时开通。</li>
+<li>适合长期个人项目，但要接受等待和审核不确定性。</li>
+</ul>
+<p>配置 GitHub Pages 时，可以把 EU.org 域名交给支持 DNS 托管的服务管理，然后添加 GitHub Pages 所需的 CNAME 或 A 记录。</p>
+<h3 id="2-PP-UA"><a href="#2-PP-UA" class="headerlink" title="2. PP.UA"></a>2. PP.UA</h3><p>地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://pp.ua/</span><br><span class="line">https://nic.ua/en/domains/.pp.ua</span><br></pre></td></tr></table></figure>
+
+<p><code>.pp.ua</code> 是乌克兰的免费域名区域，官方和注册商资料都明确说明它可以免费注册。</p>
+<p>特点：</p>
+<ul>
+<li>免费注册。</li>
+<li>需要手机号激活。</li>
+<li>可用于博客、测试项目、个人页面。</li>
+<li>通常需要按规则续期，续期也可能需要验证。</li>
+<li>WHOIS 隐私能力有限，注册前要看清规则。</li>
+</ul>
+<p>如果你介意手机号、公开 WHOIS 或跨境服务稳定性，不要把它作为唯一主域名。</p>
+<h3 id="3-is-a-dev"><a href="#3-is-a-dev" class="headerlink" title="3. is-a.dev"></a>3. is-a.dev</h3><p>地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/is-a-dev/register</span><br></pre></td></tr></table></figure>
+
+<p><code>is-a.dev</code> 是面向开发者的免费子域名服务。申请方式是 fork 官方仓库，按文档新增记录文件，然后提交 Pull Request。审核通过后 DNS 记录会发布。</p>
+<p>特点：</p>
+<ul>
+<li>免费。</li>
+<li>域名形式适合开发者，例如 <code>name.is-a.dev</code>。</li>
+<li>申请过程依赖 GitHub Pull Request。</li>
+<li>适合个人主页、技术博客、开源项目展示。</li>
+</ul>
+<p>如果博客本身是技术向内容，这类域名比较贴合定位。</p>
+<h3 id="4-JS-ORG"><a href="#4-JS-ORG" class="headerlink" title="4. JS.ORG"></a>4. JS.ORG</h3><p>地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://js.org/</span><br></pre></td></tr></table></figure>
+
+<p>JS.ORG 提供免费的 <code>*.js.org</code> 子域名，主要面向 JavaScript 相关项目，并且官方流程直接围绕 GitHub Pages 展开。</p>
+<p>特点：</p>
+<ul>
+<li>免费。</li>
+<li>更适合 JavaScript 项目、前端库、工具或文档站。</li>
+<li>页面内容需要和 JavaScript 有明确关联。</li>
+<li>需要在仓库里放置匹配的 <code>CNAME</code>。</li>
+</ul>
+<p>如果你的博客主要写 Android、Linux、后端，不一定适合申请 JS.ORG；如果是前端或 JS 项目文档，则很合适。</p>
+<h3 id="5-FreeDNS-afraid-org"><a href="#5-FreeDNS-afraid-org" class="headerlink" title="5. FreeDNS &#x2F; afraid.org"></a>5. FreeDNS &#x2F; afraid.org</h3><p>地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://freedns.afraid.org/</span><br></pre></td></tr></table></figure>
+
+<p>FreeDNS 提供免费 DNS、动态 DNS、静态 DNS、共享域名下的免费子域名等能力。</p>
+<p>特点：</p>
+<ul>
+<li>可申请共享域名下的子域名。</li>
+<li>支持动态 DNS，更适合家庭服务器、临时项目、实验环境。</li>
+<li>能否添加某些记录类型，取决于具体共享域名和权限。</li>
+<li>域名观感不如独立域名稳定统一。</li>
+</ul>
+<p>如果只是想快速得到一个可访问地址，它很方便；如果是长期个人品牌博客，建议优先考虑自有域名或更稳定的免费子域名。</p>
+<h2 id="十、免费域名选择建议"><a href="#十、免费域名选择建议" class="headerlink" title="十、免费域名选择建议"></a>十、免费域名选择建议</h2><p>按个人博客场景排序：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">长期博客：优先买一个便宜正式域名，其次 EU.org</span><br><span class="line">开发者个人页：is-a.dev</span><br><span class="line">JavaScript 项目文档：JS.ORG</span><br><span class="line">测试站点或临时访问：FreeDNS</span><br><span class="line">想要免费独立域名体验：PP.UA</span><br></pre></td></tr></table></figure>
+
+<p>免费服务要重点看四件事：</p>
+<ul>
+<li>是否能配置 CNAME、A、AAAA 记录。</li>
+<li>是否需要人工审核。</li>
+<li>是否需要手机号、实名或公开 WHOIS。</li>
+<li>是否有续期规则、滥用规则、项目类型限制。</li>
+</ul>
+<p>真正长期使用的博客，域名成本其实不高。免费域名适合起步和实验，等博客稳定后，可以迁移到付费域名，并保留旧域名做跳转或备用入口。</p>
+<h2 id="十一、完整检查清单"><a href="#十一、完整检查清单" class="headerlink" title="十一、完整检查清单"></a>十一、完整检查清单</h2><p>发布前检查：</p>
+<ul>
+<li><code>npm run build</code> 能通过。</li>
+<li><code>_config.yml</code> 的 <code>url</code> 是最终访问域名。</li>
+<li><code>_config.yml</code> 的 <code>deploy.repo</code> 指向 <code>username.github.io</code> 发布仓库。</li>
+<li><code>source/CNAME</code> 存在，并且内容和 GitHub Pages 自定义域名一致。</li>
+<li>DNS 子域名使用 CNAME 指向 <code>username.github.io</code>。</li>
+<li>DNS 根域名使用 GitHub Pages A 记录。</li>
+<li>GitHub Pages 设置里的发布分支正确。</li>
+<li>GitHub Pages 的 <code>Custom domain</code> 已保存。</li>
+<li>HTTPS 检查通过后开启 <code>Enforce HTTPS</code>。</li>
+<li>源码仓库已经提交并推送。</li>
+</ul>
+<h2 id="十二、参考资料"><a href="#十二、参考资料" class="headerlink" title="十二、参考资料"></a>十二、参考资料</h2><ul>
+<li>Hexo One-Command Deployment：<a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment">https://hexo.io/docs/one-command-deployment</a></li>
+<li>Hexo GitHub Pages：<a target="_blank" rel="noopener" href="https://hexo.io/docs/github-pages">https://hexo.io/docs/github-pages</a></li>
+<li>GitHub Pages 自定义域名：<a target="_blank" rel="noopener" href="https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site">https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site</a></li>
+<li>GitHub Pages HTTPS：<a target="_blank" rel="noopener" href="https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https">https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https</a></li>
+<li>EU.org：<a target="_blank" rel="noopener" href="https://nic.eu.org/">https://nic.eu.org/</a></li>
+<li>EU.org 注册说明：<a target="_blank" rel="noopener" href="https://nic.eu.org/register.html">https://nic.eu.org/register.html</a></li>
+<li>PP.UA：<a target="_blank" rel="noopener" href="https://pp.ua/">https://pp.ua/</a></li>
+<li>NIC.UA 的 PP.UA 说明：<a target="_blank" rel="noopener" href="https://nic.ua/en/domains/.pp.ua">https://nic.ua/en/domains/.pp.ua</a></li>
+<li>is-a.dev：<a target="_blank" rel="noopener" href="https://github.com/is-a-dev/register">https://github.com/is-a-dev/register</a></li>
+<li>JS.ORG：<a target="_blank" rel="noopener" href="https://js.org/">https://js.org/</a></li>
+<li>FreeDNS：<a target="_blank" rel="noopener" href="https://freedns.afraid.org/">https://freedns.afraid.org/</a></li>
+</ul>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/01/Hexo_GitHub_Pages_Free_Domain_Guide_2026_07_01/" title="Hexo 部署到 GitHub Pages 与免费域名配置完整指南">https://blog.hansong.icu/2026/07/01/Hexo_GitHub_Pages_Free_Domain_Guide_2026_07_01/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/01/AI_Task_Slicing_Practice_2026_07_01/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/01/AI_Task_Slicing_Practice_2026_07_01/" class="trm-anima-link">
+                    AI 任务切片实践：把大需求拆成可交付的小步骤
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/01</li>
+                <li>09:16</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先理解两个仓库"><a rel="nofollow" class="trm-toc-link" href="#一、先理解两个仓库"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先理解两个仓库</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、准备 GitHub Pages 仓库"><a rel="nofollow" class="trm-toc-link" href="#二、准备-GitHub-Pages-仓库"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、准备 GitHub Pages 仓库</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、初始化 Hexo 项目"><a rel="nofollow" class="trm-toc-link" href="#三、初始化-Hexo-项目"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、初始化 Hexo 项目</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、安装 Git 部署插件"><a rel="nofollow" class="trm-toc-link" href="#四、安装-Git-部署插件"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、安装 Git 部署插件</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、配置 GitHub SSH 推送"><a rel="nofollow" class="trm-toc-link" href="#五、配置-GitHub-SSH-推送"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、配置 GitHub SSH 推送</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、第一次发布"><a rel="nofollow" class="trm-toc-link" href="#六、第一次发布"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、第一次发布</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、源码仓库也要推到 GitHub"><a rel="nofollow" class="trm-toc-link" href="#七、源码仓库也要推到-GitHub"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、源码仓库也要推到 GitHub</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、绑定自定义域名"><a rel="nofollow" class="trm-toc-link" href="#八、绑定自定义域名"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、绑定自定义域名</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="1. 在 GitHub Pages 设置里填写域名"><a rel="nofollow" class="trm-toc-link" href="#1-在-GitHub-Pages-设置里填写域名"><span class="trm-toc-number">8.1.</span> <span class="trm-toc-text">1. 在 GitHub Pages 设置里填写域名</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2. 在 Hexo 里保留 CNAME"><a rel="nofollow" class="trm-toc-link" href="#2-在-Hexo-里保留-CNAME"><span class="trm-toc-number">8.2.</span> <span class="trm-toc-text">2. 在 Hexo 里保留 CNAME</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3. 子域名 DNS 配置"><a rel="nofollow" class="trm-toc-link" href="#3-子域名-DNS-配置"><span class="trm-toc-number">8.3.</span> <span class="trm-toc-text">3. 子域名 DNS 配置</span></a></li><li class="trm-toc-item trm-toc-level-3" title="4. 根域名 DNS 配置"><a rel="nofollow" class="trm-toc-link" href="#4-根域名-DNS-配置"><span class="trm-toc-number">8.4.</span> <span class="trm-toc-text">4. 根域名 DNS 配置</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5. 不要随便配 wildcard"><a rel="nofollow" class="trm-toc-link" href="#5-不要随便配-wildcard"><span class="trm-toc-number">8.5.</span> <span class="trm-toc-text">5. 不要随便配 wildcard</span></a></li><li class="trm-toc-item trm-toc-level-3" title="6. 开启 HTTPS"><a rel="nofollow" class="trm-toc-link" href="#6-开启-HTTPS"><span class="trm-toc-number">8.6.</span> <span class="trm-toc-text">6. 开启 HTTPS</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="九、几个免费的域名或子域名申请网站"><a rel="nofollow" class="trm-toc-link" href="#九、几个免费的域名或子域名申请网站"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、几个免费的域名或子域名申请网站</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="1. EU.org"><a rel="nofollow" class="trm-toc-link" href="#1-EU-org"><span class="trm-toc-number">9.1.</span> <span class="trm-toc-text">1. EU.org</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2. PP.UA"><a rel="nofollow" class="trm-toc-link" href="#2-PP-UA"><span class="trm-toc-number">9.2.</span> <span class="trm-toc-text">2. PP.UA</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3. is-a.dev"><a rel="nofollow" class="trm-toc-link" href="#3-is-a-dev"><span class="trm-toc-number">9.3.</span> <span class="trm-toc-text">3. is-a.dev</span></a></li><li class="trm-toc-item trm-toc-level-3" title="4. JS.ORG"><a rel="nofollow" class="trm-toc-link" href="#4-JS-ORG"><span class="trm-toc-number">9.4.</span> <span class="trm-toc-text">4. JS.ORG</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5. FreeDNS &#x2F; afraid.org"><a rel="nofollow" class="trm-toc-link" href="#5-FreeDNS-afraid-org"><span class="trm-toc-number">9.5.</span> <span class="trm-toc-text">5. FreeDNS &#x2F; afraid.org</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="十、免费域名选择建议"><a rel="nofollow" class="trm-toc-link" href="#十、免费域名选择建议"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、免费域名选择建议</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十一、完整检查清单"><a rel="nofollow" class="trm-toc-link" href="#十一、完整检查清单"><span class="trm-toc-number">11.</span> <span class="trm-toc-text">十一、完整检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十二、参考资料"><a rel="nofollow" class="trm-toc-link" href="#十二、参考资料"><span class="trm-toc-number">12.</span> <span class="trm-toc-text">十二、参考资料</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
