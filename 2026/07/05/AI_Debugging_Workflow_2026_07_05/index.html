@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="调试最怕的不是问题复杂，而是信息散落在日志、配置、代码分支和环境差异里，最后只能靠猜。AI 工具能帮我们快速阅读日志、追踪调用链、整理假设，但如果一开始就问“这个问题怎么修”，它很容易跳过验证，直接给出看似合理的修改建议。 更稳的做法，是把 AI 放进一个可检查的调试流程里：先描述现象，再收集证据，然后缩小范围，最后产出最小复现和修复方案。这样 AI 不只是回答问题，而是参与工程排障。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 辅助调试流程：从日志到最小复现">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/05/AI_Debugging_Workflow_2026_07_05/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="调试最怕的不是问题复杂，而是信息散落在日志、配置、代码分支和环境差异里，最后只能靠猜。AI 工具能帮我们快速阅读日志、追踪调用链、整理假设，但如果一开始就问“这个问题怎么修”，它很容易跳过验证，直接给出看似合理的修改建议。 更稳的做法，是把 AI 放进一个可检查的调试流程里：先描述现象，再收集证据，然后缩小范围，最后产出最小复现和修复方案。这样 AI 不只是回答问题，而是参与工程排障。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-05T02:20:14.000Z">
+<meta property="article:modified_time" content="2026-07-05T02:20:14.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Workflow">
+<meta property="article:tag" content="Engineering">
+<meta property="article:tag" content="Debugging">
+<meta name="twitter:card" content="summary">
+
+
+<title >AI 辅助调试流程：从日志到最小复现</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-05 10:20:14"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            AI 辅助调试流程：从日志到最小复现
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/05
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            10:20
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>调试最怕的不是问题复杂，而是信息散落在日志、配置、代码分支和环境差异里，最后只能靠猜。AI 工具能帮我们快速阅读日志、追踪调用链、整理假设，但如果一开始就问“这个问题怎么修”，它很容易跳过验证，直接给出看似合理的修改建议。</p>
+<p>更稳的做法，是把 AI 放进一个可检查的调试流程里：先描述现象，再收集证据，然后缩小范围，最后产出最小复现和修复方案。这样 AI 不只是回答问题，而是参与工程排障。</p>
+<span id="more"></span>
+
+<h2 id="一、先把现象写成可验证描述"><a href="#一、先把现象写成可验证描述" class="headerlink" title="一、先把现象写成可验证描述"></a>一、先把现象写成可验证描述</h2><p>很多调试对话一开始就太模糊，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">页面偶尔打不开，帮我看看。</span><br></pre></td></tr></table></figure>
+
+<p>这句话对人和 AI 都不够用。它缺少触发条件、错误表现、影响范围和期望行为。更好的描述应该接近一次缺陷报告：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">问题：Android 设置页点击保存后，偶发停留在 loading 状态。</span><br><span class="line">触发条件：弱网环境下连续点击保存，或者切到后台再回来。</span><br><span class="line">实际表现：按钮不可点击，页面没有错误提示。</span><br><span class="line">期望表现：请求成功后退出 loading，请求失败后显示错误并允许重试。</span><br><span class="line">已知范围：只在设置页出现，登录页和资料页没有复现。</span><br></pre></td></tr></table></figure>
+
+<p>这样的输入能让 AI 先围绕现象建立边界，而不是马上猜测“可能是网络问题”。</p>
+<h2 id="二、日志要带上下文，不要只贴最后一行"><a href="#二、日志要带上下文，不要只贴最后一行" class="headerlink" title="二、日志要带上下文，不要只贴最后一行"></a>二、日志要带上下文，不要只贴最后一行</h2><p>调试时经常会看到一段异常堆栈，然后直接把最后的报错交给 AI。这样容易丢掉关键线索。</p>
+<p>更实用的日志材料包括：</p>
+<ul>
+<li>异常堆栈的完整调用链。</li>
+<li>异常前后的关键业务日志。</li>
+<li>请求参数、响应码和错误体。</li>
+<li>线程、进程、设备型号或运行环境。</li>
+<li>最近一次相关改动的 diff 或提交说明。</li>
+</ul>
+<p>如果是 Linux 服务，除了应用日志，还应该补充：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl status app.service</span><br><span class="line">journalctl -u app.service --since <span class="string">&quot;10 minutes ago&quot;</span></span><br><span class="line"><span class="built_in">df</span> -h</span><br><span class="line">free -m</span><br></pre></td></tr></table></figure>
+
+<p>如果是 Android 问题，可以补充：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb logcat -v <span class="keyword">time</span></span><br><span class="line">adb shell dumpsys activity top</span><br><span class="line">adb shell dumpsys meminfo &lt;package_name&gt;</span><br></pre></td></tr></table></figure>
+
+<p>重点不是把所有日志都贴进去，而是保留能解释时间顺序的信息。AI 需要知道问题发生前发生了什么，问题发生后系统进入了什么状态。</p>
+<h2 id="三、让-AI-先整理事实和假设"><a href="#三、让-AI-先整理事实和假设" class="headerlink" title="三、让 AI 先整理事实和假设"></a>三、让 AI 先整理事实和假设</h2><p>AI 很容易把推测说得像结论。调试时可以明确要求它分层输出：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请把下面材料分成三部分：</span><br><span class="line">1. 可以从日志直接确认的事实。</span><br><span class="line">2. 基于事实推导出的可能原因。</span><br><span class="line">3. 还需要补充验证的信息。</span><br><span class="line"></span><br><span class="line">不要直接给修复代码。</span><br></pre></td></tr></table></figure>
+
+<p>这个提示能把调试节奏放慢一点。比如日志里出现 <code>SocketTimeoutException</code>，可以确认的是请求超时，不一定能确认服务端不可用。可能原因还包括 DNS、代理、弱网、超时时间过短、请求被取消或主线程阻塞。</p>
+<p>事实和假设分清楚之后，排查方向会更干净。否则很容易改了一个“看起来像原因”的地方，却没有真正解决问题。</p>
+<h2 id="四、按调用链缩小范围"><a href="#四、按调用链缩小范围" class="headerlink" title="四、按调用链缩小范围"></a>四、按调用链缩小范围</h2><p>复杂问题通常跨越多个层级。以一个常见的客户端保存流程为例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">View -&gt; ViewModel -&gt; Repository -&gt; ApiClient -&gt; Server</span><br></pre></td></tr></table></figure>
+
+<p>调试时不要让 AI 只盯着报错文件。可以要求它先画出调用链：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请根据当前代码和日志，整理保存按钮触发后的调用链。</span><br><span class="line">标出每一层的输入、输出、异常处理和状态更新位置。</span><br></pre></td></tr></table></figure>
+
+<p>调用链整理出来后，再逐层定位风险点：</p>
+<ul>
+<li>View 是否重复触发点击事件。</li>
+<li>ViewModel 是否正确处理 loading 状态。</li>
+<li>Repository 是否吞掉异常或返回了错误默认值。</li>
+<li>ApiClient 是否正确区分超时、取消和业务失败。</li>
+<li>服务端返回是否符合客户端解析约定。</li>
+</ul>
+<p>这一步的价值在于把“偶发问题”拆成多个可检查节点。每个节点都可以通过日志、断点、测试或 mock 数据单独验证。</p>
+<h2 id="五、优先构造最小复现"><a href="#五、优先构造最小复现" class="headerlink" title="五、优先构造最小复现"></a>五、优先构造最小复现</h2><p>没有复现的修复，很难判断是否有效。AI 可以帮忙把复杂场景压缩成最小复现。</p>
+<p>可以这样提问：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请基于上面的现象和调用链，设计一个最小复现场景。</span><br><span class="line">要求：</span><br><span class="line">1. 输入条件尽量少。</span><br><span class="line">2. 能稳定触发问题。</span><br><span class="line">3. 能说明观察指标。</span><br><span class="line">4. 不依赖完整线上环境。</span><br></pre></td></tr></table></figure>
+
+<p>例如 Android loading 卡住的问题，最小复现可能不是“打开 App 操作十步”，而是一个 ViewModel 单元测试：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">save_failed_should_clear_loading</span><span class="params">()</span></span> = runTest &#123;</span><br><span class="line">    repository.result = Result.failure(IOException(<span class="string">&quot;timeout&quot;</span>))</span><br><span class="line"></span><br><span class="line">    viewModel.save()</span><br><span class="line"></span><br><span class="line">    assertFalse(viewModel.uiState.value.loading)</span><br><span class="line">    assertNotNull(viewModel.uiState.value.errorMessage)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个测试不一定覆盖所有真实环境，但它能验证核心状态机：失败后必须退出 loading。如果这个测试失败，说明问题已经被压缩到足够小的范围。</p>
+<h2 id="六、修复前先列验证清单"><a href="#六、修复前先列验证清单" class="headerlink" title="六、修复前先列验证清单"></a>六、修复前先列验证清单</h2><p>很多调试会在“我知道原因了”之后变得草率。真正修改代码前，最好先让 AI 列出验证清单：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在修改前，请列出这次修复必须满足的验证点。</span><br><span class="line">按正常路径、失败路径、边界路径和回归路径分类。</span><br></pre></td></tr></table></figure>
+
+<p>一个合格的验证清单应该包含：</p>
+<ul>
+<li>正常路径：请求成功后状态恢复，页面显示正确结果。</li>
+<li>失败路径：超时、断网、服务端错误都有可见反馈。</li>
+<li>边界路径：重复点击、取消请求、页面销毁后回调返回。</li>
+<li>回归路径：已有接口协议和旧数据行为不变。</li>
+</ul>
+<p>这份清单能防止修复只覆盖当前日志里的单个错误。很多线上问题并不是没有修，而是修复时只处理了最明显的一条路径。</p>
+<h2 id="七、让-AI-输出小改动，而不是重写模块"><a href="#七、让-AI-输出小改动，而不是重写模块" class="headerlink" title="七、让 AI 输出小改动，而不是重写模块"></a>七、让 AI 输出小改动，而不是重写模块</h2><p>调试修复应该尽量小。问题越紧急，越不适合顺手重构。</p>
+<p>可以明确约束：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请只修改导致该问题的最小代码路径。</span><br><span class="line">不要重构无关模块，不要调整命名，不要改变接口协议。</span><br><span class="line">修改后说明每一处改动对应哪个验证点。</span><br></pre></td></tr></table></figure>
+
+<p>这类约束对 AI 很重要。它经常会在修 bug 时顺手整理结构，结果 diff 变大，review 成本上升，还可能引入新的行为变化。</p>
+<p>小改动不是保守，而是为了让因果关系清楚：哪个问题、哪个证据、哪处修改、哪个测试验证，能够一一对应。</p>
+<h2 id="八、复盘要沉淀成下一次上下文"><a href="#八、复盘要沉淀成下一次上下文" class="headerlink" title="八、复盘要沉淀成下一次上下文"></a>八、复盘要沉淀成下一次上下文</h2><p>一次调试结束后，最容易被忽略的是复盘。对个人项目来说，复盘不需要写成长文，几句话就够：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">现象：保存失败后 loading 没有恢复。</span><br><span class="line">原因：Repository 抛出的异常被 ViewModel 捕获后没有更新失败状态。</span><br><span class="line">修复：失败分支统一设置 loading=false，并补充单元测试。</span><br><span class="line">验证：成功、失败、重复点击三个路径通过。</span><br><span class="line">预防：后续新增异步状态时必须覆盖失败路径。</span><br></pre></td></tr></table></figure>
+
+<p>这段内容可以放进 issue、提交说明、代码注释或团队知识库。下一次遇到相似问题时，它就是非常好的 AI 上下文。</p>
+<p>AI 调试的价值，不只是当下解决一个 bug，更是把排障过程变成可复用的工程资产。</p>
+<h2 id="九、一个可复用提示词"><a href="#九、一个可复用提示词" class="headerlink" title="九、一个可复用提示词"></a>九、一个可复用提示词</h2><p>日常调试时，可以直接使用这个模板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">请按调试流程协助分析问题。</span><br><span class="line"></span><br><span class="line">现象：</span><br><span class="line">环境：</span><br><span class="line">复现步骤：</span><br><span class="line">关键日志：</span><br><span class="line">相关代码：</span><br><span class="line">已尝试操作：</span><br><span class="line">期望结果：</span><br><span class="line"></span><br><span class="line">要求：</span><br><span class="line">1. 先区分事实、假设和待验证信息。</span><br><span class="line">2. 再整理调用链和可能断点。</span><br><span class="line">3. 设计最小复现场景。</span><br><span class="line">4. 提出最小修复方案。</span><br><span class="line">5. 给出验证清单。</span><br></pre></td></tr></table></figure>
+
+<p>如果问题涉及版本、服务状态、价格、政策或其他实时信息，还应该明确要求先查询可信来源，并记录信息获取时间。没有实时依据时，不要把猜测写成事实。</p>
+<h2 id="十、总结"><a href="#十、总结" class="headerlink" title="十、总结"></a>十、总结</h2><p>AI 辅助调试的关键，不是让它一次性猜中答案，而是让它帮助我们组织证据、缩小范围、构造复现和检查修复。</p>
+<p>一个稳定的调试流程通常包括：</p>
+<ul>
+<li>把现象写成可验证描述。</li>
+<li>提供带上下文的日志和代码。</li>
+<li>区分事实、假设和待验证信息。</li>
+<li>沿调用链逐层缩小范围。</li>
+<li>先构造最小复现，再做最小修复。</li>
+<li>用验证清单确认问题闭环。</li>
+</ul>
+<p>当 AI 被放进这样的流程里，它更像一个能持续协助排障的工程伙伴，而不是一个只会根据报错生成答案的工具。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/05/AI_Debugging_Workflow_2026_07_05/" title="AI 辅助调试流程：从日志到最小复现">https://blog.hansong.icu/2026/07/05/AI_Debugging_Workflow_2026_07_05/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/01/Hexo_GitHub_Pages_Free_Domain_Guide_2026_07_01/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/blogging.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%8D%9A%E5%AE%A2%E5%BB%BA%E7%AB%99/">
+                    博客建站
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/01/Hexo_GitHub_Pages_Free_Domain_Guide_2026_07_01/" class="trm-anima-link">
+                    Hexo 部署到 GitHub Pages 与免费域名配置完整指南
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/01</li>
+                <li>09:34</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先把现象写成可验证描述"><a rel="nofollow" class="trm-toc-link" href="#一、先把现象写成可验证描述"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先把现象写成可验证描述</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、日志要带上下文，不要只贴最后一行"><a rel="nofollow" class="trm-toc-link" href="#二、日志要带上下文，不要只贴最后一行"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、日志要带上下文，不要只贴最后一行</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、让 AI 先整理事实和假设"><a rel="nofollow" class="trm-toc-link" href="#三、让-AI-先整理事实和假设"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、让 AI 先整理事实和假设</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、按调用链缩小范围"><a rel="nofollow" class="trm-toc-link" href="#四、按调用链缩小范围"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、按调用链缩小范围</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、优先构造最小复现"><a rel="nofollow" class="trm-toc-link" href="#五、优先构造最小复现"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、优先构造最小复现</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、修复前先列验证清单"><a rel="nofollow" class="trm-toc-link" href="#六、修复前先列验证清单"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、修复前先列验证清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、让 AI 输出小改动，而不是重写模块"><a rel="nofollow" class="trm-toc-link" href="#七、让-AI-输出小改动，而不是重写模块"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、让 AI 输出小改动，而不是重写模块</span></a></li><li class="trm-toc-item trm-toc-level-2" title="八、复盘要沉淀成下一次上下文"><a rel="nofollow" class="trm-toc-link" href="#八、复盘要沉淀成下一次上下文"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">八、复盘要沉淀成下一次上下文</span></a></li><li class="trm-toc-item trm-toc-level-2" title="九、一个可复用提示词"><a rel="nofollow" class="trm-toc-link" href="#九、一个可复用提示词"><span class="trm-toc-number">9.</span> <span class="trm-toc-text">九、一个可复用提示词</span></a></li><li class="trm-toc-item trm-toc-level-2" title="十、总结"><a rel="nofollow" class="trm-toc-link" href="#十、总结"><span class="trm-toc-number">10.</span> <span class="trm-toc-text">十、总结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
