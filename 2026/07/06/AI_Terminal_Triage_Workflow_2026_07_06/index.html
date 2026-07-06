@@ -7,25 +7,25 @@
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#317EFB" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
-<meta name="description" content="嵌入式项目很容易变成一堆 SDK 压缩包、临时补丁、手工改动和不可复现镜像。项目目录和协作方式如果不规范，团队越多人，问题越难追。">
+<meta name="description" content="终端排障最容易卡住的地方，不是缺少命令，而是缺少顺序。看到一个异常现象后，工程师往往会同时打开日志、进程、网络、磁盘和配置，信息量迅速膨胀；AI 也会在上下文混乱时给出看似合理、实际跳步的建议。 更稳妥的做法，是把 AI 放在“整理证据”和“生成下一步检查清单”的位置上。它不替代现场判断，也不直接给最终结论，而是帮助我们把 Android 与 Linux 环境里的零散输出，收敛成可复现、可解释、可">
 <meta property="og:type" content="article">
-<meta property="og:title" content="嵌入式 Linux 系列 30：SDK、项目目录和团队协作">
-<meta property="og:url" content="https://blog.hansong.icu/2026/06/26/Embedded_Linux_Series_30_SDK_Project_Structure/index.html">
+<meta property="og:title" content="AI 辅助终端排障流程：把 Android 与 Linux 现象变成证据">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/06/AI_Terminal_Triage_Workflow_2026_07_06/index.html">
 <meta property="og:site_name" content="Zihuatanejo">
-<meta property="og:description" content="嵌入式项目很容易变成一堆 SDK 压缩包、临时补丁、手工改动和不可复现镜像。项目目录和协作方式如果不规范，团队越多人，问题越难追。">
+<meta property="og:description" content="终端排障最容易卡住的地方，不是缺少命令，而是缺少顺序。看到一个异常现象后，工程师往往会同时打开日志、进程、网络、磁盘和配置，信息量迅速膨胀；AI 也会在上下文混乱时给出看似合理、实际跳步的建议。 更稳妥的做法，是把 AI 放在“整理证据”和“生成下一步检查清单”的位置上。它不替代现场判断，也不直接给最终结论，而是帮助我们把 Android 与 Linux 环境里的零散输出，收敛成可复现、可解释、可">
 <meta property="og:locale">
-<meta property="article:published_time" content="2026-06-26T14:10:21.000Z">
-<meta property="article:modified_time" content="2026-06-26T14:10:21.000Z">
+<meta property="article:published_time" content="2026-07-06T01:39:38.000Z">
+<meta property="article:modified_time" content="2026-07-06T01:39:38.000Z">
 <meta property="article:author" content="Zihuatanejo">
-<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="AI">
 <meta property="article:tag" content="Workflow">
+<meta property="article:tag" content="Debugging">
 <meta property="article:tag" content="Linux">
-<meta property="article:tag" content="Embedded">
-<meta property="article:tag" content="SDK">
 <meta name="twitter:card" content="summary">
 
 
-<title >嵌入式 Linux 系列 30：SDK、项目目录和团队协作</title>
+<title >AI 辅助终端排障流程：把 Android 与 Linux 现象变成证据</title>
 
 <!-- Favicon -->
 
@@ -64,7 +64,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-06-26 22:10:21"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-06 09:39:38"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -221,7 +221,7 @@
     <div class="trm-banner">
     
     <!-- banner cover -->
-    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
     <!-- banner cover end -->
     
 
@@ -240,7 +240,7 @@
                             NEWS LETTER
                         </div>
                         <h1 class="trm-mb-30 trm-hsmb-font">
-                            嵌入式 Linux 系列 30：SDK、项目目录和团队协作
+                            AI 辅助终端排障流程：把 Android 与 Linux 现象变成证据
                         </h1>
 
                         
@@ -346,13 +346,13 @@
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
-            06/26
+            07/06
         </div>
     </div>
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-clock trm-icon"></i><br>
-            22:10
+            09:39
         </div>
     </div>
     <div class="col-sm-4">
@@ -364,75 +364,91 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <p>嵌入式项目很容易变成一堆 SDK 压缩包、临时补丁、手工改动和不可复现镜像。项目目录和协作方式如果不规范，团队越多人，问题越难追。</p>
+    <p>终端排障最容易卡住的地方，不是缺少命令，而是缺少顺序。看到一个异常现象后，工程师往往会同时打开日志、进程、网络、磁盘和配置，信息量迅速膨胀；AI 也会在上下文混乱时给出看似合理、实际跳步的建议。</p>
+<p>更稳妥的做法，是把 AI 放在“整理证据”和“生成下一步检查清单”的位置上。它不替代现场判断，也不直接给最终结论，而是帮助我们把 Android 与 Linux 环境里的零散输出，收敛成可复现、可解释、可交接的排障记录。</p>
 <span id="more"></span>
 
-<h2 id="一、推荐目录"><a href="#一、推荐目录" class="headerlink" title="一、推荐目录"></a>一、推荐目录</h2><p>示例：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">project/</span><br><span class="line">  buildroot/</span><br><span class="line">  board/</span><br><span class="line">  apps/</span><br><span class="line">  packages/</span><br><span class="line">  scripts/</span><br><span class="line">  configs/</span><br><span class="line">  docs/</span><br><span class="line">  output/</span><br></pre></td></tr></table></figure>
+<h2 id="一、先固定问题边界"><a href="#一、先固定问题边界" class="headerlink" title="一、先固定问题边界"></a>一、先固定问题边界</h2><p>排障开始时不要急着粘贴整段日志。先把问题压缩成四个字段：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">现象：</span><br><span class="line">影响范围：</span><br><span class="line">复现方式：</span><br><span class="line">最近变更：</span><br></pre></td></tr></table></figure>
 
-<p>或者把 Buildroot 作为子模块，应用单独仓库。关键是能说明每个目录职责。</p>
-<h2 id="二、哪些要进-Git"><a href="#二、哪些要进-Git" class="headerlink" title="二、哪些要进 Git"></a>二、哪些要进 Git</h2><p>应该保存：</p>
-<ul>
-<li>defconfig。</li>
-<li>kernel config。</li>
-<li>busybox config。</li>
-<li>rootfs overlay。</li>
-<li>自定义 package。</li>
-<li>应用源码。</li>
-<li>构建脚本。</li>
-<li>文档。</li>
-</ul>
-<p>不建议保存：</p>
-<ul>
-<li>完整 output。</li>
-<li>临时镜像。</li>
-<li>编译中间文件。</li>
-<li>私钥和证书。</li>
-</ul>
-<p>产物可以通过 CI 归档，不一定进源码仓库。</p>
-<h2 id="三、补丁管理"><a href="#三、补丁管理" class="headerlink" title="三、补丁管理"></a>三、补丁管理</h2><p>厂商 SDK 经常需要打补丁。</p>
-<p>建议：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">patches/</span><br><span class="line">  linux/</span><br><span class="line">  uboot/</span><br><span class="line">  buildroot/</span><br></pre></td></tr></table></figure>
+<p>例如 Android 应用启动慢，可以写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">现象：冷启动从点击图标到首页可交互明显变慢。</span><br><span class="line">影响范围：只在部分低内存设备上稳定出现。</span><br><span class="line">复现方式：清理后台后首次启动，重复三次均可观察到。</span><br><span class="line">最近变更：启动链路新增了配置读取和一次本地数据库迁移。</span><br></pre></td></tr></table></figure>
 
-<p>每个补丁写清楚：</p>
-<ul>
-<li>修改原因。</li>
-<li>适用版本。</li>
-<li>是否已反馈上游。</li>
-<li>是否可以删除。</li>
-</ul>
-<p>不要直接在 SDK 里手工改完就忘。</p>
-<h2 id="四、一键构建"><a href="#四、一键构建" class="headerlink" title="四、一键构建"></a>四、一键构建</h2><p>提供：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./scripts/build.sh</span><br></pre></td></tr></table></figure>
+<p>这一步的价值是让 AI 不再根据单个错误行猜原因。它能先判断问题属于启动、资源、IO、网络、权限还是依赖初始化，再建议该优先收集哪些证据。</p>
+<p>可以使用这样的提示词：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">你是排障助手。请根据下面的问题描述，先不要给结论，只输出：</span><br><span class="line">1. 可能的排查方向。</span><br><span class="line">2. 每个方向需要的最小证据。</span><br><span class="line">3. 哪些信息不足以判断。</span><br><span class="line">问题描述如下：</span><br></pre></td></tr></table></figure>
 
-<p>做到：</p>
-<ul>
-<li>从干净环境开始。</li>
-<li>加载配置。</li>
-<li>编译固件。</li>
-<li>生成版本信息。</li>
-<li>输出产物路径。</li>
-</ul>
-<p>新人接手项目时，一键构建比长文档更可靠。</p>
-<h2 id="五、文档最小集"><a href="#五、文档最小集" class="headerlink" title="五、文档最小集"></a>五、文档最小集</h2><p>至少包括：</p>
-<ul>
-<li>环境搭建。</li>
-<li>构建方法。</li>
-<li>烧录方法。</li>
-<li>串口参数。</li>
-<li>分区布局。</li>
-<li>OTA 流程。</li>
-<li>常见问题。</li>
-</ul>
-<p>文档要跟着代码更新，否则很快失效。</p>
-<h2 id="六、协作底线"><a href="#六、协作底线" class="headerlink" title="六、协作底线"></a>六、协作底线</h2><p>团队协作底线：</p>
-<ul>
-<li>所有改动可追踪。</li>
-<li>所有镜像可复现。</li>
-<li>所有版本可定位。</li>
-<li>所有发布有记录。</li>
-</ul>
-<p>嵌入式项目不是只写代码，更多时候是在管理复杂系统的可重复性。</p>
+<h2 id="二、每次只收集一组证据"><a href="#二、每次只收集一组证据" class="headerlink" title="二、每次只收集一组证据"></a>二、每次只收集一组证据</h2><p>终端排障要避免“命令瀑布”。一次只围绕一个假设收集证据，输出也只给 AI 一组，让上下文保持干净。</p>
+<p>如果怀疑是 Linux 主机资源问题，可以先收集：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uptime</span></span><br><span class="line">free -h</span><br><span class="line"><span class="built_in">df</span> -h</span><br><span class="line">ps aux --<span class="built_in">sort</span>=-%mem | <span class="built_in">head</span></span><br><span class="line">ps aux --<span class="built_in">sort</span>=-%cpu | <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>如果怀疑是 Android 进程状态问题，可以先收集：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb shell ps -A | grep your.package.name</span><br><span class="line">adb shell dumpsys meminfo your.package.name</span><br><span class="line">adb logcat -d -t 300</span><br></pre></td></tr></table></figure>
+
+<p>然后让 AI 做结构化整理：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">请只根据这组输出判断：</span><br><span class="line">1. 是否能支持“资源不足”这个假设。</span><br><span class="line">2. 支持或反驳该假设的具体证据是什么。</span><br><span class="line">3. 下一步最小检查命令是什么。</span><br><span class="line">不要扩展到无关方向。</span><br></pre></td></tr></table></figure>
+
+<p>这里的关键不是让 AI 记住所有命令，而是要求它给出“证据是否支持假设”。排障记录里最有用的内容，往往不是命令本身，而是命令输出和假设之间的关系。</p>
+<h2 id="三、把日志切成时间窗口"><a href="#三、把日志切成时间窗口" class="headerlink" title="三、把日志切成时间窗口"></a>三、把日志切成时间窗口</h2><p>日志最常见的问题是太长。完整日志看起来信息充分，其实会稀释关键事件。更可靠的方式是先确定时间窗口，再围绕窗口前后观察。</p>
+<p>Android 场景可以按操作步骤切日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb logcat -c</span><br><span class="line"><span class="comment"># 执行一次复现操作</span></span><br><span class="line">adb logcat -d &gt; reproduce.log</span><br></pre></td></tr></table></figure>
+
+<p>Linux 服务可以按时间段查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u service_name --since <span class="string">&quot;10 minutes ago&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>交给 AI 时，不要只说“分析日志”。可以这样约束：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">下面是一次复现期间的日志。请按时间顺序输出：</span><br><span class="line">1. 第一个异常信号。</span><br><span class="line">2. 异常前最近的关键动作。</span><br><span class="line">3. 异常后的连锁反应。</span><br><span class="line">4. 不能从日志中确认的内容。</span><br><span class="line">如果存在多个错误，只按因果关系排序，不按严重程度排序。</span><br></pre></td></tr></table></figure>
+
+<p>这能减少一个常见误判：把最后出现的错误当成根因。很多终端问题里，最后的崩溃、超时或重启只是结果，真正的触发点在前面几十行。</p>
+<h2 id="四、让-AI-维护排障表，而不是聊天记录"><a href="#四、让-AI-维护排障表，而不是聊天记录" class="headerlink" title="四、让 AI 维护排障表，而不是聊天记录"></a>四、让 AI 维护排障表，而不是聊天记录</h2><p>聊天式排障会越来越难追踪，因为每一轮都混入新的猜测。更适合工程协作的格式是一张小表：</p>
+<table>
+<thead>
+<tr>
+<th>假设</th>
+<th>已有证据</th>
+<th>反证</th>
+<th>下一步</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>启动阶段 IO 阻塞</td>
+<td>首屏前出现密集文件读取</td>
+<td>暂无</td>
+<td>采集启动阶段 trace</td>
+<td>待验证</td>
+</tr>
+<tr>
+<td>内存不足触发回收</td>
+<td>低内存设备更明显</td>
+<td>高内存设备未复现</td>
+<td>对比 meminfo</td>
+<td>待验证</td>
+</tr>
+<tr>
+<td>网络请求阻塞主线程</td>
+<td>日志没有直接证据</td>
+<td>离线也可复现</td>
+<td>暂停该方向</td>
+<td>降级</td>
+</tr>
+</tbody></table>
+<p>每做完一轮检查，就让 AI 更新表格：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">请基于新增证据更新排障表：</span><br><span class="line">1. 保留仍然成立的假设。</span><br><span class="line">2. 标记已被反证的假设。</span><br><span class="line">3. 新增假设必须说明来源。</span><br><span class="line">4. 下一步只能给一个优先级最高的动作。</span><br></pre></td></tr></table></figure>
+
+<p>这会强迫排障过程不断收敛。对团队来说，这张表也比一长串聊天记录更适合放进 issue、复盘文档或提交说明。</p>
+<h2 id="五、结论必须能被人工复核"><a href="#五、结论必须能被人工复核" class="headerlink" title="五、结论必须能被人工复核"></a>五、结论必须能被人工复核</h2><p>AI 给出的排障结论，最好都落到三句话：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">根因判断：</span><br><span class="line">关键证据：</span><br><span class="line">修复或规避方案：</span><br></pre></td></tr></table></figure>
+
+<p>如果其中任何一句写不出来，就说明结论还不够硬。比如“可能是内存问题”不是结论，“在低内存设备上，启动后进程 RSS 持续升高，同时日志出现频繁回收；移除启动期大对象缓存后现象消失”才接近可复核的工程判断。</p>
+<p>最终提交修复前，还可以让 AI 做一次反向检查：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">请审查这份排障结论：</span><br><span class="line">1. 哪些证据真正支持根因。</span><br><span class="line">2. 哪些结论仍然只是推测。</span><br><span class="line">3. 是否缺少复现前后对比。</span><br><span class="line">4. 是否可以写成更清晰的回归测试或验证步骤。</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、把流程沉淀成团队模板"><a href="#六、把流程沉淀成团队模板" class="headerlink" title="六、把流程沉淀成团队模板"></a>六、把流程沉淀成团队模板</h2><p>AI 辅助排障的收益，来自稳定流程，而不是某一次回答。可以把常用模板放进仓库文档或个人片段库：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">问题边界模板</span><br><span class="line">证据整理模板</span><br><span class="line">日志时间线模板</span><br><span class="line">假设表更新模板</span><br><span class="line">结论复核模板</span><br></pre></td></tr></table></figure>
+
+<p>每次遇到 Android 卡顿、Linux 服务异常、构建机资源波动或脚本偶发失败，都用同一套骨架推进。久而久之，AI 的角色会从“给建议的人”变成“帮你保持工程纪律的助手”。</p>
+<p>真正有效的 AI 工具流，不是把终端输出一次性倒进去等待答案，而是让每一轮对话都产生更清晰的证据、更少的假设，以及更容易被同事复现的下一步。</p>
 
 </article>
     
@@ -445,7 +461,7 @@
     </li>
     <li class="trm-post-copyright-link">
         <strong>本文链接：</strong>
-        <a id="original-link" href="https://blog.hansong.icu/2026/06/26/Embedded_Linux_Series_30_SDK_Project_Structure/" title="嵌入式 Linux 系列 30：SDK、项目目录和团队协作">https://blog.hansong.icu/2026/06/26/Embedded_Linux_Series_30_SDK_Project_Structure/</a>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/06/AI_Terminal_Triage_Workflow_2026_07_06/" title="AI 辅助终端排障流程：把 Android 与 Linux 现象变成证据">https://blog.hansong.icu/2026/07/06/AI_Terminal_Triage_Workflow_2026_07_06/</a>
     </li>
     <li class="trm-post-copyright-license">
         <strong>版权声明：</strong>
@@ -464,62 +480,31 @@
         </h5>
     </div>
     
+    
         <div class="col-lg-6">
     <div class="trm-blog-card trm-scroll-animation">
-        <a href="/2026/06/26/Embedded_Linux_Series_31_Language_Choice/" class="trm-cover-frame trm-anima-link">
+        <a href="/2026/07/06/AI_Commit_Hygiene_Workflow_2026_07_06/" class="trm-cover-frame trm-anima-link">
             
             
-                <img alt="cover" class="no-fancybox" src="/img/covers/embedded.svg">
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
             
         </a>
         
         <div class="trm-card-descr">
             <div class="trm-label trm-category trm-mb-20">
-                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">
-                    嵌入式开发
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
                 </a>
             </div>
             <h5>
-                <a href="/2026/06/26/Embedded_Linux_Series_31_Language_Choice/" class="trm-anima-link">
-                    嵌入式 Linux 系列 31：C、C++、Go、Rust 的语言选型
+                <a href="/2026/07/06/AI_Commit_Hygiene_Workflow_2026_07_06/" class="trm-anima-link">
+                    AI 辅助提交整理流程：从零散改动到可审查 Diff
                 </a>
             </h5>
             <div class="trm-divider trm-mb-20 trm-mt-20"></div>
             <ul class="trm-card-data trm-label">
-                <li>26/06/26</li>
-                <li>22:11</li>
-                
-                
-            </ul>
-        </div>
-    </div>
-</div>
-    
-    
-        <div class="col-lg-6">
-    <div class="trm-blog-card trm-scroll-animation">
-        <a href="/2026/06/26/Embedded_Linux_Series_29_MTD_UBI_EMMC/" class="trm-cover-frame trm-anima-link">
-            
-            
-                <img alt="cover" class="no-fancybox" src="/img/covers/embedded.svg">
-            
-        </a>
-        
-        <div class="trm-card-descr">
-            <div class="trm-label trm-category trm-mb-20">
-                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">
-                    嵌入式开发
-                </a>
-            </div>
-            <h5>
-                <a href="/2026/06/26/Embedded_Linux_Series_29_MTD_UBI_EMMC/" class="trm-anima-link">
-                    嵌入式 Linux 系列 29：MTD、UBI、eMMC 和文件系统选择
-                </a>
-            </h5>
-            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
-            <ul class="trm-card-data trm-label">
-                <li>26/06/26</li>
-                <li>22:09</li>
+                <li>26/07/06</li>
+                <li>09:21</li>
                 
                 
             </ul>
@@ -587,7 +572,7 @@
 				</span>
       </div>
       <div class="trm-post-toc-content">
-        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、推荐目录"><a rel="nofollow" class="trm-toc-link" href="#一、推荐目录"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、推荐目录</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、哪些要进 Git"><a rel="nofollow" class="trm-toc-link" href="#二、哪些要进-Git"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、哪些要进 Git</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、补丁管理"><a rel="nofollow" class="trm-toc-link" href="#三、补丁管理"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、补丁管理</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、一键构建"><a rel="nofollow" class="trm-toc-link" href="#四、一键构建"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、一键构建</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、文档最小集"><a rel="nofollow" class="trm-toc-link" href="#五、文档最小集"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、文档最小集</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、协作底线"><a rel="nofollow" class="trm-toc-link" href="#六、协作底线"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、协作底线</span></a></li></ol>
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先固定问题边界"><a rel="nofollow" class="trm-toc-link" href="#一、先固定问题边界"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先固定问题边界</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、每次只收集一组证据"><a rel="nofollow" class="trm-toc-link" href="#二、每次只收集一组证据"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、每次只收集一组证据</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、把日志切成时间窗口"><a rel="nofollow" class="trm-toc-link" href="#三、把日志切成时间窗口"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、把日志切成时间窗口</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、让 AI 维护排障表，而不是聊天记录"><a rel="nofollow" class="trm-toc-link" href="#四、让-AI-维护排障表，而不是聊天记录"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、让 AI 维护排障表，而不是聊天记录</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、结论必须能被人工复核"><a rel="nofollow" class="trm-toc-link" href="#五、结论必须能被人工复核"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、结论必须能被人工复核</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、把流程沉淀成团队模板"><a rel="nofollow" class="trm-toc-link" href="#六、把流程沉淀成团队模板"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、把流程沉淀成团队模板</span></a></li></ol>
       </div>
     </div>
 
