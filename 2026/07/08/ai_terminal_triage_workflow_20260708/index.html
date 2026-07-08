@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="很多人使用 AI 工具时，习惯把它当成一个更会说话的搜索框：复制报错、等待解释、再去终端里尝试命令。这个方式能解决一部分问题，但在真实工程里经常不够稳定。日志会截断，环境会变化，命令有副作用，Android 和 Linux 的问题还常常夹在权限、进程、文件系统、网络和构建缓存之间。 更高效的做法，是把 AI 放进一套固定的排障工作流里。它不直接替你判断结论，而是帮助整理现场、收敛假设、设计下一步验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="把 AI 工具接进终端排障：一套可复用的工程工作流">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/08/ai_terminal_triage_workflow_20260708/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="很多人使用 AI 工具时，习惯把它当成一个更会说话的搜索框：复制报错、等待解释、再去终端里尝试命令。这个方式能解决一部分问题，但在真实工程里经常不够稳定。日志会截断，环境会变化，命令有副作用，Android 和 Linux 的问题还常常夹在权限、进程、文件系统、网络和构建缓存之间。 更高效的做法，是把 AI 放进一套固定的排障工作流里。它不直接替你判断结论，而是帮助整理现场、收敛假设、设计下一步验">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-08T01:01:01.000Z">
+<meta property="article:modified_time" content="2026-07-08T01:01:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Engineering">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Efficiency">
+<meta name="twitter:card" content="summary">
+
+
+<title >把 AI 工具接进终端排障：一套可复用的工程工作流</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-08 09:01:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            把 AI 工具接进终端排障：一套可复用的工程工作流
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/08
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:01
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>很多人使用 AI 工具时，习惯把它当成一个更会说话的搜索框：复制报错、等待解释、再去终端里尝试命令。这个方式能解决一部分问题，但在真实工程里经常不够稳定。日志会截断，环境会变化，命令有副作用，Android 和 Linux 的问题还常常夹在权限、进程、文件系统、网络和构建缓存之间。</p>
+<p>更高效的做法，是把 AI 放进一套固定的排障工作流里。它不直接替你判断结论，而是帮助整理现场、收敛假设、设计下一步验证。人仍然负责执行命令、确认边界和决定是否修改系统状态。</p>
+<span id="more"></span>
+
+<h2 id="一、先固定现场，不急着问原因"><a href="#一、先固定现场，不急着问原因" class="headerlink" title="一、先固定现场，不急着问原因"></a>一、先固定现场，不急着问原因</h2><p>排障最容易浪费时间的地方，是一开始就让 AI 猜。比如 Android 构建失败，只贴最后一屏错误，它可能会围绕 Gradle、Kotlin、SDK 或缓存给出一串宽泛建议。Linux 服务启动失败也是一样，只给一行 <code>failed</code>，很难知道问题在权限、配置、依赖还是运行用户。</p>
+<p>可以先把现场整理成稳定模板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">目标：我本来要完成什么操作</span><br><span class="line">环境：系统、工程目录、运行用户、关键工具链</span><br><span class="line">现象：完整错误、复现步骤、出现频率</span><br><span class="line">限制：哪些命令不能执行，哪些文件不能改</span><br><span class="line">已尝试：已经跑过的命令和结果</span><br></pre></td></tr></table></figure>
+
+<p>这个模板的价值不在于好看，而在于逼迫自己把“我感觉哪里坏了”转换成“哪些事实已经可确认”。AI 在这样的输入上，更容易给出可以验证的假设，而不是直接跳到重装依赖、清缓存或改配置。</p>
+<h2 id="二、让-AI-先生成检查清单"><a href="#二、让-AI-先生成检查清单" class="headerlink" title="二、让 AI 先生成检查清单"></a>二、让 AI 先生成检查清单</h2><p>一个实用提示词是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">不要先给修复方案。</span><br><span class="line">请根据下面现场，列出 5 个最可能原因。</span><br><span class="line">每个原因给出一个只读检查命令，并说明命令输出如何支持或排除该原因。</span><br></pre></td></tr></table></figure>
+
+<p>这句话里的“只读检查命令”很关键。排障早期不要让工具直接建议删除缓存、重启服务、改权限或覆盖配置。先用 <code>pwd</code>、<code>ls -l</code>、<code>id</code>、<code>env</code>、<code>systemctl status</code>、<code>journalctl</code>、<code>adb devices</code>、<code>adb logcat</code> 这类命令建立事实，风险会低很多。</p>
+<p>在 Android 场景里，可以让 AI 把检查项按层次拆开：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请按设备连接、构建环境、依赖解析、安装阶段、运行时崩溃五层排查。</span><br><span class="line">每层只给 1 到 2 个检查动作。</span><br></pre></td></tr></table></figure>
+
+<p>在 Linux 场景里，也可以要求它按权限、路径、服务用户、端口、资源限制拆分。这样做的好处是，排障过程不会在一个方向里钻太深，也不容易忽略那些“看起来不像代码问题”的基础条件。</p>
+<h2 id="三、把命令输出变成差异，而不是长日志"><a href="#三、把命令输出变成差异，而不是长日志" class="headerlink" title="三、把命令输出变成差异，而不是长日志"></a>三、把命令输出变成差异，而不是长日志</h2><p>AI 能读长日志，但长日志不等于高质量输入。更好的方式，是让终端先把噪声压掉，只保留差异和关键上下文。</p>
+<p>例如对比两次环境变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">env</span> | <span class="built_in">sort</span> &gt; /tmp/env.current</span><br><span class="line">diff -u /tmp/env.expected /tmp/env.current</span><br></pre></td></tr></table></figure>
+
+<p>查看服务失败原因：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl status app.service --no-pager</span><br><span class="line">journalctl -u app.service -n 80 --no-pager</span><br></pre></td></tr></table></figure>
+
+<p>查看 Android 运行时错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb logcat -d | rg <span class="string">&quot;FATAL EXCEPTION|AndroidRuntime|Permission|Unable to start&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>把这些输出交给 AI 时，可以要求它只做三件事：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 标出最关键的 3 行。</span><br><span class="line">2. 解释这些行之间的因果关系。</span><br><span class="line">3. 给出下一条验证命令，不要一次性给多个修复动作。</span><br></pre></td></tr></table></figure>
+
+<p>这个节奏会慢一点，但每一步都有反馈闭环。排障不再是“试一堆建议”，而是从一个可验证事实走向下一个可验证事实。</p>
+<h2 id="四、修改前让-AI-写回滚方案"><a href="#四、修改前让-AI-写回滚方案" class="headerlink" title="四、修改前让 AI 写回滚方案"></a>四、修改前让 AI 写回滚方案</h2><p>真正需要改文件、改权限、清缓存或重启服务时，AI 的角色应该切换成变更审查助手。可以直接要求：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我要执行下面的修改。</span><br><span class="line">请指出它可能影响的范围、失败后如何回滚、以及执行前还缺少哪些确认。</span><br></pre></td></tr></table></figure>
+
+<p>比如准备修改 systemd unit、调整 Android manifest 权限、升级构建插件、删除 Gradle 缓存，都应该先有回滚路径。工程效率不是把动作变快，而是让错误动作的代价变低。</p>
+<p>一个简单原则是：凡是会改变系统状态的命令，都先问三件事。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">它改了哪里？</span><br><span class="line">如何确认改成功？</span><br><span class="line">如何恢复原状？</span><br></pre></td></tr></table></figure>
+
+<p>如果 AI 不能清楚回答这三点，这个建议就还不能直接执行。</p>
+<h2 id="五、沉淀成团队可复用的提示词"><a href="#五、沉淀成团队可复用的提示词" class="headerlink" title="五、沉淀成团队可复用的提示词"></a>五、沉淀成团队可复用的提示词</h2><p>个人使用 AI 工具，提升的是单次排障速度；团队使用 AI 工具，更重要的是把经验固化下来。可以在仓库里维护几类提示词模板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Android 构建失败排查模板</span><br><span class="line">Android 崩溃日志分析模板</span><br><span class="line">Linux 服务启动失败模板</span><br><span class="line">Shell 脚本变更审查模板</span><br><span class="line">线上变更回滚检查模板</span><br></pre></td></tr></table></figure>
+
+<p>模板不需要很长，重点是统一输入结构、限制危险动作、要求给出验证命令。这样新人遇到问题时，不会只把一段日志丢给 AI 等答案，而是按团队认可的路径收集证据。</p>
+<p>AI 工具真正适合承担的，不是替工程师“猜中原因”，而是把混乱现场整理成一连串低风险、可验证的小步骤。对于 Android、Linux 和日常工程实践来说，这种能力比一次漂亮的答案更稳定，也更容易被团队长期复用。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/08/ai_terminal_triage_workflow_20260708/" title="把 AI 工具接进终端排障：一套可复用的工程工作流">https://blog.hansong.icu/2026/07/08/ai_terminal_triage_workflow_20260708/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/07/ai_change_review_workflow_20260707/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/07/ai_change_review_workflow_20260707/" class="trm-anima-link">
+                    AI 辅助变更前检查：把 Android 与 Linux 风险提前摊开
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/07</li>
+                <li>09:01</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先固定现场，不急着问原因"><a rel="nofollow" class="trm-toc-link" href="#一、先固定现场，不急着问原因"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先固定现场，不急着问原因</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、让 AI 先生成检查清单"><a rel="nofollow" class="trm-toc-link" href="#二、让-AI-先生成检查清单"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、让 AI 先生成检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、把命令输出变成差异，而不是长日志"><a rel="nofollow" class="trm-toc-link" href="#三、把命令输出变成差异，而不是长日志"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、把命令输出变成差异，而不是长日志</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、修改前让 AI 写回滚方案"><a rel="nofollow" class="trm-toc-link" href="#四、修改前让-AI-写回滚方案"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、修改前让 AI 写回滚方案</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、沉淀成团队可复用的提示词"><a rel="nofollow" class="trm-toc-link" href="#五、沉淀成团队可复用的提示词"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、沉淀成团队可复用的提示词</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
