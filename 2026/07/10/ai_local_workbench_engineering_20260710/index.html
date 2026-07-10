@@ -7,15 +7,15 @@
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#317EFB" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
-<meta name="description" content="AI 工具真正提升效率的地方，往往不是第一次回答，而是它能否接住一段正在推进的工程上下文。Android 构建、Linux 服务排障、脚本迁移、依赖升级这些工作，都不是孤立的一问一答。它们会经历观察、假设、验证、修改、回滚和复盘。如果上下文交接混乱，AI 很容易给出看似合理但实际脱离现场的建议。 很多团队把 AI 用得不稳定，并不是模型不会写代码，而是人没有把工程现场组织成可交接的状态。一次高质量">
+<meta name="description" content="AI 工具进入日常工程之后，最容易被高估的是“生成答案”的速度，最容易被低估的是“把答案接入本地工作台”的成本。一个建议如果不能被复现、验证、回滚，它在 Android 项目、Linux 环境或后端服务里都只能算灵感，不能算工程动作。 真正稳定的效率提升，不是让 AI 替人多写几段代码，而是让它进入一条可控的本地流程：先理解目标，再读取有限上下文，提出可执行改动，最后通过命令、日志和测试闭环。这样">
 <meta property="og:type" content="article">
-<meta property="og:title" content="把上下文交接做好：AI 辅助 Android 与 Linux 工程的效率边界">
-<meta property="og:url" content="https://blog.hansong.icu/2026/07/09/ai_context_handoff_android_linux_20260709/index.html">
+<meta property="og:title" content="把 AI 工具放进本地工作台：从提示词到可验证工程流">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/10/ai_local_workbench_engineering_20260710/index.html">
 <meta property="og:site_name" content="Zihuatanejo">
-<meta property="og:description" content="AI 工具真正提升效率的地方，往往不是第一次回答，而是它能否接住一段正在推进的工程上下文。Android 构建、Linux 服务排障、脚本迁移、依赖升级这些工作，都不是孤立的一问一答。它们会经历观察、假设、验证、修改、回滚和复盘。如果上下文交接混乱，AI 很容易给出看似合理但实际脱离现场的建议。 很多团队把 AI 用得不稳定，并不是模型不会写代码，而是人没有把工程现场组织成可交接的状态。一次高质量">
+<meta property="og:description" content="AI 工具进入日常工程之后，最容易被高估的是“生成答案”的速度，最容易被低估的是“把答案接入本地工作台”的成本。一个建议如果不能被复现、验证、回滚，它在 Android 项目、Linux 环境或后端服务里都只能算灵感，不能算工程动作。 真正稳定的效率提升，不是让 AI 替人多写几段代码，而是让它进入一条可控的本地流程：先理解目标，再读取有限上下文，提出可执行改动，最后通过命令、日志和测试闭环。这样">
 <meta property="og:locale">
-<meta property="article:published_time" content="2026-07-09T01:01:01.000Z">
-<meta property="article:modified_time" content="2026-07-09T01:01:01.000Z">
+<meta property="article:published_time" content="2026-07-10T01:01:01.000Z">
+<meta property="article:modified_time" content="2026-07-10T01:01:01.000Z">
 <meta property="article:author" content="Zihuatanejo">
 <meta property="article:tag" content="Android">
 <meta property="article:tag" content="AI">
@@ -25,7 +25,7 @@
 <meta name="twitter:card" content="summary">
 
 
-<title >把上下文交接做好：AI 辅助 Android 与 Linux 工程的效率边界</title>
+<title >把 AI 工具放进本地工作台：从提示词到可验证工程流</title>
 
 <!-- Favicon -->
 
@@ -64,7 +64,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-09 09:01:01"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-10 09:01:01"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -240,7 +240,7 @@
                             NEWS LETTER
                         </div>
                         <h1 class="trm-mb-30 trm-hsmb-font">
-                            把上下文交接做好：AI 辅助 Android 与 Linux 工程的效率边界
+                            把 AI 工具放进本地工作台：从提示词到可验证工程流
                         </h1>
 
                         
@@ -346,7 +346,7 @@
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
-            07/09
+            07/10
         </div>
     </div>
     <div class="col-sm-4">
@@ -364,42 +364,36 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <p>AI 工具真正提升效率的地方，往往不是第一次回答，而是它能否接住一段正在推进的工程上下文。Android 构建、Linux 服务排障、脚本迁移、依赖升级这些工作，都不是孤立的一问一答。它们会经历观察、假设、验证、修改、回滚和复盘。如果上下文交接混乱，AI 很容易给出看似合理但实际脱离现场的建议。</p>
-<p>很多团队把 AI 用得不稳定，并不是模型不会写代码，而是人没有把工程现场组织成可交接的状态。一次高质量交接，应该让后来者知道当前目标、已经确认的事实、不能碰的边界，以及下一步最小验证动作。这个后来者可以是同事，也可以是下一轮 AI 对话。</p>
+    <p>AI 工具进入日常工程之后，最容易被高估的是“生成答案”的速度，最容易被低估的是“把答案接入本地工作台”的成本。一个建议如果不能被复现、验证、回滚，它在 Android 项目、Linux 环境或后端服务里都只能算灵感，不能算工程动作。</p>
+<p>真正稳定的效率提升，不是让 AI 替人多写几段代码，而是让它进入一条可控的本地流程：先理解目标，再读取有限上下文，提出可执行改动，最后通过命令、日志和测试闭环。这样做看起来慢一点，却能减少大量“回答正确但落地失败”的消耗。</p>
 <span id="more"></span>
 
-<h2 id="一、不要把聊天记录当成工程记录"><a href="#一、不要把聊天记录当成工程记录" class="headerlink" title="一、不要把聊天记录当成工程记录"></a>一、不要把聊天记录当成工程记录</h2><p>聊天记录适合探索，不适合沉淀。一次 Android 构建失败的排查，可能夹杂着 Gradle 日志、环境变量、缓存目录、SDK 路径、临时猜测和几次失败尝试。如果只是继续往对话里追加内容，后面的判断会越来越依赖记忆和运气。</p>
-<p>更可靠的方式，是在关键节点主动生成一份短交接：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">目标：当前要解决的问题是什么</span><br><span class="line">现象：稳定复现的错误或行为</span><br><span class="line">事实：已经用命令确认过的结论</span><br><span class="line">变更：已经改过哪些文件或配置</span><br><span class="line">限制：不能执行、不能删除、不能重启的内容</span><br><span class="line">下一步：建议先验证的最小动作</span><br></pre></td></tr></table></figure>
+<h2 id="一、把-AI-当成工作台的一层，而不是入口"><a href="#一、把-AI-当成工作台的一层，而不是入口" class="headerlink" title="一、把 AI 当成工作台的一层，而不是入口"></a>一、把 AI 当成工作台的一层，而不是入口</h2><p>很多人使用 AI 时，会把问题直接搬进聊天框：“这个 Android 编译错误怎么解决？”“这个 Linux 服务为什么起不来？”如果上下文很少，AI 只能按常见经验猜测。猜测有时会命中，但它无法知道仓库里真实的 Gradle 配置、脚本约束、系统用户、服务启动目录和已有临时改动。</p>
+<p>更合适的方式，是先把本地工作台整理成 AI 可以安全进入的状态。比如在提问前先明确三件事：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">目标：要修复、实现或确认什么</span><br><span class="line">边界：哪些文件不能动，哪些命令不能执行</span><br><span class="line">证据：已经看到的日志、命令输出和复现步骤</span><br></pre></td></tr></table></figure>
 
-<p>这个结构看起来简单，但它能把“AI 觉得可能是”压回到“现场已经证明了什么”。尤其是在 Linux 环境里，权限、用户、systemd 单元、工作目录和环境变量经常互相影响。没有事实列表，排障很容易变成随机试命令。</p>
-<h2 id="二、把“已验证”和“待验证”分开"><a href="#二、把“已验证”和“待验证”分开" class="headerlink" title="二、把“已验证”和“待验证”分开"></a>二、把“已验证”和“待验证”分开</h2><p>AI 在工程协作里最常见的问题，是把推测写得像结论。比如看到 Android 编译失败，就推断是缓存损坏；看到服务启动失败，就推断是端口占用。这些方向可能正确，但在执行前都只是待验证假设。</p>
-<p>交接文档里应该刻意分出两栏：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">已验证：</span><br><span class="line">- `./gradlew tasks` 可以运行，说明 Gradle Wrapper 本身可用</span><br><span class="line">- 当前用户能读取项目目录，但不能写入某个构建输出目录</span><br><span class="line">- 服务配置文件语法检查通过</span><br><span class="line"></span><br><span class="line">待验证：</span><br><span class="line">- 是否存在旧进程占用端口</span><br><span class="line">- CI 与本机是否使用了不同的 JDK</span><br><span class="line">- systemd 启动时是否缺少必要环境变量</span><br></pre></td></tr></table></figure>
+<p>这三件事会把对话从“泛泛问答”变成“受约束的工程协作”。AI 不需要知道整个世界，只需要知道当前任务里哪些信息可信、哪些操作允许、哪些结果能够证明问题已经解决。</p>
+<h2 id="二、本地上下文要小，但要硬"><a href="#二、本地上下文要小，但要硬" class="headerlink" title="二、本地上下文要小，但要硬"></a>二、本地上下文要小，但要硬</h2><p>把整个仓库都塞给 AI，通常不是高质量上下文。大上下文会带来两个问题：一是噪音太多，模型容易抓错重点；二是成本太高，后续每轮对话都背着一堆不再相关的信息。</p>
+<p>更好的上下文是小而硬：只包含能影响判断的文件、命令和输出。排查 Android 构建问题时，优先给出相关模块的 <code>build.gradle</code>、失败任务、完整错误片段和本机 JDK&#x2F;SDK 路径。排查 Linux 服务问题时，优先给出 systemd 单元、启动用户、工作目录、环境变量来源和 <code>journalctl</code> 中稳定复现的错误。</p>
+<p>所谓“硬”，是指这些信息来自实际命令，而不是记忆里的描述。比如“权限应该没问题”不如 <code>ls -l</code> 和当前用户有效；“服务以前能跑”不如最近一次成功部署的脚本和变更记录有效。AI 擅长在结构化事实之间建立关系，但不擅长替现场补事实。</p>
+<h2 id="三、让每个建议都带最小验证动作"><a href="#三、让每个建议都带最小验证动作" class="headerlink" title="三、让每个建议都带最小验证动作"></a>三、让每个建议都带最小验证动作</h2><p>AI 给出的方案，如果没有验证动作，就只是一个待执行的猜想。工程实践里最有价值的回答，应该天然包含下一步如何证明它是对的。</p>
+<p>例如 Android 依赖冲突，不应该只停在“升级某个依赖”或“排除某个传递包”。更可靠的闭环是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">先用依赖树确认冲突来源</span><br><span class="line">只改一个依赖声明或排除规则</span><br><span class="line">运行目标模块的最小构建任务</span><br><span class="line">如果失败，保留新日志并回滚这一步</span><br></pre></td></tr></table></figure>
 
-<p>这样做的好处是，下一轮 AI 不会把前一轮的猜测当作事实继续放大。工程效率的关键不是让 AI 一次猜中，而是让每次验证都能缩小问题范围。</p>
-<h2 id="三、让命令输出保持可复用"><a href="#三、让命令输出保持可复用" class="headerlink" title="三、让命令输出保持可复用"></a>三、让命令输出保持可复用</h2><p>命令输出不要只截图，也不要只摘最后一行。对于 Android 和 Linux 问题，最有价值的信息通常在上下文附近：执行目录、用户身份、完整命令、退出码、关键日志前后几行。</p>
-<p>可以用一种固定格式贴给 AI：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">命令：</span><br><span class="line">pwd</span><br><span class="line">whoami</span><br><span class="line">./gradlew assembleDebug --stacktrace</span><br><span class="line"></span><br><span class="line">结果摘要：</span><br><span class="line">- 工作目录是项目根目录</span><br><span class="line">- 执行用户是普通用户</span><br><span class="line">- 构建在资源合并阶段失败</span><br><span class="line"></span><br><span class="line">关键输出：</span><br><span class="line">粘贴必要日志片段</span><br></pre></td></tr></table></figure>
+<p>Linux 服务排障也是同理。看到启动失败时，先确认服务实际使用的用户、工作目录和环境变量，再执行最小范围的启动验证。不要一边改权限、一边改配置、一边清缓存。多变量同时变化会让成功和失败都失去解释力。</p>
+<p>当 AI 建议一个动作时，可以主动要求它补上验证命令和失败后的回退方式。这样对话会从“给我答案”转向“给我一条可审计的路径”。</p>
+<h2 id="四、把提示词沉到脚本和文档里"><a href="#四、把提示词沉到脚本和文档里" class="headerlink" title="四、把提示词沉到脚本和文档里"></a>四、把提示词沉到脚本和文档里</h2><p>如果一个提示词每天都要重复输入，它就不应该只存在聊天窗口里。常用的工程协作模式，可以沉淀到仓库里的脚本、任务说明或排障模板中。</p>
+<p>比如可以为团队保留一份轻量模板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请基于以下上下文给出方案：</span><br><span class="line">1. 只使用我提供的事实，不要假设未给出的环境。</span><br><span class="line">2. 先列出你认为关键的已知事实。</span><br><span class="line">3. 给出不超过三步的最小修改或验证路径。</span><br><span class="line">4. 每一步都说明预期结果和失败时保留什么证据。</span><br><span class="line">5. 不要建议破坏性命令，除非我明确允许。</span><br></pre></td></tr></table></figure>
 
-<p>固定格式能减少解释成本，也方便下一次交接时直接复用。更重要的是，它让 AI 更容易区分“命令没有执行”“命令执行了但失败”“命令执行成功但结果不符合预期”。</p>
-<h2 id="四、给-AI-明确修改边界"><a href="#四、给-AI-明确修改边界" class="headerlink" title="四、给 AI 明确修改边界"></a>四、给 AI 明确修改边界</h2><p>AI 很擅长提出修改建议，但工程现场并不总允许随便改。Android 项目里，改 <code>build.gradle</code>、升级插件、清理缓存、删除锁文件，影响范围完全不同。Linux 服务器上，重启服务、改权限、删目录、修改 systemd 单元，也都有不同风险。</p>
-<p>在交接里可以提前写清楚边界：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">允许：</span><br><span class="line">- 读取日志和配置</span><br><span class="line">- 修改当前分支内的源码</span><br><span class="line">- 新增小范围脚本或文档</span><br><span class="line"></span><br><span class="line">需要确认：</span><br><span class="line">- 升级依赖版本</span><br><span class="line">- 删除缓存目录</span><br><span class="line">- 修改系统服务配置</span><br><span class="line">- 重启线上进程</span><br><span class="line"></span><br><span class="line">禁止：</span><br><span class="line">- 覆盖用户未提交改动</span><br><span class="line">- 删除未知来源文件</span><br><span class="line">- 执行不可逆迁移</span><br></pre></td></tr></table></figure>
+<p>这类模板的价值不是“提示词技巧”，而是把团队的工程标准写进协作入口。新人、同事和 AI 都会被同一套约束牵引：先确认事实，再做小步验证，最后记录结果。</p>
+<h2 id="五、把-AI-输出纳入代码审查，而不是绕过审查"><a href="#五、把-AI-输出纳入代码审查，而不是绕过审查" class="headerlink" title="五、把 AI 输出纳入代码审查，而不是绕过审查"></a>五、把 AI 输出纳入代码审查，而不是绕过审查</h2><p>AI 可以加快写代码、改脚本、补测试，但它不应该绕过审查。尤其是构建脚本、部署脚本、权限配置和数据迁移这类改动，表面上可能只有几行，实际影响范围却很大。</p>
+<p>一次合格的 AI 辅助改动，至少应该留下三类痕迹：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">改了什么：文件、配置项、脚本逻辑</span><br><span class="line">为什么改：对应的现象、限制和判断依据</span><br><span class="line">怎么验证：实际运行过的命令和结果</span><br></pre></td></tr></table></figure>
 
-<p>这不是为了限制 AI，而是为了让建议更贴近真实工作流。边界越清楚，AI 越容易给出可执行的下一步，而不是生成一串“也许可以试试”的通用方案。</p>
-<h2 id="五、交接要包含下一步最小动作"><a href="#五、交接要包含下一步最小动作" class="headerlink" title="五、交接要包含下一步最小动作"></a>五、交接要包含下一步最小动作</h2><p>一份好的上下文交接，不应该停在“目前怀疑是某某原因”。它应该给出下一步最小验证动作。所谓最小动作，是指成本低、影响小、能明显改变判断的信息。</p>
-<p>例如：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">下一步建议：</span><br><span class="line">1. 先运行 `systemctl cat xxx.service`，确认服务实际加载的 unit 内容</span><br><span class="line">2. 再运行 `systemctl show xxx.service -p User -p WorkingDirectory -p Environment`</span><br><span class="line">3. 如果运行用户和手工测试用户不同，再比较两个用户下的关键环境变量</span><br></pre></td></tr></table></figure>
-
-<p>这个顺序比直接“重启服务看看”更稳。它先确认 systemd 实际使用的配置，再确认运行身份和环境，最后才考虑改动。Android 构建也是同样的思路：先确认 wrapper、JDK、模块、任务和错误阶段，再决定是否清缓存或改依赖。</p>
-<h2 id="六、把复盘写成可复制模板"><a href="#六、把复盘写成可复制模板" class="headerlink" title="六、把复盘写成可复制模板"></a>六、把复盘写成可复制模板</h2><p>问题解决后，最容易被忽略的是复盘。很多人会把最终命令贴进文档，却没有记录为什么是这条命令。下一次遇到相似问题，又会重新问一遍。</p>
-<p>复盘可以保持很短：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">问题：一句话描述故障</span><br><span class="line">根因：最终确认的原因</span><br><span class="line">证据：哪条命令或日志证明了根因</span><br><span class="line">修复：实际改了什么</span><br><span class="line">防复发：是否需要检查脚本、CI 规则或文档</span><br><span class="line">误区：排查中哪些猜测被证明是错的</span><br></pre></td></tr></table></figure>
-
-<p>其中“误区”尤其有价值。它能避免下一次继续沿着错误方向消耗时间，也能帮助 AI 在后续对话里少走弯路。</p>
-<h2 id="七、结语"><a href="#七、结语" class="headerlink" title="七、结语"></a>七、结语</h2><p>AI 工具的工程价值，不在于把每个问题都变成自动驾驶，而在于让人的判断过程更清晰、更可复用。对于 Android 与 Linux 这类现场因素很重的工作，真正拉开效率差距的不是提示词写得多漂亮，而是上下文是否能稳定交接。</p>
-<p>把目标、事实、限制、变更和下一步动作写清楚，AI 才能从“回答问题的工具”变成“参与工程推进的助手”。这套习惯一旦建立起来，不只 AI 对话更顺，团队协作、值班排障和个人复盘也都会变得更轻。</p>
+<p>这些内容可以写进提交说明、合并请求描述或排障记录里。它们不是额外负担，而是在把 AI 的临时输出转化为团队可维护的工程资产。没有这些痕迹，后续维护者只能重新猜一遍当时为什么这样改。</p>
+<h2 id="六、效率来自可重复，而不是一次命中"><a href="#六、效率来自可重复，而不是一次命中" class="headerlink" title="六、效率来自可重复，而不是一次命中"></a>六、效率来自可重复，而不是一次命中</h2><p>AI 工具的工程价值，最终不取决于某次回答有多惊艳，而取决于它能否稳定进入团队的可重复流程。一个好的本地工作台，应该让 AI 每次都能快速知道目标、读取必要证据、尊重边界、提出小步方案，并接受测试结果的反向约束。</p>
+<p>这也是 Android、Linux 和各类工程实践共通的地方：现场永远比经验重要，验证永远比猜测重要，最小改动永远比大范围试错更可靠。把 AI 放进这样的流程里，它才不是一个偶尔有用的聊天窗口，而是本地工程能力的一部分。</p>
 
 </article>
     
@@ -412,7 +406,7 @@
     </li>
     <li class="trm-post-copyright-link">
         <strong>本文链接：</strong>
-        <a id="original-link" href="https://blog.hansong.icu/2026/07/09/ai_context_handoff_android_linux_20260709/" title="把上下文交接做好：AI 辅助 Android 与 Linux 工程的效率边界">https://blog.hansong.icu/2026/07/09/ai_context_handoff_android_linux_20260709/</a>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/10/ai_local_workbench_engineering_20260710/" title="把 AI 工具放进本地工作台：从提示词到可验证工程流">https://blog.hansong.icu/2026/07/10/ai_local_workbench_engineering_20260710/</a>
     </li>
     <li class="trm-post-copyright-license">
         <strong>版权声明：</strong>
@@ -431,9 +425,10 @@
         </h5>
     </div>
     
+    
         <div class="col-lg-6">
     <div class="trm-blog-card trm-scroll-animation">
-        <a href="/2026/07/10/ai_local_workbench_engineering_20260710/" class="trm-cover-frame trm-anima-link">
+        <a href="/2026/07/09/ai_context_handoff_android_linux_20260709/" class="trm-cover-frame trm-anima-link">
             
             
                 <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
@@ -447,45 +442,13 @@
                 </a>
             </div>
             <h5>
-                <a href="/2026/07/10/ai_local_workbench_engineering_20260710/" class="trm-anima-link">
-                    把 AI 工具放进本地工作台：从提示词到可验证工程流
+                <a href="/2026/07/09/ai_context_handoff_android_linux_20260709/" class="trm-anima-link">
+                    把上下文交接做好：AI 辅助 Android 与 Linux 工程的效率边界
                 </a>
             </h5>
             <div class="trm-divider trm-mb-20 trm-mt-20"></div>
             <ul class="trm-card-data trm-label">
-                <li>26/07/10</li>
-                <li>09:01</li>
-                
-                
-            </ul>
-        </div>
-    </div>
-</div>
-    
-    
-        <div class="col-lg-6">
-    <div class="trm-blog-card trm-scroll-animation">
-        <a href="/2026/07/08/ai_terminal_triage_workflow_20260708/" class="trm-cover-frame trm-anima-link">
-            
-            
-                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
-            
-        </a>
-        
-        <div class="trm-card-descr">
-            <div class="trm-label trm-category trm-mb-20">
-                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
-                    AI工具
-                </a>
-            </div>
-            <h5>
-                <a href="/2026/07/08/ai_terminal_triage_workflow_20260708/" class="trm-anima-link">
-                    把 AI 工具接进终端排障：一套可复用的工程工作流
-                </a>
-            </h5>
-            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
-            <ul class="trm-card-data trm-label">
-                <li>26/07/08</li>
+                <li>26/07/09</li>
                 <li>09:01</li>
                 
                 
@@ -554,7 +517,7 @@
 				</span>
       </div>
       <div class="trm-post-toc-content">
-        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、不要把聊天记录当成工程记录"><a rel="nofollow" class="trm-toc-link" href="#一、不要把聊天记录当成工程记录"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、不要把聊天记录当成工程记录</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、把“已验证”和“待验证”分开"><a rel="nofollow" class="trm-toc-link" href="#二、把“已验证”和“待验证”分开"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、把“已验证”和“待验证”分开</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、让命令输出保持可复用"><a rel="nofollow" class="trm-toc-link" href="#三、让命令输出保持可复用"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、让命令输出保持可复用</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、给 AI 明确修改边界"><a rel="nofollow" class="trm-toc-link" href="#四、给-AI-明确修改边界"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、给 AI 明确修改边界</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、交接要包含下一步最小动作"><a rel="nofollow" class="trm-toc-link" href="#五、交接要包含下一步最小动作"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、交接要包含下一步最小动作</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、把复盘写成可复制模板"><a rel="nofollow" class="trm-toc-link" href="#六、把复盘写成可复制模板"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、把复盘写成可复制模板</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、结语"><a rel="nofollow" class="trm-toc-link" href="#七、结语"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、结语</span></a></li></ol>
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、把 AI 当成工作台的一层，而不是入口"><a rel="nofollow" class="trm-toc-link" href="#一、把-AI-当成工作台的一层，而不是入口"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、把 AI 当成工作台的一层，而不是入口</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、本地上下文要小，但要硬"><a rel="nofollow" class="trm-toc-link" href="#二、本地上下文要小，但要硬"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、本地上下文要小，但要硬</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、让每个建议都带最小验证动作"><a rel="nofollow" class="trm-toc-link" href="#三、让每个建议都带最小验证动作"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、让每个建议都带最小验证动作</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、把提示词沉到脚本和文档里"><a rel="nofollow" class="trm-toc-link" href="#四、把提示词沉到脚本和文档里"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、把提示词沉到脚本和文档里</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、把 AI 输出纳入代码审查，而不是绕过审查"><a rel="nofollow" class="trm-toc-link" href="#五、把-AI-输出纳入代码审查，而不是绕过审查"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、把 AI 输出纳入代码审查，而不是绕过审查</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、效率来自可重复，而不是一次命中"><a rel="nofollow" class="trm-toc-link" href="#六、效率来自可重复，而不是一次命中"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、效率来自可重复，而不是一次命中</span></a></li></ol>
       </div>
     </div>
 
