@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="让 AI 写一条命令很容易：清理构建缓存、批量替换配置、抓取 Android 日志，或者找出占用磁盘最多的目录。真正危险的部分，是我们常常把“看起来合理”误当成“可以直接执行”。 命令行会放大效率，也会放大错误。一个路径变量为空、一个通配符范围过宽，或者一段只适用于另一种 Shell 的语法，都可能让几秒钟的操作变成半天的恢复工作。 因此，我更愿意把 AI 当成命令的起草者，而不是终端的驾驶员。它">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给 AI 生成的命令加护栏：Android 与 Linux 工程中的安全执行法">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/13/ai_command_guardrails_20260713/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="让 AI 写一条命令很容易：清理构建缓存、批量替换配置、抓取 Android 日志，或者找出占用磁盘最多的目录。真正危险的部分，是我们常常把“看起来合理”误当成“可以直接执行”。 命令行会放大效率，也会放大错误。一个路径变量为空、一个通配符范围过宽，或者一段只适用于另一种 Shell 的语法，都可能让几秒钟的操作变成半天的恢复工作。 因此，我更愿意把 AI 当成命令的起草者，而不是终端的驾驶员。它">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-13T02:32:33.000Z">
+<meta property="article:modified_time" content="2026-07-13T02:32:33.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Shell">
+<meta property="article:tag" content="Efficiency">
+<meta name="twitter:card" content="summary">
+
+
+<title >给 AI 生成的命令加护栏：Android 与 Linux 工程中的安全执行法</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-13 10:32:33"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            给 AI 生成的命令加护栏：Android 与 Linux 工程中的安全执行法
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/13
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            10:32
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>让 AI 写一条命令很容易：清理构建缓存、批量替换配置、抓取 Android 日志，或者找出占用磁盘最多的目录。真正危险的部分，是我们常常把“看起来合理”误当成“可以直接执行”。</p>
+<p>命令行会放大效率，也会放大错误。一个路径变量为空、一个通配符范围过宽，或者一段只适用于另一种 Shell 的语法，都可能让几秒钟的操作变成半天的恢复工作。</p>
+<p>因此，我更愿意把 AI 当成命令的起草者，而不是终端的驾驶员。它负责压缩探索时间，人负责建立执行护栏。</p>
+<span id="more"></span>
+
+<h2 id="一、先让命令回答三个问题"><a href="#一、先让命令回答三个问题" class="headerlink" title="一、先让命令回答三个问题"></a>一、先让命令回答三个问题</h2><p>拿到一段命令后，不要先问“能不能跑”，而要先确认三件事：</p>
+<ol>
+<li>它会读取什么？</li>
+<li>它会修改什么？</li>
+<li>失败后留下什么？</li>
+</ol>
+<p>例如，下面这条命令看起来只是在删除旧文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find <span class="string">&quot;<span class="variable">$CACHE_DIR</span>&quot;</span> -<span class="built_in">type</span> f -mtime +7 -delete</span><br></pre></td></tr></table></figure>
+
+<p>但在执行前，至少需要确认 <code>CACHE_DIR</code> 是否存在、是否为空，以及它最终指向哪里。更稳妥的写法是先验证边界，再输出候选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">: <span class="string">&quot;<span class="variable">$&#123;CACHE_DIR:?CACHE_DIR is required&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">test</span> -d <span class="string">&quot;<span class="variable">$CACHE_DIR</span>&quot;</span></span><br><span class="line">find <span class="string">&quot;<span class="variable">$CACHE_DIR</span>&quot;</span> -<span class="built_in">type</span> f -mtime +7 -<span class="built_in">print</span></span><br></pre></td></tr></table></figure>
+
+<p>只有候选列表符合预期，才把最后的 <code>-print</code> 换成 <code>-delete</code>。这不是拖慢效率，而是把检查成本放在损失发生之前。</p>
+<h2 id="二、把“预览模式”当成默认模式"><a href="#二、把“预览模式”当成默认模式" class="headerlink" title="二、把“预览模式”当成默认模式"></a>二、把“预览模式”当成默认模式</h2><p>批量操作最值得建立的习惯，是先生成计划，再执行计划。很多命令原生支持这种方式：<code>rsync</code> 有 <code>--dry-run</code>，包管理器通常能显示待处理项，Git 也可以先查看 diff。</p>
+<p>没有预览参数时，可以自己拆成两步。比如批量修改 Android 工程中的文件名，不要让查找、判断和改名挤在一条难以检查的管道里：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find app/src -<span class="built_in">type</span> f -name <span class="string">&#x27;*OldName*&#x27;</span> -print0 |</span><br><span class="line">    <span class="keyword">while</span> IFS= <span class="built_in">read</span> -r -d <span class="string">&#x27;&#x27;</span> file; <span class="keyword">do</span></span><br><span class="line">        target=<span class="variable">$&#123;file//OldName/NewName&#125;</span></span><br><span class="line">        <span class="built_in">printf</span> <span class="string">&#x27;%q -&gt; %q\n&#x27;</span> <span class="string">&quot;<span class="variable">$file</span>&quot;</span> <span class="string">&quot;<span class="variable">$target</span>&quot;</span></span><br><span class="line">    <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>第一轮只打印映射。确认目录范围、转义和目标名称都正确后，再加入真正的 <code>mv -- &quot;$file&quot; &quot;$target&quot;</code>。</p>
+<p>让 AI 生成脚本时，也可以明确要求它同时提供：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">预览命令：只输出影响范围</span><br><span class="line">执行命令：实施修改</span><br><span class="line">验证命令：证明结果符合预期</span><br><span class="line">回退方法：说明如何恢复</span><br></pre></td></tr></table></figure>
+
+<p>这样得到的就不再是一条孤立命令，而是一个小型执行方案。</p>
+<h2 id="三、Android-调试命令也要限制范围"><a href="#三、Android-调试命令也要限制范围" class="headerlink" title="三、Android 调试命令也要限制范围"></a>三、Android 调试命令也要限制范围</h2><p>Android 调试经常依赖 <code>adb</code>。当设备、应用和日志混在一起时，一条宽泛命令很容易抓到错误对象。</p>
+<p>先显式选择设备：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br><span class="line">adb -s <span class="string">&quot;<span class="variable">$ANDROID_SERIAL</span>&quot;</span> get-state</span><br></pre></td></tr></table></figure>
+
+<p>再确认应用包名和进程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb -s <span class="string">&quot;<span class="variable">$ANDROID_SERIAL</span>&quot;</span> shell pm path <span class="string">&quot;<span class="variable">$PACKAGE_NAME</span>&quot;</span></span><br><span class="line">pid=$(adb -s <span class="string">&quot;<span class="variable">$ANDROID_SERIAL</span>&quot;</span> shell pidof <span class="string">&quot;<span class="variable">$PACKAGE_NAME</span>&quot;</span> | <span class="built_in">tr</span> -d <span class="string">&#x27;\r&#x27;</span>)</span><br><span class="line"><span class="built_in">test</span> -n <span class="string">&quot;<span class="variable">$pid</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>最后才进入日志或诊断步骤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb -s <span class="string">&quot;<span class="variable">$ANDROID_SERIAL</span>&quot;</span> logcat --pid=<span class="string">&quot;<span class="variable">$pid</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这几个变量看似增加了输入，其实消除了“默认设备”和“猜测包名”带来的歧义。尤其在同时连接真机、模拟器和远程设备时，显式范围比命令长度更重要。</p>
+<h2 id="四、给长任务准备停止条件"><a href="#四、给长任务准备停止条件" class="headerlink" title="四、给长任务准备停止条件"></a>四、给长任务准备停止条件</h2><p>AI 很擅长给出循环、监控和重试脚本，但它未必知道你的终端要运行多久。没有停止条件的自动化，常常只是把手工等待变成后台失控。</p>
+<p>Linux 下可以用 <code>timeout</code> 给诊断命令设定上限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">timeout</span> 60s adb -s <span class="string">&quot;<span class="variable">$ANDROID_SERIAL</span>&quot;</span> logcat --pid=<span class="string">&quot;<span class="variable">$pid</span>&quot;</span> &gt; app.log</span><br></pre></td></tr></table></figure>
+
+<p>脚本中的重试也应有明确次数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> attempt <span class="keyword">in</span> 1 2 3; <span class="keyword">do</span></span><br><span class="line">    ./gradlew assembleDebug &amp;&amp; <span class="built_in">break</span></span><br><span class="line">    <span class="built_in">printf</span> <span class="string">&#x27;attempt %s failed\n&#x27;</span> <span class="string">&quot;<span class="variable">$attempt</span>&quot;</span> &gt;&amp;2</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>停止条件不只包括时间和次数，还可以是文件大小、磁盘余量、返回码或某个可观察状态。关键是不要让“继续试试”成为默认行为。</p>
+<h2 id="五、保存证据，而不是只保存成功截图"><a href="#五、保存证据，而不是只保存成功截图" class="headerlink" title="五、保存证据，而不是只保存成功截图"></a>五、保存证据，而不是只保存成功截图</h2><p>一次命令执行是否可信，取决于之后能否回答：当时在哪个目录、用了哪些参数、返回码是什么、修改了哪些文件。</p>
+<p>对于重要操作，我会保留一个很小的证据链：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br><span class="line">git status --short</span><br><span class="line">command_to_run 2&gt;&amp;1 | <span class="built_in">tee</span> command.log</span><br><span class="line">status=<span class="variable">$&#123;PIPESTATUS[0]&#125;</span></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;exit=%s\n&#x27;</span> <span class="string">&quot;<span class="variable">$status</span>&quot;</span></span><br><span class="line"><span class="built_in">exit</span> <span class="string">&quot;<span class="variable">$status</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 Git 仓库中，执行前后的 <code>git diff --stat</code> 和 <code>git diff --check</code> 也很有价值。前者告诉你影响范围，后者能发现部分格式问题。对于构建任务，则应保留实际构建命令及其退出状态，而不是用“终端最后几行看起来正常”代替验证。</p>
+<h2 id="六、把高风险操作拆出人工确认点"><a href="#六、把高风险操作拆出人工确认点" class="headerlink" title="六、把高风险操作拆出人工确认点"></a>六、把高风险操作拆出人工确认点</h2><p>并不是所有命令都值得自动化到底。涉及删除、覆盖、权限、分区、密钥、生产设备和远程主机时，人工确认点本身就是设计的一部分。</p>
+<p>可以把任务按风险分成三层：</p>
+<ul>
+<li>只读：搜索、统计、查看日志，可以快速执行；</li>
+<li>可回退写入：修改受版本控制的文件，先预览并验证 diff；</li>
+<li>难回退写入：删除数据、改权限、操作设备，必须单独确认目标和恢复方案。</li>
+</ul>
+<p>AI 可以帮助识别命令中的危险参数，也可以解释每个阶段，但最终的确认应该发生在信息最完整的时刻，而不是任务刚开始时笼统地说一句“都同意”。</p>
+<h2 id="七、形成自己的命令请求模板"><a href="#七、形成自己的命令请求模板" class="headerlink" title="七、形成自己的命令请求模板"></a>七、形成自己的命令请求模板</h2><p>当这套方法稳定后，可以把需求固定成一段简短模板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">环境：Linux Bash / Android 工程</span><br><span class="line">目标：说明期望结果</span><br><span class="line">范围：允许读取和修改的目录</span><br><span class="line">限制：不能联网、不能删除、最长运行时间</span><br><span class="line">输出：预览、执行、验证、回退四组命令</span><br><span class="line">要求：变量为空时退出，路径全部加引号，保留退出码</span><br></pre></td></tr></table></figure>
+
+<p>模板的价值不在于让提示词显得专业，而在于把容易遗忘的工程约束变成默认输入。使用次数越多，它越像一份轻量的操作规范。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>AI 让生成命令的成本接近于零，但执行命令的风险并没有一起归零。真正可靠的效率提升，来自预览、边界、停止条件、证据和回退路径。</p>
+<p>当每条命令都能说清楚“作用在哪里、什么时候停止、如何证明成功、出错怎么恢复”，AI 才真正进入了工程工作流，而不是成为一个速度更快的复制粘贴来源。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/13/ai_command_guardrails_20260713/" title="给 AI 生成的命令加护栏：Android 与 Linux 工程中的安全执行法">https://blog.hansong.icu/2026/07/13/ai_command_guardrails_20260713/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/11/ai_verified_workflow_20260711/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/AI%E5%B7%A5%E5%85%B7/">
+                    AI工具
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/11/ai_verified_workflow_20260711/" class="trm-anima-link">
+                    把 AI 工具接进日常工程：一套可验证的效率工作流
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/11</li>
+                <li>13:14</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先让命令回答三个问题"><a rel="nofollow" class="trm-toc-link" href="#一、先让命令回答三个问题"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先让命令回答三个问题</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、把“预览模式”当成默认模式"><a rel="nofollow" class="trm-toc-link" href="#二、把“预览模式”当成默认模式"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、把“预览模式”当成默认模式</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、Android 调试命令也要限制范围"><a rel="nofollow" class="trm-toc-link" href="#三、Android-调试命令也要限制范围"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、Android 调试命令也要限制范围</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、给长任务准备停止条件"><a rel="nofollow" class="trm-toc-link" href="#四、给长任务准备停止条件"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、给长任务准备停止条件</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、保存证据，而不是只保存成功截图"><a rel="nofollow" class="trm-toc-link" href="#五、保存证据，而不是只保存成功截图"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、保存证据，而不是只保存成功截图</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、把高风险操作拆出人工确认点"><a rel="nofollow" class="trm-toc-link" href="#六、把高风险操作拆出人工确认点"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、把高风险操作拆出人工确认点</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、形成自己的命令请求模板"><a rel="nofollow" class="trm-toc-link" href="#七、形成自己的命令请求模板"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、形成自己的命令请求模板</span></a></li><li class="trm-toc-item trm-toc-level-2" title="结语"><a rel="nofollow" class="trm-toc-link" href="#结语"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">结语</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
