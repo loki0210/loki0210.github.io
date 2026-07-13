@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="把一段报错直接贴给 AI，往往能得到十几种“可能原因”。这些答案未必错，却很难立刻用于工程现场：它不知道问题发生在哪次构建、设备处于什么状态，也不知道日志前后发生了什么。 高效排障的关键，不是提供更多文字，而是提供一份边界清楚、可以复查的故障证据包。它既让 AI 少猜，也让接手问题的人能沿着同一条路径复现和验证。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给 AI 一份可复现的故障证据包：Android 与 Linux 排查实践">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/13/ai_debug_evidence_pack_20260713/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="把一段报错直接贴给 AI，往往能得到十几种“可能原因”。这些答案未必错，却很难立刻用于工程现场：它不知道问题发生在哪次构建、设备处于什么状态，也不知道日志前后发生了什么。 高效排障的关键，不是提供更多文字，而是提供一份边界清楚、可以复查的故障证据包。它既让 AI 少猜，也让接手问题的人能沿着同一条路径复现和验证。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-13T05:11:51.000Z">
+<meta property="article:modified_time" content="2026-07-13T05:11:51.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Debugging">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Efficiency">
+<meta name="twitter:card" content="summary">
+
+
+<title >给 AI 一份可复现的故障证据包：Android 与 Linux 排查实践</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-13 13:11:51"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            给 AI 一份可复现的故障证据包：Android 与 Linux 排查实践
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/13
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            13:11
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>把一段报错直接贴给 AI，往往能得到十几种“可能原因”。这些答案未必错，却很难立刻用于工程现场：它不知道问题发生在哪次构建、设备处于什么状态，也不知道日志前后发生了什么。</p>
+<p>高效排障的关键，不是提供更多文字，而是提供一份边界清楚、可以复查的故障证据包。它既让 AI 少猜，也让接手问题的人能沿着同一条路径复现和验证。</p>
+<span id="more"></span>
+
+<h2 id="一、证据包要回答四个问题"><a href="#一、证据包要回答四个问题" class="headerlink" title="一、证据包要回答四个问题"></a>一、证据包要回答四个问题</h2><p>一份有用的证据包不必很大，但至少要回答：</p>
+<ol>
+<li><strong>对象是什么</strong>：应用、进程、服务、设备和构建产物分别是谁。</li>
+<li><strong>问题何时发生</strong>：触发动作、时间窗口和稳定复现步骤是什么。</li>
+<li><strong>预期与实际有何差异</strong>：不要只写“失败了”，要说明期望观察到什么。</li>
+<li><strong>已经验证过什么</strong>：哪些假设已被排除，使用了什么证据。</li>
+</ol>
+<p>例如，“应用偶尔卡死”几乎无法缩小范围；而“从后台返回后点击同步，界面在 5 秒内无响应，主线程堆栈停在数据库事务”已经形成了可验证的线索。</p>
+<h2 id="二、先固定现场，再收集日志"><a href="#二、先固定现场，再收集日志" class="headerlink" title="二、先固定现场，再收集日志"></a>二、先固定现场，再收集日志</h2><p>日志的价值依赖上下文。同一条超时错误，在网络切换、服务重启和锁竞争场景下会指向完全不同的方向。因此，先创建一个独立目录，保存本次排查的静态信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">case_dir=<span class="string">&quot;debug_case_<span class="subst">$(date +%Y%m%d_%H%M%S)</span>&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$case_dir</span>&quot;</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">printf</span> <span class="string">&#x27;captured_at=%s\n&#x27;</span> <span class="string">&quot;<span class="subst">$(date -Iseconds)</span>&quot;</span></span><br><span class="line">  <span class="built_in">printf</span> <span class="string">&#x27;kernel=%s\n&#x27;</span> <span class="string">&quot;<span class="subst">$(uname -a)</span>&quot;</span></span><br><span class="line">  <span class="built_in">printf</span> <span class="string">&#x27;git_commit=%s\n&#x27;</span> <span class="string">&quot;<span class="subst">$(git rev-parse --short HEAD 2&gt;/dev/null || true)</span>&quot;</span></span><br><span class="line">&#125; &gt; <span class="string">&quot;<span class="variable">$case_dir</span>/context.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里记录的是“这一次现场”，而不是机器永远不变的说明。后续即使代码、设备或系统状态变化，也能知道证据对应哪个时间点。</p>
+<p>Android 问题还可以补充设备和应用信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">adb get-serialno &gt; <span class="string">&quot;<span class="variable">$case_dir</span>/device_serial.txt&quot;</span></span><br><span class="line">adb shell getprop ro.build.fingerprint &gt; <span class="string">&quot;<span class="variable">$case_dir</span>/build_fingerprint.txt&quot;</span></span><br><span class="line">adb shell dumpsys package com.example.app \</span><br><span class="line">  &gt; <span class="string">&quot;<span class="variable">$case_dir</span>/package.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>采集命令应根据问题裁剪。排查启动失败不需要完整电池报告，分析网络异常也不必默认导出所有系统服务。无关信息越多，真正的时间线越容易被淹没。</p>
+<h2 id="三、用时间窗口代替“整份日志”"><a href="#三、用时间窗口代替“整份日志”" class="headerlink" title="三、用时间窗口代替“整份日志”"></a>三、用时间窗口代替“整份日志”</h2><p>最常见的低效做法，是把几万行日志交给 AI，然后让它自行寻找异常。更稳妥的方法是明确执行顺序：</p>
+<ol>
+<li>清理或标记日志起点。</li>
+<li>执行最短复现步骤。</li>
+<li>记录问题出现的准确时间。</li>
+<li>立即停止采集并保存原始输出。</li>
+</ol>
+<p>Android 场景可以这样保留一次干净的复现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb logcat -c</span><br><span class="line">adb logcat -v threadtime &gt; <span class="string">&quot;<span class="variable">$case_dir</span>/logcat.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>复现完成后终止采集，再从 <code>logcat.txt</code> 中提取目标进程、异常栈及前后事件。Linux 服务则可以围绕明确时间段导出日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u example.service \</span><br><span class="line">  --since <span class="string">&quot;10 minutes ago&quot;</span> \</span><br><span class="line">  --no-pager &gt; <span class="string">&quot;<span class="variable">$case_dir</span>/service.log&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>不要只保留筛选结果。原始日志负责追溯，精简片段负责分析，两者用途不同。错误的过滤条件可能恰好删掉根因。</p>
+<h2 id="四、给-AI-的不是附件，而是任务说明"><a href="#四、给-AI-的不是附件，而是任务说明" class="headerlink" title="四、给 AI 的不是附件，而是任务说明"></a>四、给 AI 的不是附件，而是任务说明</h2><p>证据齐全后，还需要约束 AI 的输出。一个实用的提问模板可以是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">目标：定位同步操作导致界面无响应的首要原因。</span><br><span class="line">环境：见 context.txt 与 package.txt。</span><br><span class="line">复现：启动应用 -&gt; 进入同步页 -&gt; 切到后台 -&gt; 返回并点击同步。</span><br><span class="line">预期：2 秒内显示进度。</span><br><span class="line">实际：界面约 5 秒无响应。</span><br><span class="line">证据：logcat.txt、main_thread.txt。</span><br><span class="line"></span><br><span class="line">请完成：</span><br><span class="line">1. 只根据证据列出按可能性排序的 3 个假设；</span><br><span class="line">2. 每个假设引用对应日志行或堆栈；</span><br><span class="line">3. 给出一个成本最低的验证动作；</span><br><span class="line">4. 区分“已确认事实”和“仍需验证的推断”。</span><br></pre></td></tr></table></figure>
+
+<p>这种格式把“请帮我看看”变成了一个可验收的分析任务。特别是要求引用证据，可以及时发现模型是否把经验性判断写成了现场事实。</p>
+<h2 id="五、先验证假设，再修改代码"><a href="#五、先验证假设，再修改代码" class="headerlink" title="五、先验证假设，再修改代码"></a>五、先验证假设，再修改代码</h2><p>AI 给出的第一个解释通常只是候选假设。收到分析后，不要马上开始大范围重构，而应优先设计最小验证动作。</p>
+<p>如果怀疑主线程等待锁，可以增加一次线程转储；如果怀疑某个 Binder 调用变慢，可以测量调用边界；如果怀疑 Linux 服务被系统终止，可以检查服务状态和内核日志。验证动作最好只改变一个变量，并且能产生新的可观察证据。</p>
+<p>可以把排查过程记录成一个小表格：</p>
+<table>
+<thead>
+<tr>
+<th>假设</th>
+<th>支持证据</th>
+<th>反对证据</th>
+<th>下一步验证</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主线程等待数据库锁</td>
+<td>堆栈停在事务入口</td>
+<td>尚未发现持锁线程</td>
+<td>采集全部线程堆栈</td>
+<td>待验证</td>
+</tr>
+<tr>
+<td>网络请求阻塞 UI</td>
+<td>点击后出现请求日志</td>
+<td>主线程栈不在网络调用</td>
+<td>增加调用耗时埋点</td>
+<td>待验证</td>
+</tr>
+</tbody></table>
+<p>表格的意义不是写报告，而是防止排查在聊天中失去状态。当新证据推翻旧判断时，也能清楚知道为什么转向。</p>
+<h2 id="六、分享前必须做脱敏"><a href="#六、分享前必须做脱敏" class="headerlink" title="六、分享前必须做脱敏"></a>六、分享前必须做脱敏</h2><p>日志可能包含访问令牌、账号、设备序列号、内网地址、文件路径和业务数据。把证据交给任何外部工具之前，都应先检查并生成脱敏副本，原始材料只保留在受控位置。</p>
+<p>可以先用搜索定位常见敏感字段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rg -n -i <span class="string">&#x27;token|authorization|cookie|password|secret|serial&#x27;</span> <span class="string">&quot;<span class="variable">$case_dir</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>但关键词扫描只能作为提醒，不能替代人工审阅。脱敏时还要保持同一标识符的一致性，例如把同一个用户 ID 始终替换成 <code>USER_A</code>，否则事件关联会被破坏。</p>
+<h2 id="七、把一次排查沉淀成可复用流程"><a href="#七、把一次排查沉淀成可复用流程" class="headerlink" title="七、把一次排查沉淀成可复用流程"></a>七、把一次排查沉淀成可复用流程</h2><p>问题解决后，证据包不应只是被压缩归档。值得保留的内容包括：</p>
+<ul>
+<li>最短复现步骤；</li>
+<li>真正有区分度的采集命令；</li>
+<li>根因对应的关键证据；</li>
+<li>修复后的验证结果；</li>
+<li>下次可以自动化的检查项。</li>
+</ul>
+<p>对于重复出现的问题，可以把采集命令做成只读脚本，并在输出中记录时间、命令和退出状态。脚本负责稳定采集，AI 负责归纳线索，人负责验证假设和决定修改，这三者边界越清楚，排障越不容易变成碰运气。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>AI 能加快故障分析，但它无法替代现场证据。真正提升效率的做法，是把模糊现象整理成一个可复现、可引用、可验证、已脱敏的证据包。</p>
+<p>当每个结论都能回到日志或实验结果，AI 就不再只是原因生成器，而会成为排查流程中可靠的分析助手。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/13/ai_debug_evidence_pack_20260713/" title="给 AI 一份可复现的故障证据包：Android 与 Linux 排查实践">https://blog.hansong.icu/2026/07/13/ai_debug_evidence_pack_20260713/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/13/ai_command_guardrails_20260713/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/13/ai_command_guardrails_20260713/" class="trm-anima-link">
+                    给 AI 生成的命令加护栏：Android 与 Linux 工程中的安全执行法
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/13</li>
+                <li>10:32</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、证据包要回答四个问题"><a rel="nofollow" class="trm-toc-link" href="#一、证据包要回答四个问题"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、证据包要回答四个问题</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、先固定现场，再收集日志"><a rel="nofollow" class="trm-toc-link" href="#二、先固定现场，再收集日志"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、先固定现场，再收集日志</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、用时间窗口代替“整份日志”"><a rel="nofollow" class="trm-toc-link" href="#三、用时间窗口代替“整份日志”"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、用时间窗口代替“整份日志”</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、给 AI 的不是附件，而是任务说明"><a rel="nofollow" class="trm-toc-link" href="#四、给-AI-的不是附件，而是任务说明"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、给 AI 的不是附件，而是任务说明</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、先验证假设，再修改代码"><a rel="nofollow" class="trm-toc-link" href="#五、先验证假设，再修改代码"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、先验证假设，再修改代码</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、分享前必须做脱敏"><a rel="nofollow" class="trm-toc-link" href="#六、分享前必须做脱敏"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、分享前必须做脱敏</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、把一次排查沉淀成可复用流程"><a rel="nofollow" class="trm-toc-link" href="#七、把一次排查沉淀成可复用流程"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、把一次排查沉淀成可复用流程</span></a></li><li class="trm-toc-item trm-toc-level-2" title="结语"><a rel="nofollow" class="trm-toc-link" href="#结语"><span class="trm-toc-number">8.</span> <span class="trm-toc-text">结语</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
