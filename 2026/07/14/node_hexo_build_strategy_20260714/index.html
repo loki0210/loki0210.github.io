@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="静态博客看起来是最轻的工程项目：Markdown 写内容，主题渲染页面，执行一次构建就能发布。但只要它依赖 Node.js、npm、主题包和渲染插件，它就不是一堆“永远可用”的文本，而是一条会随运行时变化而漂移的构建链。 很多博客维护问题并不来自文章本身，而来自环境变化：本机 Node 版本升级后主题样式编译失败，CI 镜像换代后依赖重新解析，旧插件在新运行时里触发弃用行为。越是低频维护的个人站点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node 版本变化下的 Hexo 构建策略：别让博客依赖运气发布">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/14/node_hexo_build_strategy_20260714/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="静态博客看起来是最轻的工程项目：Markdown 写内容，主题渲染页面，执行一次构建就能发布。但只要它依赖 Node.js、npm、主题包和渲染插件，它就不是一堆“永远可用”的文本，而是一条会随运行时变化而漂移的构建链。 很多博客维护问题并不来自文章本身，而来自环境变化：本机 Node 版本升级后主题样式编译失败，CI 镜像换代后依赖重新解析，旧插件在新运行时里触发弃用行为。越是低频维护的个人站点">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-14T01:22:38.000Z">
+<meta property="article:modified_time" content="2026-07-14T01:22:38.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Engineering">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="CI">
+<meta property="article:tag" content="Node.js">
+<meta property="article:tag" content="Blog">
+<meta name="twitter:card" content="summary">
+
+
+<title >Node 版本变化下的 Hexo 构建策略：别让博客依赖运气发布</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-14 09:22:38"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/blogging.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Node 版本变化下的 Hexo 构建策略：别让博客依赖运气发布
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/14
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>静态博客看起来是最轻的工程项目：Markdown 写内容，主题渲染页面，执行一次构建就能发布。但只要它依赖 Node.js、npm、主题包和渲染插件，它就不是一堆“永远可用”的文本，而是一条会随运行时变化而漂移的构建链。</p>
+<p>很多博客维护问题并不来自文章本身，而来自环境变化：本机 Node 版本升级后主题样式编译失败，CI 镜像换代后依赖重新解析，旧插件在新运行时里触发弃用行为。越是低频维护的个人站点，越容易在下一次发布时才发现构建已经不稳定。</p>
+<span id="more"></span>
+
+<h2 id="一、先看今天的运行时事实"><a href="#一、先看今天的运行时事实" class="headerlink" title="一、先看今天的运行时事实"></a>一、先看今天的运行时事实</h2><p>以下信息抓取于 <strong>2026-07-14 09:25:57 CST</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>信息项</th>
+<th>当前观察值</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js 最新 LTS</td>
+<td>v24.18.0</td>
+<td><a target="_blank" rel="noopener" href="https://nodejs.org/en/about/previous-releases">Node.js Releases</a></td>
+</tr>
+<tr>
+<td>Node.js 最新 Current</td>
+<td>v26.5.0</td>
+<td><a target="_blank" rel="noopener" href="https://nodejs.org/en/about/previous-releases">Node.js Releases</a></td>
+</tr>
+<tr>
+<td>Node.js 18 状态</td>
+<td>EOL，最后更新于 2025-03-27</td>
+<td><a target="_blank" rel="noopener" href="https://nodejs.org/en/about/previous-releases">Node.js Releases</a></td>
+</tr>
+<tr>
+<td>Node.js 发布节奏变化</td>
+<td>从 27.x 开始改为每年一个主版本，且每个主版本都会进入 LTS</td>
+<td><a target="_blank" rel="noopener" href="https://nodejs.org/en/blog/announcements/evolving-the-nodejs-release-schedule">Evolving the Node.js Release Schedule</a></td>
+</tr>
+<tr>
+<td>npm 上 Hexo 最新版本</td>
+<td>8.1.2</td>
+<td><code>npm view hexo version</code></td>
+</tr>
+</tbody></table>
+<p>这些数字本身不是结论，但它们给了博客维护者一个很清楚的信号：构建环境不能只写“安装 Node.js”，更不能默认“本机能跑就行”。当官方 LTS 已经进入 24.x，而旧的 18.x 已经结束维护时，继续依赖旧环境并不一定马上失败，却会让之后的升级跨度变大。</p>
+<h2 id="二、Hexo-博客真正需要锁住什么"><a href="#二、Hexo-博客真正需要锁住什么" class="headerlink" title="二、Hexo 博客真正需要锁住什么"></a>二、Hexo 博客真正需要锁住什么</h2><p>Hexo 站点的构建稳定性通常由三层决定：</p>
+<ol>
+<li><strong>运行时版本</strong>：Node.js 和 npm 的版本。</li>
+<li><strong>依赖解析结果</strong>：<code>package-lock.json</code> 或其他锁文件里记录的实际包版本。</li>
+<li><strong>主题与渲染器行为</strong>：主题模板、Less&#x2F;Stylus 编译器、Markdown 渲染器和插件配置。</li>
+</ol>
+<p>如果只锁依赖，不锁 Node 版本，某些原生模块、弃用 API 或 ESM&#x2F;CJS 边界问题仍然可能在换机器时暴露。如果只锁 Node 版本，不提交锁文件，依赖树又可能在一次 <code>npm install</code> 后被重新解析。对博客这种低频但长期维护的项目来说，最稳妥的做法是同时固定“运行时入口”和“依赖树结果”。</p>
+<p>一个更实际的仓库约定可以是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">本地开发：使用 .nvmrc 或文档明确 Node LTS 版本</span><br><span class="line">依赖安装：优先 npm ci，避免发布前临时重算依赖树</span><br><span class="line">构建验证：每次新增文章后运行 npm run build</span><br><span class="line">升级节奏：单独开一次依赖升级，不和内容发布混在一起</span><br></pre></td></tr></table></figure>
+
+<p>这样做的目的不是把博客工程化到很重，而是把故障边界缩小。内容改动失败时，优先看 Markdown、front matter 和资源路径；依赖升级失败时，再看主题、渲染器和运行时兼容性。两类问题不要混在同一次提交里。</p>
+<h2 id="三、不要盲目追-Current，也不要长期停在-EOL"><a href="#三、不要盲目追-Current，也不要长期停在-EOL" class="headerlink" title="三、不要盲目追 Current，也不要长期停在 EOL"></a>三、不要盲目追 Current，也不要长期停在 EOL</h2><p>Node.js 的 Current 版本适合库作者和愿意提前验证生态兼容性的人。它能更早看到新特性和破坏性变化，但对一个以稳定发布为目标的博客来说，Current 通常不是默认选择。博客构建链并不需要每一个运行时新能力，反而更需要可预测的安全修复窗口。</p>
+<p>长期停在 EOL 版本也不理想。旧版本短期内也许还能构建成功，但维护风险会积累在三个地方：</p>
+<ol>
+<li>新版依赖逐渐停止测试旧运行时。</li>
+<li>CI 托管环境可能移除旧镜像或默认版本。</li>
+<li>安全扫描和供应链工具会不断提示运行时过期。</li>
+</ol>
+<p>比较平衡的策略是：日常使用 Active LTS 或 Maintenance LTS；当新的 LTS 发布后，选择一个固定窗口做验证升级；升级时只改运行时和依赖，不顺手重构主题或批量改文章。</p>
+<h2 id="四、把构建失败当成可复现问题处理"><a href="#四、把构建失败当成可复现问题处理" class="headerlink" title="四、把构建失败当成可复现问题处理"></a>四、把构建失败当成可复现问题处理</h2><p>博客构建失败时，最容易浪费时间的做法是连续试错：删 <code>node_modules</code>、换 Node、升级 Hexo、改主题、清缓存，然后发现不知道到底是哪一步起作用。更好的方式是把它当成普通工程故障：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line">npm ci</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>如果失败，先保留完整输出，再按单变量排查。比如先只切换 Node LTS，不升级依赖；或者先只恢复锁文件，不切换运行时。每次只改变一个条件，才能判断失败来自哪里。</p>
+<p>对 Hexo 来说，还要特别关注三类错误：</p>
+<ol>
+<li>front matter 格式错误，导致文章解析失败。</li>
+<li>图片或 cover 路径不存在，导致主题渲染异常。</li>
+<li>Markdown 中的模板符号、HTML 片段或代码块没有正确转义。</li>
+</ol>
+<p>这些问题都和 Node 最新版本无关，但会在同一个 <code>npm run build</code> 里暴露。稳定的构建流程不只是版本管理，也包括文章格式和资源引用的基本约束。</p>
+<h2 id="五、为个人博客保留一条低成本升级路线"><a href="#五、为个人博客保留一条低成本升级路线" class="headerlink" title="五、为个人博客保留一条低成本升级路线"></a>五、为个人博客保留一条低成本升级路线</h2><p>个人博客不需要复杂的发布平台，但需要一条能长期执行的路线。我的建议是把升级拆成三种节奏：</p>
+<ol>
+<li><strong>写作日</strong>：只新增或修改 Markdown，构建通过即可。</li>
+<li><strong>维护日</strong>：升级 Hexo、主题和插件，单独验证页面效果。</li>
+<li><strong>运行时日</strong>：切换 Node LTS，确认依赖安装和构建都稳定。</li>
+</ol>
+<p>这三件事分开做，后续排查会轻很多。比如今天只是发文章，就不应该顺手升级 Hexo；今天只是切换 Node 版本，就不应该顺手改主题样式。低频项目最怕“顺便”，因为顺便做的改动通常没有足够上下文记录。</p>
+<h2 id="六、结论"><a href="#六、结论" class="headerlink" title="六、结论"></a>六、结论</h2><p>Hexo 的优势是简单，但简单不等于没有工程边界。一个能长期维护的博客仓库，应该清楚记录使用哪个 Node 版本、如何安装依赖、如何验证构建，以及何时升级运行时。</p>
+<p>截至 2026-07-14 09:25:57 CST，Node.js 官方最新 LTS 已到 v24.18.0，Current 已到 v26.5.0，Hexo 在 npm 上的最新版本为 8.1.2。对多数静态博客来说，最务实的选择不是马上追最新 Current，而是使用当前 LTS 建立稳定构建基线，并把每次升级变成一次可复现、可回退的工程动作。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/14/node_hexo_build_strategy_20260714/" title="Node 版本变化下的 Hexo 构建策略：别让博客依赖运气发布">https://blog.hansong.icu/2026/07/14/node_hexo_build_strategy_20260714/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/14/ai_change_budget_engineering/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/14/ai_change_budget_engineering/" class="trm-anima-link">
+                    给 AI 设定变更预算：把一次大改拆成可验证的小步
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/14</li>
+                <li>09:01</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、先看今天的运行时事实"><a rel="nofollow" class="trm-toc-link" href="#一、先看今天的运行时事实"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、先看今天的运行时事实</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、Hexo 博客真正需要锁住什么"><a rel="nofollow" class="trm-toc-link" href="#二、Hexo-博客真正需要锁住什么"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、Hexo 博客真正需要锁住什么</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、不要盲目追 Current，也不要长期停在 EOL"><a rel="nofollow" class="trm-toc-link" href="#三、不要盲目追-Current，也不要长期停在-EOL"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、不要盲目追 Current，也不要长期停在 EOL</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、把构建失败当成可复现问题处理"><a rel="nofollow" class="trm-toc-link" href="#四、把构建失败当成可复现问题处理"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、把构建失败当成可复现问题处理</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、为个人博客保留一条低成本升级路线"><a rel="nofollow" class="trm-toc-link" href="#五、为个人博客保留一条低成本升级路线"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、为个人博客保留一条低成本升级路线</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、结论"><a rel="nofollow" class="trm-toc-link" href="#六、结论"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、结论</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
