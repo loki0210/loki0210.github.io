@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="让 AI 修改代码时，真正危险的往往不是它不会写，而是它一次写得太多：顺手整理目录、统一命名、升级依赖，再补上一层“更合理”的抽象。最终 diff 看起来很完整，验证成本却超过了人工重写。 解决办法不是把提示词写得更长，而是给每轮修改设定一个明确的“变更预算”。预算限制本轮可以触碰的文件、行为和验证范围，使 AI 的产出保持在人工能够快速审查、机器能够及时验证的尺度内。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给 AI 设定变更预算：把一次大改拆成可验证的小步">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/14/ai_change_budget_engineering/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="让 AI 修改代码时，真正危险的往往不是它不会写，而是它一次写得太多：顺手整理目录、统一命名、升级依赖，再补上一层“更合理”的抽象。最终 diff 看起来很完整，验证成本却超过了人工重写。 解决办法不是把提示词写得更长，而是给每轮修改设定一个明确的“变更预算”。预算限制本轮可以触碰的文件、行为和验证范围，使 AI 的产出保持在人工能够快速审查、机器能够及时验证的尺度内。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-14T01:01:01.000Z">
+<meta property="article:modified_time" content="2026-07-14T01:01:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="自动化">
+<meta property="article:tag" content="效率">
+<meta name="twitter:card" content="summary">
+
+
+<title >给 AI 设定变更预算：把一次大改拆成可验证的小步</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-14 09:01:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/ai-tools.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            给 AI 设定变更预算：把一次大改拆成可验证的小步
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/14
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:01
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>让 AI 修改代码时，真正危险的往往不是它不会写，而是它一次写得太多：顺手整理目录、统一命名、升级依赖，再补上一层“更合理”的抽象。最终 diff 看起来很完整，验证成本却超过了人工重写。</p>
+<p>解决办法不是把提示词写得更长，而是给每轮修改设定一个明确的“变更预算”。预算限制本轮可以触碰的文件、行为和验证范围，使 AI 的产出保持在人工能够快速审查、机器能够及时验证的尺度内。</p>
+<span id="more"></span>
+
+<h2 id="一、变更预算不是行数限制"><a href="#一、变更预算不是行数限制" class="headerlink" title="一、变更预算不是行数限制"></a>一、变更预算不是行数限制</h2><p>只要求“修改不超过 50 行”并不可靠。删除一个判断可能只有一行，却会改变整个调用链；批量格式化几百行，反而可能完全不影响行为。</p>
+<p>更实用的预算由四部分组成：</p>
+<ol>
+<li><strong>文件预算</strong>：允许新增或修改哪些文件，哪些目录禁止触碰。</li>
+<li><strong>行为预算</strong>：本轮只改变一个可描述的外部行为。</li>
+<li><strong>依赖预算</strong>：是否允许升级版本、引入库或调整构建配置。</li>
+<li><strong>验证预算</strong>：改动完成后，必须在多长时间内得到明确结果。</li>
+</ol>
+<p>例如，Android 中修复一次空指针，可以这样定义边界：只修改 ViewModel 和对应测试；不改接口模型，不升级依赖；空数据返回时展示空状态；运行目标单元测试必须通过。</p>
+<p>这比“修复页面偶发崩溃”更容易执行，也更容易判断任务是否真的结束。</p>
+<h2 id="二、先让-AI-交付最小闭环"><a href="#二、先让-AI-交付最小闭环" class="headerlink" title="二、先让 AI 交付最小闭环"></a>二、先让 AI 交付最小闭环</h2><p>一次有效的小步修改应包含三个部分：触发问题的输入、针对问题的改动、能够证明结果的验证。缺少其中任何一项，改动都只是一个尚未闭合的猜测。</p>
+<p>可以把任务描述成下面的形式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">目标：修复网络返回空列表时页面一直显示加载中的问题。</span><br><span class="line">范围：只允许修改 UserListViewModel.kt 和对应测试。</span><br><span class="line">约束：不修改公共 API，不增加依赖，不做格式化整理。</span><br><span class="line">验证：先补充一个能复现问题的测试，再实现修复，最后运行该测试。</span><br><span class="line">输出：说明改动文件、验证命令和仍未覆盖的风险。</span><br></pre></td></tr></table></figure>
+
+<p>这里最重要的不是措辞，而是每项约束都能被检查。完成后可以直接用 <code>git diff --stat</code> 看范围，用测试结果看行为，而不必依赖 AI 自己声称“已经解决”。</p>
+<h2 id="三、Android-项目按层切分"><a href="#三、Android-项目按层切分" class="headerlink" title="三、Android 项目按层切分"></a>三、Android 项目按层切分</h2><p>Android 工程容易出现跨层扩散：界面问题一路改到 ViewModel、Repository、网络模型和 Gradle 配置。面对这类任务，可以先按故障所在的最窄层设置预算。</p>
+<p>如果状态转换错误，就先限定在状态持有者及其测试；如果布局在特定尺寸下溢出，就先限定布局资源和截图验证；如果构建失败，再把预算放到对应模块的构建脚本。只有现有证据证明问题跨层，才扩大下一轮范围。</p>
+<p>目标测试也应尽量贴近改动模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./gradlew :app:testDebugUnitTest \</span><br><span class="line">  --tests <span class="string">&#x27;*UserListViewModelTest.empty response shows empty state&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>目标测试通过后，再根据风险决定是否运行模块测试或完整构建。这样既保持反馈速度，也不会把“跑了一个大命令”误当成精确验证。</p>
+<h2 id="四、Linux-工具修改先固定输入输出"><a href="#四、Linux-工具修改先固定输入输出" class="headerlink" title="四、Linux 工具修改先固定输入输出"></a>四、Linux 工具修改先固定输入输出</h2><p>Shell 脚本和系统工具的改动看似局部，却经常依赖环境变量、退出码、权限和文件状态。给 AI 修改前，先把输入输出契约写清楚：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tmp_dir=$(<span class="built_in">mktemp</span> -d)</span><br><span class="line"><span class="built_in">trap</span> <span class="string">&#x27;rm -rf &quot;$tmp_dir&quot;&#x27;</span> EXIT</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;%s\n&#x27;</span> alpha beta &gt; <span class="string">&quot;<span class="variable">$tmp_dir</span>/input.txt&quot;</span></span><br><span class="line">./bin/process <span class="string">&quot;<span class="variable">$tmp_dir</span>/input.txt&quot;</span> &gt; <span class="string">&quot;<span class="variable">$tmp_dir</span>/output.txt&quot;</span></span><br><span class="line">status=$?</span><br><span class="line"></span><br><span class="line"><span class="built_in">test</span> <span class="string">&quot;<span class="variable">$status</span>&quot;</span> -eq 0</span><br><span class="line">diff -u tests/expected.txt <span class="string">&quot;<span class="variable">$tmp_dir</span>/output.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这段验证不一定要直接用于生产，但它明确了测试数据、退出状态和预期输出。AI 若想顺手改变输出格式，差异会立即暴露，而不是等到下游脚本异常时才发现。</p>
+<p>对于会写入系统目录、操作设备或调用网络的脚本，还应默认禁止真实副作用，优先使用临时目录、模拟输入或 dry-run。验证过程本身也属于预算的一部分。</p>
+<h2 id="五、每轮结束检查预算是否超支"><a href="#五、每轮结束检查预算是否超支" class="headerlink" title="五、每轮结束检查预算是否超支"></a>五、每轮结束检查预算是否超支</h2><p>AI 完成修改后，不要立刻进入下一项需求。先做一次短检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git status --short</span><br><span class="line">git diff --<span class="built_in">stat</span></span><br><span class="line">git diff --check</span><br></pre></td></tr></table></figure>
+
+<p>然后回答四个问题：</p>
+<ul>
+<li>修改是否只发生在允许的文件中？</li>
+<li>是否引入了未授权的依赖、配置或公共接口变化？</li>
+<li>验证命令是否真的执行，结果是否与目标直接相关？</li>
+<li>如果本轮失败，能否只撤销这一步而不影响其他工作？</li>
+</ul>
+<p>发现超支时，最稳妥的处理通常不是继续解释，而是缩小任务重新做一轮。一个需要长篇说明才能证明安全的 diff，本身就已经失去了小步修改的价值。</p>
+<h2 id="六、什么时候扩大预算"><a href="#六、什么时候扩大预算" class="headerlink" title="六、什么时候扩大预算"></a>六、什么时候扩大预算</h2><p>预算不是越小越好。边界过窄也可能迫使代码加入临时补丁，掩盖真正的问题。扩大预算应由证据触发，而不是由“顺便优化”触发。</p>
+<p>常见的扩大理由包括：测试证明错误来自下游契约；局部修改会破坏已有公共行为；构建系统无法只验证单个模块。扩大时仍然一次只增加一个维度，例如先增加一个文件，再增加一组测试，而不是同时开放整个仓库。</p>
+<h2 id="七、把-AI-从代码生成器变成受控执行者"><a href="#七、把-AI-从代码生成器变成受控执行者" class="headerlink" title="七、把 AI 从代码生成器变成受控执行者"></a>七、把 AI 从代码生成器变成受控执行者</h2><p>变更预算的核心，是把一次模糊的“帮我改好”转换成多轮可观察的工程动作。每一轮都有明确边界、可执行验证和独立回滚点，人的审查压力会显著降低，AI 也更少在缺少证据时自行扩展任务。</p>
+<p>高效的人机协作并不追求一次生成最多代码，而是追求每一步都能快速回答：改了什么、为什么有效、失败后如何退回。能持续回答这三个问题，小步修改最终反而更快。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/14/ai_change_budget_engineering/" title="给 AI 设定变更预算：把一次大改拆成可验证的小步">https://blog.hansong.icu/2026/07/14/ai_change_budget_engineering/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/13/ai_debug_evidence_pack_20260713/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/ai-tools.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/13/ai_debug_evidence_pack_20260713/" class="trm-anima-link">
+                    给 AI 一份可复现的故障证据包：Android 与 Linux 排查实践
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/13</li>
+                <li>13:11</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、变更预算不是行数限制"><a rel="nofollow" class="trm-toc-link" href="#一、变更预算不是行数限制"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、变更预算不是行数限制</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、先让 AI 交付最小闭环"><a rel="nofollow" class="trm-toc-link" href="#二、先让-AI-交付最小闭环"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、先让 AI 交付最小闭环</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、Android 项目按层切分"><a rel="nofollow" class="trm-toc-link" href="#三、Android-项目按层切分"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、Android 项目按层切分</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、Linux 工具修改先固定输入输出"><a rel="nofollow" class="trm-toc-link" href="#四、Linux-工具修改先固定输入输出"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、Linux 工具修改先固定输入输出</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、每轮结束检查预算是否超支"><a rel="nofollow" class="trm-toc-link" href="#五、每轮结束检查预算是否超支"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、每轮结束检查预算是否超支</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、什么时候扩大预算"><a rel="nofollow" class="trm-toc-link" href="#六、什么时候扩大预算"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、什么时候扩大预算</span></a></li><li class="trm-toc-item trm-toc-level-2" title="七、把 AI 从代码生成器变成受控执行者"><a rel="nofollow" class="trm-toc-link" href="#七、把-AI-从代码生成器变成受控执行者"><span class="trm-toc-number">7.</span> <span class="trm-toc-text">七、把 AI 从代码生成器变成受控执行者</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
