@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="嵌入式 Linux 产品的核心竞争力往往不在于内核本身，而在于其承载的用户空间组件：文件系统布局、包选型、init 策略和安全加固。Buildroot 作为轻量级构建系统，能从源码交叉编译出最小化的根文件系统镜像，但实际项目中很少停留在 make qemu_arm_vexpress_defconfig 的默认状态。本文讨论如何在 Buildroot 框架内，将一个 minimal 根文件系统逐步演">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Buildroot 定制根文件系统：从 minimal 到生产级">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21_2/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="嵌入式 Linux 产品的核心竞争力往往不在于内核本身，而在于其承载的用户空间组件：文件系统布局、包选型、init 策略和安全加固。Buildroot 作为轻量级构建系统，能从源码交叉编译出最小化的根文件系统镜像，但实际项目中很少停留在 make qemu_arm_vexpress_defconfig 的默认状态。本文讨论如何在 Buildroot 框架内，将一个 minimal 根文件系统逐步演">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-21T02:58:53.000Z">
+<meta property="article:modified_time" content="2026-07-21T02:58:53.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="Buildroot">
+<meta property="article:tag" content="根文件系统">
+<meta property="article:tag" content="嵌入式Linux">
+<meta name="twitter:card" content="summary">
+
+
+<title >Buildroot 定制根文件系统：从 minimal 到生产级</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-21 10:58:53"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Buildroot 定制根文件系统：从 minimal 到生产级
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            10:58
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>嵌入式 Linux 产品的核心竞争力往往不在于内核本身，而在于其承载的用户空间组件：文件系统布局、包选型、init 策略和安全加固。Buildroot 作为轻量级构建系统，能从源码交叉编译出最小化的根文件系统镜像，但实际项目中很少停留在 <code>make qemu_arm_vexpress_defconfig</code> 的默认状态。本文讨论如何在 Buildroot 框架内，将一个 minimal 根文件系统逐步演进为满足量产要求的生产级镜像。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>Buildroot 的 defconfig 提供了一条快速跑通的路径，但默认配置往往缺少量产所需的要素：文件系统只读挂载、安全补丁管理、OTA 升级支持、调试接口关闭等。直接基于默认输出构建的产品，会在后期面临大量返工。讨论范围限定在 Buildroot 2024.02 LTS 之后的版本，目标平台为 ARM Cortex-A 系列 SoC，文件系统类型为 squashfs + overlay。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><ul>
+<li><strong>分层管理</strong>：将 rootfs 划分为只读基础层（squashfs）和可写覆盖层（overlayfs），降低写磨损风险并简化 OTA 更新。</li>
+<li><strong>最小化原则</strong>：默认 defconfig 包含大量开发用工具（strace、gdb、gcc），生产镜像应剥离，仅保留运行时必要的库和守护进程。</li>
+<li><strong>config fragments</strong>：使用 Buildroot 的 <code>BR2_PACKAGE_OVERRIDE_DIR</code> 和 <code>.config</code> fragment 机制，将平台无关配置与板级定制分离，便于版本管理和跨产品复用。</li>
+<li>** reproducibility**：锁定交叉编译工具链版本、内核头文件版本和每个包的哈希值，确保同一 commit 在不同时间构建出相同产物。</li>
+</ul>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><ol>
+<li><strong>生成基础 defconfig</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make &lt;your_board&gt;_defconfig</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>剥离开发工具</strong></li>
+</ol>
+<p>在 <code>menuconfig</code> 中取消以下包：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">BR2_PACKAGE_STRACE=n</span><br><span class="line">BR2_PACKAGE_GDB=n</span><br><span class="line">BR2_PACKAGE_GCC=n</span><br><span class="line">BR2_PACKAGE_GCC_INITIAL=n</span><br><span class="line">BR2_PACKAGE_GCC_FINAL=n</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>启用只读根文件系统</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BR2_TARGET_ROOTFS_SQUASHFS=y</span><br><span class="line">BR2_TARGET_ROOTFS_SQUASHFS4_BLOCKSIZE=256</span><br><span class="line">BR2_ROOTFS_OVERLAY=&quot;board/your_board/rootfs_overlay&quot;</span><br><span class="line">BR2_ROOTFS_POST_SCRIPT=&quot;board/your_board/post_build.sh&quot;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><strong>添加 config fragment</strong></li>
+</ol>
+<p>在 <code>board/your_board/</code> 下创建 <code>buildroot.config.fragment</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BR2_PACKAGE_BUSYBOX_CONFIG=&quot;board/your_board/busybox.config&quot;</span><br><span class="line">BR2_INIT_SYSTEMD=y</span><br><span class="line">BR2_PACKAGE_SYSTEMD=y</span><br><span class="line">BR2_PACKAGE_JOURNALD=y</span><br></pre></td></tr></table></figure>
+
+<p>构建时使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make BR2_EXTERNAL=&lt;path_to_your_external_tree&gt; all</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><strong>锁定版本</strong></li>
+</ol>
+<p>在 <code>external.mk</code> 中指定每个关键包的版本和哈希：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LINUX_VERSION = 6.6.36</span><br><span class="line">LINUX_SITE = kernel.org/pub/linux/kernel/v6.x</span><br><span class="line">LINUX_HASH = sha256 abcdef123456...</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li><strong>后处理脚本</strong></li>
+</ol>
+<p>在 <code>post_build.sh</code> 中完成镜像发布前的清理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># 移除调试符号</span></span><br><span class="line">find <span class="string">&quot;<span class="variable">$TARGET_DIR</span>&quot;</span> -name <span class="string">&quot;*.debug&quot;</span> -delete</span><br><span class="line"><span class="comment"># 移除文档</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$TARGET_DIR</span>/usr/share/doc&quot;</span></span><br><span class="line"><span class="comment"># 设置关键目录权限</span></span><br><span class="line"><span class="built_in">chmod</span> 700 <span class="string">&quot;<span class="variable">$TARGET_DIR</span>/etc/shadow&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><ul>
+<li><strong>overlayfs 与 systemd 冲突</strong>：systemd 默认尝试挂载 <code>/run</code> 和 <code>/tmp</code>，在只读根文件系统下可能失败。需要在 <code>fstab</code> 中显式配置 <code>tmpfs</code> 挂载点。</li>
+<li><strong>squashfs 块大小选择</strong>：块越大压缩率越高，但随机读性能越差。对于流媒体类产品建议 256KB，频繁读写的场景建议 128KB。</li>
+<li><strong>BR2_ROOTFS_OVERLAY 顺序</strong>：多个 overlay 目录时，后列出的会覆盖先列出的，导致文件丢失。务必确认顺序符合预期。</li>
+<li><strong>版本锁定导致的依赖问题</strong>：锁定包版本后，手动更新某个包可能破坏依赖关系。建议定期运行 <code>make legal-info</code> 检查许可证合规性和依赖完整性。</li>
+<li><strong>交叉编译工具链与主机差异</strong>：使用 Buildroot 内置工具链时，主机系统更新可能影响编译。生产环境建议使用独立的交叉编译工具链。</li>
+</ul>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> defconfig 已基于板级配置，非通用默认</li>
+<li><input disabled="" type="checkbox"> 开发工具（strace、gdb、gcc）已在生产配置中移除</li>
+<li><input disabled="" type="checkbox"> rootfs 为 squashfs 只读 + overlay 可写方案</li>
+<li><input disabled="" type="checkbox"> post_build.sh 已执行清理和权限设置</li>
+<li><input disabled="" type="checkbox"> 关键包版本和哈希已锁定</li>
+<li><input disabled="" type="checkbox"> config fragments 已与平台无关配置分离</li>
+<li><input disabled="" type="checkbox"> systemd 服务在只读根文件系统下可正常启动</li>
+<li><input disabled="" type="checkbox"> <code>make legal-info</code> 无异常</li>
+<li><input disabled="" type="checkbox"> 构建产物大小在目标 Flash 容量范围内</li>
+<li><input disabled="" type="checkbox"> OTA 升级脚本已验证回滚能力</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>Buildroot 的价值不在于它能跑通多少 defconfig，而在于它提供了一套可版本化、可审计的构建管线。从 minimal 到生产级的演进，本质上是将隐式的默认行为转化为显式的配置决策。每个决策都应有对应的 rationale 和验证手段，这比任何单点优化都更重要。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21_2/" title="Buildroot 定制根文件系统：从 minimal 到生产级">https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21_2/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/21/daily_post_2026_07_21/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/default.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/21/daily_post_2026_07_21/" class="trm-anima-link">
+                    本地自动化脚本的幂等设计
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/21</li>
+                <li>09:01</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
