@@ -7,23 +7,24 @@
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#317EFB" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
-<meta name="description" content="本地自动化脚本经常从临时命令演变而来：先是为了少敲几行命令，后来被放进项目文档、构建流程或发布前检查里。问题也通常从这里出现：脚本第一次能跑，第二次失败；在干净环境能跑，在已有缓存、已有输出、已有分支的环境里失败。 本文讨论的不是复杂流水线平台，而是开发仓库中常见的 Shell、Node、Python 或 Make 脚本。结论很简单：本地脚本应当优先按幂等任务设计，允许重复执行，并且把环境检查、状">
+<meta name="description" content="嵌入式 Linux 系统的内核镜像大小直接影响启动时间、存储占用和运行时内存余量。一个未经裁剪的通用内核动辄数十 MB，而多数嵌入式设备只需要其中很小一部分功能。内核裁剪就是把不需要的驱动、文件系统、网络协议和调试设施从内核中剔除，最终得到一个功能完备且体积紧凑的定制内核。 内核定制并非简单地关闭选项。它要求开发者对硬件外设、BSP 提供的能力、产品功能边界有清晰认知。裁剪过头会导致缺少必要驱动或">
 <meta property="og:type" content="article">
-<meta property="og:title" content="本地自动化脚本的幂等设计">
+<meta property="og:title" content="嵌入式 Linux 内核裁剪与定制">
 <meta property="og:url" content="https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21/index.html">
 <meta property="og:site_name" content="Zihuatanejo">
-<meta property="og:description" content="本地自动化脚本经常从临时命令演变而来：先是为了少敲几行命令，后来被放进项目文档、构建流程或发布前检查里。问题也通常从这里出现：脚本第一次能跑，第二次失败；在干净环境能跑，在已有缓存、已有输出、已有分支的环境里失败。 本文讨论的不是复杂流水线平台，而是开发仓库中常见的 Shell、Node、Python 或 Make 脚本。结论很简单：本地脚本应当优先按幂等任务设计，允许重复执行，并且把环境检查、状">
+<meta property="og:description" content="嵌入式 Linux 系统的内核镜像大小直接影响启动时间、存储占用和运行时内存余量。一个未经裁剪的通用内核动辄数十 MB，而多数嵌入式设备只需要其中很小一部分功能。内核裁剪就是把不需要的驱动、文件系统、网络协议和调试设施从内核中剔除，最终得到一个功能完备且体积紧凑的定制内核。 内核定制并非简单地关闭选项。它要求开发者对硬件外设、BSP 提供的能力、产品功能边界有清晰认知。裁剪过头会导致缺少必要驱动或">
 <meta property="og:locale">
-<meta property="article:published_time" content="2026-07-21T01:01:02.000Z">
-<meta property="article:modified_time" content="2026-07-21T01:01:02.000Z">
+<meta property="article:published_time" content="2026-07-21T03:26:17.000Z">
+<meta property="article:modified_time" content="2026-07-21T03:26:17.000Z">
 <meta property="article:author" content="Zihuatanejo">
-<meta property="article:tag" content="自动化">
-<meta property="article:tag" content="脚本设计">
-<meta property="article:tag" content="幂等性">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="Kernel">
 <meta name="twitter:card" content="summary">
 
 
-<title >本地自动化脚本的幂等设计</title>
+<title >嵌入式 Linux 内核裁剪与定制</title>
 
 <!-- Favicon -->
 
@@ -62,7 +63,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-21 09:01:02"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-21 11:26:17"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -219,7 +220,7 @@
     <div class="trm-banner">
     
     <!-- banner cover -->
-    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/default.svg">
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
     <!-- banner cover end -->
     
 
@@ -238,7 +239,7 @@
                             NEWS LETTER
                         </div>
                         <h1 class="trm-mb-30 trm-hsmb-font">
-                            本地自动化脚本的幂等设计
+                            嵌入式 Linux 内核裁剪与定制
                         </h1>
 
                         
@@ -350,7 +351,7 @@
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-clock trm-icon"></i><br>
-            09:01
+            11:26
         </div>
     </div>
     <div class="col-sm-4">
@@ -362,52 +363,88 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <p>本地自动化脚本经常从临时命令演变而来：先是为了少敲几行命令，后来被放进项目文档、构建流程或发布前检查里。问题也通常从这里出现：脚本第一次能跑，第二次失败；在干净环境能跑，在已有缓存、已有输出、已有分支的环境里失败。</p>
-<p>本文讨论的不是复杂流水线平台，而是开发仓库中常见的 Shell、Node、Python 或 Make 脚本。结论很简单：本地脚本应当优先按幂等任务设计，允许重复执行，并且把环境检查、状态判断、写入动作和失败回滚分清楚。</p>
+    <p>嵌入式 Linux 系统的内核镜像大小直接影响启动时间、存储占用和运行时内存余量。一个未经裁剪的通用内核动辄数十 MB，而多数嵌入式设备只需要其中很小一部分功能。内核裁剪就是把不需要的驱动、文件系统、网络协议和调试设施从内核中剔除，最终得到一个功能完备且体积紧凑的定制内核。</p>
+<p>内核定制并非简单地关闭选项。它要求开发者对硬件外设、BSP 提供的能力、产品功能边界有清晰认知。裁剪过头会导致缺少必要驱动或模块依赖断裂，裁剪不足则浪费存储和内存。本文给出一套可操作的裁剪流程和常见陷阱，帮助开发者在功能完整性和镜像体积之间取得平衡。</p>
 <span id="more"></span>
 
-<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>本地脚本的使用场景通常很分散：有人在新机器上初始化环境，有人在改完代码后批量生成文件，也有人在发布前执行打包、校验和归档。如果脚本假设自己只会运行一次，就会把很多状态问题留给执行者处理。</p>
-<p>幂等设计值得写，是因为它能降低脚本的认知成本。执行者不需要记住上一次跑到了哪一步，也不需要手工清理半成品目录。脚本可以根据当前状态决定跳过、覆盖、修复或明确失败。</p>
-<p>本文只讨论仓库内本地脚本的设计，不扩展到分布式任务调度、数据库迁移框架或云资源编排。那些场景也需要幂等性，但涉及锁、事务、租约和权限模型，边界更复杂。</p>
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>在资源受限的嵌入式平台上——例如 64MB RAM 的 IoT 网关、8MB Flash 的工业控制器、或需要快速启动的车载终端——内核体积是系统设计的硬约束。过大的内核不仅占用宝贵的 Flash 空间，还会拖慢启动速度、增加 OTA 升级的传输时间和失败风险。</p>
+<p>同时，内核中大量未使用的代码会增加攻击面。安全审计表明，许多 CVE 影响的功能在特定产品中根本不需要。裁剪掉不需要的子系统是减少攻击面的直接手段。</p>
+<p>另一个现实问题是 BSP 升级。厂商提供的 BSP 内核配置往往保留了大量通用选项，直接用于量产是不合适的。每个产品线都需要基于自身硬件和功能需求做一次定制裁剪。</p>
 <h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><ul>
-<li>先检查状态，再执行写入。脚本不应只关心“我要做什么”，还要判断“当前是否已经做过”。</li>
-<li>输出路径要稳定。生成物、缓存、日志和临时文件最好有明确目录，不要散落在项目根目录。</li>
-<li>重复执行不应扩大副作用。追加写文件、重复注册配置、重复创建软链接，是最常见的失控来源。</li>
-<li>失败要停在可理解的位置。比起继续执行并制造更多中间状态，提前失败更容易定位问题。</li>
-<li>清理动作要谨慎。幂等不等于每次先删除全部产物，尤其不能删除脚本没有明确拥有权的文件。</li>
+<li><strong>先加法后减法</strong>：从一个最小可启动配置开始，逐步添加产品需要的功能，比从通用配置中逐个关闭更可控。</li>
+<li><strong>分层裁剪</strong>：区分”必须编译进内核”和”可作为模块加载”两类功能。关键启动路径上的驱动应编译进内核（built-in），非关键功能用模块（module）按需加载。</li>
+<li><strong>硬件驱动先行</strong>：明确 BSP 支持的 SoC 型号，列出板上所有外设（UART、SPI、I2C、GPIO、以太网、Wi-Fi、存储控制器等），逐个确认内核选项。</li>
+<li><strong>文件系统精简</strong>：只保留产品实际使用的文件系统支持（ext4、squashfs、UBIFS 等），去掉不相关的（NFS、CIFS、FAT 等除非产品确实需要）。</li>
+<li><strong>调试选项清理</strong>：量产内核应关闭所有调试输出（<code>CONFIG_DEBUG_*</code>）、KASAN、KMEMLEAK、ftrace 等。这些在开发阶段有用，但会显著增加镜像体积和运行开销。</li>
+<li><strong>保留回退能力</strong>：即使裁剪到最小，也应保留 <code>CONFIG_KEXEC</code> 或 U-Boot 加载备用内核的能力，以便在新内核出问题时快速恢复。</li>
 </ul>
-<p>一个实用判断是：脚本执行前后，仓库状态是否可以被清楚解释。如果执行两次后出现两份配置、两段重复文本或两个相同任务，那就不是可靠的幂等脚本。</p>
-<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><p>第一步，给脚本划定拥有范围。明确它只会读写哪些路径，哪些路径只读，哪些路径需要人工确认。例如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OUTPUT_DIR=<span class="string">&quot;dist/report&quot;</span></span><br><span class="line">CACHE_DIR=<span class="string">&quot;.cache/report&quot;</span></span><br><span class="line">CONFIG_FILE=<span class="string">&quot;config/report.json&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><h3 id="1-获取基线配置"><a href="#1-获取基线配置" class="headerlink" title="1. 获取基线配置"></a>1. 获取基线配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果使用厂商 BSP，通常在 arch/&lt;arch&gt;/configs/ 下有 defconfig</span></span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- &lt;board&gt;_defconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者从当前运行内核导出</span></span><br><span class="line">zcat /proc/config.gz &gt; .config</span><br></pre></td></tr></table></figure>
 
-<p>第二步，为关键动作增加存在性判断。目录可以重复创建，文件写入则要区分生成、覆盖和跳过。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$OUTPUT_DIR</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -f <span class="string">&quot;<span class="variable">$OUTPUT_DIR</span>/index.html&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;report already exists, regenerating: <span class="variable">$OUTPUT_DIR</span>/index.html&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">npm run report:build -- --out <span class="string">&quot;<span class="variable">$OUTPUT_DIR</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-开启菜单配置"><a href="#2-开启菜单配置" class="headerlink" title="2. 开启菜单配置"></a>2. 开启菜单配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- menuconfig</span><br></pre></td></tr></table></figure>
 
-<p>第三步，避免对文本文件做无条件追加。如果必须写入配置片段，优先使用结构化工具更新；如果只能处理纯文本，也要用标记区块限定脚本负责的范围。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">START=<span class="string">&quot;# BEGIN local report config&quot;</span></span><br><span class="line">END=<span class="string">&quot;# END local report config&quot;</span></span><br><span class="line">TARGET=<span class="string">&quot;.env.local&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">touch</span> <span class="string">&quot;<span class="variable">$TARGET</span>&quot;</span></span><br><span class="line">sed -i <span class="string">&quot;/<span class="variable">$START</span>/,/<span class="variable">$END</span>/d&quot;</span> <span class="string">&quot;<span class="variable">$TARGET</span>&quot;</span></span><br><span class="line"><span class="built_in">cat</span> &gt;&gt; <span class="string">&quot;<span class="variable">$TARGET</span>&quot;</span> &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">$START</span></span><br><span class="line"><span class="string">REPORT_OUTPUT=dist/report</span></span><br><span class="line"><span class="string">$END</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>在菜单中逐层检查以下关键目录：</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>关注点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Device Drivers</code></td>
+<td>板载外设驱动，关闭无用设备类别</td>
+</tr>
+<tr>
+<td><code>File systems</code></td>
+<td>仅保留产品使用的文件系统</td>
+</tr>
+<tr>
+<td><code>Networking support</code></td>
+<td>关闭不需要的协议族和功能（如蓝牙、CAN 等）</td>
+</tr>
+<tr>
+<td><code>Kernel hacking</code></td>
+<td>量产时全部关闭</td>
+</tr>
+<tr>
+<td><code>Security options</code></td>
+<td>根据安全需求配置 SELinux&#x2F;AppArmor</td>
+</tr>
+<tr>
+<td><code>General setup</code></td>
+<td>关闭不需要的 IPC 机制、控制组等</td>
+</tr>
+</tbody></table>
+<h3 id="3-利用-make-savedefconfig-精简"><a href="#3-利用-make-savedefconfig-精简" class="headerlink" title="3. 利用 make savedefconfig 精简"></a>3. 利用 <code>make savedefconfig</code> 精简</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成最小化 defconfig（只包含非默认值的选项）</span></span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- savedefconfig</span><br><span class="line"><span class="built_in">cp</span> defconfig <span class="built_in">arch</span>/arm/configs/&lt;board&gt;_defconfig</span><br></pre></td></tr></table></figure>
 
-<p>第四步，把前置检查放在写入之前。依赖命令、必要环境变量、目录权限和输入文件都应该先确认。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">command</span> -v npm &gt;/dev/null 2&gt;&amp;1 || &#123;</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;missing command: npm&quot;</span> &gt;&amp;2</span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[ -f package.json ] || &#123;</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;package.json not found; run this script at project root&quot;</span> &gt;&amp;2</span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样可以确保后续每次构建都基于干净的配置，不会混入调试残留。</p>
+<h3 id="4-检查模块依赖"><a href="#4-检查模块依赖" class="headerlink" title="4. 检查模块依赖"></a>4. 检查模块依赖</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- modules_prepare</span><br><span class="line"><span class="comment"># 确认没有 missing symbol 警告</span></span><br></pre></td></tr></table></figure>
 
-<p>第五步，在脚本末尾输出简短结果。结果应包含实际写入路径、跳过项和失败原因，不需要输出大段调试信息。</p>
+<h3 id="5-构建并对比"><a href="#5-构建并对比" class="headerlink" title="5. 构建并对比"></a>5. 构建并对比</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 对比裁剪前后镜像大小</span></span><br><span class="line"><span class="built_in">ls</span> -lh <span class="built_in">arch</span>/arm/boot/zImage</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-在目标板上验证"><a href="#6-在目标板上验证" class="headerlink" title="6. 在目标板上验证"></a>6. 在目标板上验证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 烧录后检查启动日志，确认所有必要驱动正常加载</span></span><br><span class="line">dmesg | grep -i <span class="string">&quot;fail\|error\|missing&quot;</span></span><br><span class="line"><span class="comment"># 检查设备节点是否齐全</span></span><br><span class="line"><span class="built_in">ls</span> /dev/</span><br></pre></td></tr></table></figure>
+
 <h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><ul>
-<li>用 <code>&gt;&gt;</code> 追加配置，却没有检查旧内容，导致每次运行都增加重复行。</li>
-<li>用 <code>rm -rf</code> 清理一个过宽的目录，把用户手工放入的文件也删掉。</li>
-<li>只检查命令退出码，不检查生成物是否真的存在。</li>
-<li>在脚本中隐式切换目录，使调用者很难判断相对路径基于哪里。</li>
-<li>把下载、生成、格式化、提交等动作放进同一个脚本，导致失败后难以恢复。</li>
-<li>依赖本机环境变量，但没有在脚本开头声明和校验。</li>
+<li><strong>依赖遗漏</strong>：关闭一个顶层选项可能隐式关闭多个依赖项。例如关闭 <code>CONFIG_NET</code> 会同时移除所有网络协议和套接字支持，即使你需要本地回环。使用 <code>make menuconfig</code> 的搜索功能（按 <code>/</code>）查看依赖关系。</li>
+<li><strong>模块 vs built-in 误判</strong>：根文件系统所在的存储控制器驱动必须 built-in，否则内核无法挂载 rootfs。<code>initramfs</code> 场景下也需要把相关驱动编入内核。</li>
+<li><strong>设备树与内核配置不同步</strong>：设备树中引用了某个外设节点，但内核配置中关闭了对应驱动，不会报错但功能静默失效。务必对照设备树节点逐个检查内核配置。</li>
+<li><strong>OTA 升级兼容性</strong>：裁剪后的内核镜像如果大小变化显著，可能需要更新 U-Boot 的 <code>bootm</code> 参数或分区表，否则加载地址冲突导致启动失败。</li>
+<li><strong>调试配置残留</strong>：从开发配置切换到量产配置时，<code>CONFIG_DEBUG_INFO</code>、<code>CONFIG_PRINTK</code> 的等级、<code>CONFIG_SYSCTL</code> 等选项容易遗漏。建议维护两份 defconfig（debug 和 release），不要在同一个配置上反复开关。</li>
+<li><strong>交叉编译工具链版本</strong>：裁剪过程中如果同时升级了 GCC 版本，可能引入新的编译警告或行为变化。建议先固定工具链版本，再做配置调整。</li>
 </ul>
 <h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
-<li><input disabled="" type="checkbox"> 脚本重复执行两次后，不会产生重复配置或重复产物。</li>
-<li><input disabled="" type="checkbox"> 所有写入路径都在脚本开头集中声明。</li>
-<li><input disabled="" type="checkbox"> 写入前已经完成依赖命令、输入文件和目录权限检查。</li>
-<li><input disabled="" type="checkbox"> 清理动作只影响脚本明确拥有的目录或文件。</li>
-<li><input disabled="" type="checkbox"> 失败信息能指出缺少什么、在哪个阶段失败。</li>
-<li><input disabled="" type="checkbox"> 日志输出包含最终产物位置，且不依赖阅读完整命令回显。</li>
+<li><input disabled="" type="checkbox"> 列出目标板所有硬件外设及对应的内核驱动选项</li>
+<li><input disabled="" type="checkbox"> 确认 rootfs 存储控制器驱动已编入内核（built-in）</li>
+<li><input disabled="" type="checkbox"> 关闭所有 <code>CONFIG_DEBUG_*</code> 选项</li>
+<li><input disabled="" type="checkbox"> 关闭 <code>CONFIG_KASAN</code>、<code>CONFIG_KMEMLEAK</code>、<code>CONFIG_FTRACE</code> 等运行时调试设施</li>
+<li><input disabled="" type="checkbox"> 只保留产品实际使用的文件系统支持</li>
+<li><input disabled="" type="checkbox"> 只保留产品实际使用的网络协议和驱动</li>
+<li><input disabled="" type="checkbox"> 运行 <code>savedefconfig</code> 并确认 defconfig 干净</li>
+<li><input disabled="" type="checkbox"> 在目标板上验证所有设备节点存在且功能正常</li>
+<li><input disabled="" type="checkbox"> 对比裁剪前后内核镜像大小，记录变化</li>
+<li><input disabled="" type="checkbox"> 确认 OTA 升级流程中分区表和加载参数与新镜像匹配</li>
 </ul>
-<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>本地自动化脚本的价值不只在于少敲命令，更在于让重复任务变得可预期。幂等设计把这种可预期性前置到脚本结构里，使它能适应干净环境、已有产物和中断后的再次执行。</p>
-<p>真正需要投入的不是复杂框架，而是几个朴素约束：先判断状态，限制写入范围，避免无条件追加，失败时给出明确原因。这样写出来的脚本更容易交给团队使用，也更容易在后续接入构建或发布流程。</p>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>内核裁剪是嵌入式 Linux 从开发板走向量产产品的必经步骤。核心在于”理解硬件需求，只留必要功能”，而非追求极端的体积最小化。一份干净的 defconfig 不仅减小镜像体积，也让系统行为更可预测、攻击面更小、维护成本更低。建议将裁剪后的 defconfig 纳入版本管理，与 BSP 代码一起维护，确保每次构建都可复现。</p>
 
 </article>
     
@@ -420,7 +457,7 @@
     </li>
     <li class="trm-post-copyright-link">
         <strong>本文链接：</strong>
-        <a id="original-link" href="https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21/" title="本地自动化脚本的幂等设计">https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21/</a>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21/" title="嵌入式 Linux 内核裁剪与定制">https://blog.hansong.icu/2026/07/21/daily_post_2026_07_21/</a>
     </li>
     <li class="trm-post-copyright-license">
         <strong>版权声明：</strong>
@@ -438,6 +475,7 @@
             <span data-number="02"></span>
         </h5>
     </div>
+    
     
         <div class="col-lg-6">
     <div class="trm-blog-card trm-scroll-animation">
@@ -463,38 +501,6 @@
             <ul class="trm-card-data trm-label">
                 <li>26/07/21</li>
                 <li>10:58</li>
-                
-                
-            </ul>
-        </div>
-    </div>
-</div>
-    
-    
-        <div class="col-lg-6">
-    <div class="trm-blog-card trm-scroll-animation">
-        <a href="/2026/07/20/daily_post_2026_07_20/" class="trm-cover-frame trm-anima-link">
-            
-            
-                <img alt="cover" class="no-fancybox" src="/img/covers/default.svg">
-            
-        </a>
-        
-        <div class="trm-card-descr">
-            <div class="trm-label trm-category trm-mb-20">
-                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
-                    工程实践
-                </a>
-            </div>
-            <h5>
-                <a href="/2026/07/20/daily_post_2026_07_20/" class="trm-anima-link">
-                    接口幂等设计的工程化落地
-                </a>
-            </h5>
-            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
-            <ul class="trm-card-data trm-label">
-                <li>26/07/20</li>
-                <li>09:01</li>
                 
                 
             </ul>
@@ -562,7 +568,7 @@
 				</span>
       </div>
       <div class="trm-post-toc-content">
-        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="1. 获取基线配置"><a rel="nofollow" class="trm-toc-link" href="#1-获取基线配置"><span class="trm-toc-number">3.1.</span> <span class="trm-toc-text">1. 获取基线配置</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2. 开启菜单配置"><a rel="nofollow" class="trm-toc-link" href="#2-开启菜单配置"><span class="trm-toc-number">3.2.</span> <span class="trm-toc-text">2. 开启菜单配置</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3. 利用 make savedefconfig 精简"><a rel="nofollow" class="trm-toc-link" href="#3-利用-make-savedefconfig-精简"><span class="trm-toc-number">3.3.</span> <span class="trm-toc-text">3. 利用 make savedefconfig 精简</span></a></li><li class="trm-toc-item trm-toc-level-3" title="4. 检查模块依赖"><a rel="nofollow" class="trm-toc-link" href="#4-检查模块依赖"><span class="trm-toc-number">3.4.</span> <span class="trm-toc-text">4. 检查模块依赖</span></a></li><li class="trm-toc-item trm-toc-level-3" title="5. 构建并对比"><a rel="nofollow" class="trm-toc-link" href="#5-构建并对比"><span class="trm-toc-number">3.5.</span> <span class="trm-toc-text">5. 构建并对比</span></a></li><li class="trm-toc-item trm-toc-level-3" title="6. 在目标板上验证"><a rel="nofollow" class="trm-toc-link" href="#6-在目标板上验证"><span class="trm-toc-number">3.6.</span> <span class="trm-toc-text">6. 在目标板上验证</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
       </div>
     </div>
 
