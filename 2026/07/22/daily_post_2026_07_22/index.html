@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="很多团队都会写临时脚本：批量改文件名、导出数据、生成配置、清理日志、检查构建产物。脚本第一次出现时通常只为解决一个具体问题，写得快、跑得通就够了，但它一旦被第二次使用，就已经进入了工程资产的范围。 本文讨论的不是把脚本做成完整平台，而是如何在成本可控的前提下，让一个临时脚本具备可重复执行、可定位问题、可交接维护的基本能力。结论很简单：先固定输入输出边界，再补齐失败处理和运行说明，最后才考虑抽象和扩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="把临时脚本整理成可重复的小工具">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/22/daily_post_2026_07_22/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="很多团队都会写临时脚本：批量改文件名、导出数据、生成配置、清理日志、检查构建产物。脚本第一次出现时通常只为解决一个具体问题，写得快、跑得通就够了，但它一旦被第二次使用，就已经进入了工程资产的范围。 本文讨论的不是把脚本做成完整平台，而是如何在成本可控的前提下，让一个临时脚本具备可重复执行、可定位问题、可交接维护的基本能力。结论很简单：先固定输入输出边界，再补齐失败处理和运行说明，最后才考虑抽象和扩">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-22T01:01:01.000Z">
+<meta property="article:modified_time" content="2026-07-22T01:01:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="自动化">
+<meta property="article:tag" content="脚本工程化">
+<meta property="article:tag" content="可维护性">
+<meta name="twitter:card" content="summary">
+
+
+<title >把临时脚本整理成可重复的小工具</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-22 09:01:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/default.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            把临时脚本整理成可重复的小工具
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:01
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>很多团队都会写临时脚本：批量改文件名、导出数据、生成配置、清理日志、检查构建产物。脚本第一次出现时通常只为解决一个具体问题，写得快、跑得通就够了，但它一旦被第二次使用，就已经进入了工程资产的范围。</p>
+<p>本文讨论的不是把脚本做成完整平台，而是如何在成本可控的前提下，让一个临时脚本具备可重复执行、可定位问题、可交接维护的基本能力。结论很简单：先固定输入输出边界，再补齐失败处理和运行说明，最后才考虑抽象和扩展。</p>
+<p>适用场景包括本地开发辅助脚本、CI 中的小型检查任务、一次性迁移后仍可能复用的数据处理脚本。对于只运行一次且已经归档的脚本，不必过度整理；对于会被多人、定期或自动化环境调用的脚本，则应该尽早收敛成稳定工具。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>临时脚本最常见的问题不是代码写得短，而是执行条件隐藏在作者的记忆里。比如依赖当前目录、默认环境变量、某个未提交的配置文件，或者要求调用者先手动清理输出目录。这些条件没有被记录时，脚本表面上只有几十行，实际维护成本却很高。</p>
+<p>本文只讨论小型脚本的工程化处理，不覆盖大型命令行框架、插件系统、任务编排平台等复杂形态。目标是让脚本在保留轻量特征的同时，具备清晰的调用方式和可预期的失败行为。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><p>先定义边界。脚本应该明确从哪里读取输入、向哪里写入输出、会修改哪些文件、是否允许重复运行。边界越清楚，调用者越容易判断它能否放入自动化流程。</p>
+<p>把隐式假设变成显式检查。与其让脚本在中间步骤因为空路径、缺文件或权限不足而失败，不如在开头检查必要条件，并给出明确错误信息。</p>
+<p>保持默认行为保守。会删除、覆盖、迁移数据的脚本，应优先支持预览模式或要求显式参数确认。自动化工具最怕含糊的默认动作。</p>
+<p>先记录用法，再拆分代码。很多脚本不需要复杂抽象，只需要一段清楚的参数说明、几个函数边界和稳定的退出码。过早拆成多个模块，反而会增加理解成本。</p>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><p>第一步，给脚本补一个固定入口。入口只负责解析参数、检查环境和调度主流程，具体处理逻辑放到函数中，避免所有代码堆在全局作用域。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">usage</span></span>() &#123;</span><br><span class="line">  <span class="built_in">printf</span> <span class="string">&#x27;Usage: %s --input &lt;dir&gt; --output &lt;dir&gt; [--dry-run]\n&#x27;</span> <span class="string">&quot;<span class="variable">$0</span>&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dry_run=0</span><br><span class="line">input_dir=<span class="string">&#x27;&#x27;</span></span><br><span class="line">output_dir=<span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> [ <span class="string">&quot;<span class="variable">$#</span>&quot;</span> -gt 0 ]; <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">    --input)</span><br><span class="line">      input_dir=<span class="string">&quot;<span class="variable">$&#123;2:-&#125;</span>&quot;</span></span><br><span class="line">      <span class="built_in">shift</span> 2</span><br><span class="line">      ;;</span><br><span class="line">    --output)</span><br><span class="line">      output_dir=<span class="string">&quot;<span class="variable">$&#123;2:-&#125;</span>&quot;</span></span><br><span class="line">      <span class="built_in">shift</span> 2</span><br><span class="line">      ;;</span><br><span class="line">    --dry-run)</span><br><span class="line">      dry_run=1</span><br><span class="line">      <span class="built_in">shift</span></span><br><span class="line">      ;;</span><br><span class="line">    -h|--<span class="built_in">help</span>)</span><br><span class="line">      usage</span><br><span class="line">      <span class="built_in">exit</span> 0</span><br><span class="line">      ;;</span><br><span class="line">    *)</span><br><span class="line">      usage</span><br><span class="line">      <span class="built_in">exit</span> 2</span><br><span class="line">      ;;</span><br><span class="line">  <span class="keyword">esac</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>第二步，集中做前置检查。检查内容至少包括输入路径是否存在、输出路径是否可写、必要命令是否可用、关键参数是否为空。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">require_command</span></span>() &#123;</span><br><span class="line">  <span class="keyword">if</span> ! <span class="built_in">command</span> -v <span class="string">&quot;<span class="variable">$1</span>&quot;</span> &gt;/dev/null 2&gt;&amp;1; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">printf</span> <span class="string">&#x27;missing required command: %s\n&#x27;</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> &gt;&amp;2</span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">validate_args</span></span>() &#123;</span><br><span class="line">  <span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$input_dir</span>&quot;</span> ] || [ -z <span class="string">&quot;<span class="variable">$output_dir</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    usage</span><br><span class="line">    <span class="built_in">exit</span> 2</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$input_dir</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">printf</span> <span class="string">&#x27;input directory does not exist: %s\n&#x27;</span> <span class="string">&quot;<span class="variable">$input_dir</span>&quot;</span> &gt;&amp;2</span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">require_command find</span><br><span class="line">validate_args</span><br></pre></td></tr></table></figure>
+
+<p>第三步，明确输出策略。脚本生成的文件应尽量写入指定目录，不要散落在当前目录或用户主目录。需要覆盖时，先判断目标是否存在，并在日志里写清楚动作。</p>
+<p>第四步，增加最小可验证样例。可以在仓库中保留一组小输入，或者在说明文档里提供一条可复制的命令。目标不是做完整测试框架，而是让维护者能快速确认脚本仍然可运行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./tools/normalize-name.sh \</span><br><span class="line">  --input ./examples/raw \</span><br><span class="line">  --output ./tmp/normalized \</span><br><span class="line">  --dry-run</span><br></pre></td></tr></table></figure>
+
+<p>第五步，将脚本接入自动化前先固定退出码。参数错误返回 <code>2</code>，运行失败返回 <code>1</code>，成功返回 <code>0</code>。这样 CI 或上层任务才能可靠判断结果，而不是解析一段不稳定的文本输出。</p>
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><p>只在本机路径上验证。脚本里写死 <code>/Users/name/project</code> 或 <code>/home/user/tmp</code>，很容易在 CI、容器或其他开发机上失效。</p>
+<p>把日志当作接口。调用方如果依赖某一行日志判断成功失败，脚本稍微调整输出就会破坏流程。成功失败应该通过退出码或结构化产物表达。</p>
+<p>忽略重复执行。很多脚本第一次运行成功，第二次因为输出目录已存在、临时文件残留或数据已部分迁移而失败。需要明确脚本是幂等、可覆盖，还是只能运行一次。</p>
+<p>默认执行高风险操作。清理、覆盖、迁移类脚本如果默认直接生效，调用者很难在不读源码的情况下评估风险。更稳妥的方式是默认预览，或要求传入 <code>--apply</code>。</p>
+<p>缺少失败现场。脚本失败后只输出 <code>error</code>，维护者无法知道处理到哪个文件、哪个步骤、哪个外部命令。至少应输出当前处理对象和失败原因。</p>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> 文件名、参数名和输出目录能表达脚本用途</li>
+<li><input disabled="" type="checkbox"> 脚本开头启用了必要的失败控制或异常处理</li>
+<li><input disabled="" type="checkbox"> 所有必需参数都有校验，错误信息能定位问题</li>
+<li><input disabled="" type="checkbox"> 依赖的外部命令、环境变量或配置文件已显式检查</li>
+<li><input disabled="" type="checkbox"> 高风险操作支持预览模式或显式确认参数</li>
+<li><input disabled="" type="checkbox"> 输出文件集中写入指定目录，避免污染调用者当前目录</li>
+<li><input disabled="" type="checkbox"> 重复执行的行为已经定义并验证</li>
+<li><input disabled="" type="checkbox"> 成功、参数错误、运行失败使用稳定退出码</li>
+<li><input disabled="" type="checkbox"> README、注释或帮助信息中包含最小运行示例</li>
+<li><input disabled="" type="checkbox"> 接入 CI 前已用小样例跑过一次完整流程</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>临时脚本是否值得整理，关键不在于行数，而在于它是否会再次被使用、是否会影响共享流程、是否需要别人接手。只要答案中有一个是肯定的，就应该至少补齐输入输出、前置检查、失败信息和运行示例。</p>
+<p>把脚本整理成小工具不需要一次完成。先让它可重复运行，再让它可诊断，最后再考虑复用和抽象，这个顺序通常更符合实际维护成本。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/22/daily_post_2026_07_22/" title="把临时脚本整理成可重复的小工具">https://blog.hansong.icu/2026/07/22/daily_post_2026_07_22/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/21/daily_post_2026_07_21/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/embedded.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91-%E5%86%85%E6%A0%B8/">
+                    嵌入式开发/内核
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/21/daily_post_2026_07_21/" class="trm-anima-link">
+                    嵌入式 Linux 内核裁剪与定制
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/21</li>
+                <li>11:26</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>

@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-21 13:12:14"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-22 09:02:10"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（108）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（109）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -360,6 +360,38 @@
     <div class="col-lg-12">
         <!-- timeline -->
         <div class="trm-timeline">
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/07/22/daily_post_2026_07_22/" class="trm-anima-link">
+                                        把临时脚本整理成可重复的小工具
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">07/22</li>
+                                        <li class="trm-accent-color">09:01</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <p>很多团队都会写临时脚本：批量改文件名、导出数据、生成配置、清理日志、检查构建产物。脚本第一次出现时通常只为解决一个具体问题，写得快、跑得通就够了，但它一旦被第二次使用，就已经进入了工程资产的范围。</p>
+<p>本文讨论的不是把脚本做成完整平台，而是如何在成本可控的前提下，让一个临时脚本具备可重复执行、可定位问题、可交接维护的基本能力。结论很简单：先固定输入输出边界，再补齐失败处理和运行说明，最后才考虑抽象和扩展。</p>
+<p>适用场景包括本地开发辅助脚本、CI 中的小型检查任务、一次性迁移后仍可能复用的数据处理脚本。对于只运行一次且已经归档的脚本，不必过度整理；对于会被多人、定期或自动化环境调用的脚本，则应该尽早收敛成稳定工具。</p>
+                            </div>
+                        
+                    
+                </div>
+            </div>
             
             <div class="trm-timeline-item trm-scroll-animation">
                 <div class="trm-timeline-mark-light"></div>
@@ -638,37 +670,6 @@
                                 <p>GitHub 的日榜很适合观察 AI 工具的短期热度，但它不等于长期价值判断。今天如果只看仓库排名，容易把一次性传播、示例合集、提示词包、脚手架项目和真正可落地的工程工具混在一起，最后得到一个很难指导选型的列表。</p>
 <p>本文讨论的场景是：团队想用较低成本跟踪 AI 工具生态，判断哪些仓库值得试用、哪些只适合记录、哪些需要等待成熟。结论是，观察“今天增长最快”时，不应只看 star 增量，而应同时记录用途、可运行性、维护信号、许可证和与现有工作流的集成成本。</p>
 <p>数据抓取时间：2026-07-14 09:47:45（Asia&#x2F;Shanghai）。本次参考 GitHub Trending 今日榜、OSSInsight 的 AI Trending 页面，以及 GitHubVC 的今日 star 增长榜。不同榜单的抓取频率、过滤规则和排序口径不同，本文只把它们作为观察样本，不把单一榜单视为最终排名。</p>
-                            </div>
-                        
-                    
-                </div>
-            </div>
-            
-            <div class="trm-timeline-item trm-scroll-animation">
-                <div class="trm-timeline-mark-light"></div>
-                <div class="trm-timeline-mark"></div>
-                <div class="trm-timeline-content more">
-                    
-                        <div class="trm-card-header">
-                            <div class="trm-left-side">
-                                <h6>
-                                    <a href="/2026/07/14/node_hexo_build_strategy_20260714/" class="trm-anima-link">
-                                        Node 版本变化下的 Hexo 构建策略：别让博客依赖运气发布
-                                    </a>
-                                </h6>
-                                <div class="trm-text-sm trm-accent-color trm-mt-15">
-                                    <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">07/14</li>
-                                        <li class="trm-accent-color">09:22</li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                            <div class="trm-publication trm-mt-15">
-                                <p>静态博客看起来是最轻的工程项目：Markdown 写内容，主题渲染页面，执行一次构建就能发布。但只要它依赖 Node.js、npm、主题包和渲染插件，它就不是一堆“永远可用”的文本，而是一条会随运行时变化而漂移的构建链。</p>
-<p>很多博客维护问题并不来自文章本身，而来自环境变化：本机 Node 版本升级后主题样式编译失败，CI 镜像换代后依赖重新解析，旧插件在新运行时里触发弃用行为。越是低频维护的个人站点，越容易在下一次发布时才发现构建已经不稳定。</p>
                             </div>
                         
                     
