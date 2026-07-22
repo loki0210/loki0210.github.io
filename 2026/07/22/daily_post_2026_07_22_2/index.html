@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="嵌入式设备一旦部署到现场，固件升级就变成了一项高频且高风险的操作。传统的单分区原地升级（in-place upgrade）在写入过程中遭遇断电或异常，设备可能变砖，恢复成本极高。A&#x2F;B 分区方案通过保留两份完整的系统镜像，将升级风险从”写入失败”降级为”切换失败”，配合可靠的回滚机制，能显著提升 OTA 的成功率和设备可用性。本文将围绕 A&#x2F;B 分区的设计思路、落地步骤和常见陷">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式系统 OTA 升级方案设计：A&#x2F;B 分区与回滚机制">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/22/daily_post_2026_07_22_2/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="嵌入式设备一旦部署到现场，固件升级就变成了一项高频且高风险的操作。传统的单分区原地升级（in-place upgrade）在写入过程中遭遇断电或异常，设备可能变砖，恢复成本极高。A&#x2F;B 分区方案通过保留两份完整的系统镜像，将升级风险从”写入失败”降级为”切换失败”，配合可靠的回滚机制，能显著提升 OTA 的成功率和设备可用性。本文将围绕 A&#x2F;B 分区的设计思路、落地步骤和常见陷">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-22T01:03:01.000Z">
+<meta property="article:modified_time" content="2026-07-22T01:03:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="Partition">
+<meta name="twitter:card" content="summary">
+
+
+<title >嵌入式系统 OTA 升级方案设计：A/B 分区与回滚机制</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-22 09:03:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            嵌入式系统 OTA 升级方案设计：A/B 分区与回滚机制
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/22
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:03
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>嵌入式设备一旦部署到现场，固件升级就变成了一项高频且高风险的操作。传统的单分区原地升级（in-place upgrade）在写入过程中遭遇断电或异常，设备可能变砖，恢复成本极高。A&#x2F;B 分区方案通过保留两份完整的系统镜像，将升级风险从”写入失败”降级为”切换失败”，配合可靠的回滚机制，能显著提升 OTA 的成功率和设备可用性。本文将围绕 A&#x2F;B 分区的设计思路、落地步骤和常见陷阱展开讨论。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>OTA（Over-The-Air）升级是嵌入式产品生命周期管理的核心能力。无论是 IoT 网关、工业控制器还是车载终端，固件更新都是修复漏洞、推送功能迭代的必经之路。单分区方案在写入过程中如果发生掉电、存储介质损坏或校验失败，设备将停留在不完整的镜像上，无法正常启动。这类故障在实验室里可控，但在大规模部署场景中几乎必然出现。A&#x2F;B 分区方案的核心目标是：任何时刻设备都持有一份完整可启动的镜像，升级只是在”下一版本镜像”就绪后做一次原子切换。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><ul>
+<li><strong>双分区冗余</strong>：将存储空间划分为 A、B 两个等大的系统分区，各自包含完整的 rootfs 和内核。Bootloader 始终从标记为”活动”的分区启动。</li>
+<li><strong>后台写入</strong>：新固件在当前活动分区运行期间，下载并写入非活动分区，不打断设备正常工作。</li>
+<li><strong>原子切换</strong>：写入完成后，更新 Bootloader 中的活动标记，下次重启即切换到新分区。若新分区启动失败或校验不通过，自动回滚到上一个已知良好的分区。</li>
+<li><strong>状态机管理</strong>：通过一个持久化的升级状态（通常存在 EEPROM 或专用分区）记录”下载中→写入中→待验证→已激活→已确认”等阶段，确保断电后状态可恢复。</li>
+<li><strong>回滚触发条件</strong>：新分区连续 N 次启动失败（看门狗超时）、应用层校验不通过、或人工主动回滚。</li>
+</ul>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><ol>
+<li><p><strong>规划分区表</strong></p>
+<p>在存储介质（eMMC、NAND、SPI Flash）上划分 Bootloader、A 分区、B 分区、数据分区。以 eMMC + U-Boot 为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用 gdisk 或设备树中的分区表定义</span><br><span class="line"># 典型布局（以 4GB eMMC 为例）：</span><br><span class="line">#   Bootloader: 0x0000_0000 - 0x0007_FFFF (512KB)</span><br><span class="line">#   A 分区:     0x0008_0000 - 0x0FFF_FFFF (~1.5GB)</span><br><span class="line">#   B 分区:     0x1000_0000 - 0x1FFF_FFFF (~1.5GB)</span><br><span class="line">#   数据分区:   0x2000_0000 - 0x7FFF_FFFF (~2GB)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>修改 Bootloader 支持 A&#x2F;B 选择</strong></p>
+<p>在 U-Boot 中添加启动选择逻辑，读取升级状态标志：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* U-Boot cmd/bmp.c 或自定义 cmd 中 */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">ab_select_boot_slot</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">uint8_t</span> slot;</span><br><span class="line">    <span class="comment">/* 从 EEPROM 或环境变量读取当前活动槽位 */</span></span><br><span class="line">    env_get_u8(<span class="string">&quot;ab_active_slot&quot;</span>, &amp;slot);</span><br><span class="line">    <span class="keyword">if</span> (slot != <span class="number">0</span> &amp;&amp; slot != <span class="number">1</span>)</span><br><span class="line">        slot = <span class="number">0</span>; <span class="comment">/* 默认 A 槽 */</span></span><br><span class="line">    <span class="keyword">return</span> slot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>实现升级状态机</strong></p>
+<p>定义状态枚举，写入非易失存储：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> &#123;</span></span><br><span class="line">    OTA_STATE_IDLE = <span class="number">0</span>,</span><br><span class="line">    OTA_STATE_DOWNLOADING,</span><br><span class="line">    OTA_STATE_WRITING,</span><br><span class="line">    OTA_STATE_VERIFYING,</span><br><span class="line">    OTA_STATE_BOOT_PENDING,</span><br><span class="line">    OTA_STATE_CONFIRMED,</span><br><span class="line">    OTA_STATE_ROLLBACK</span><br><span class="line">&#125; <span class="type">ota_state_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">ota_set_state</span><span class="params">(<span class="type">ota_state_t</span> state)</span> &#123;</span><br><span class="line">    <span class="comment">/* 写入 EEPROM，带 CRC 校验 */</span></span><br><span class="line">    eeprom_write(OTA_STATE_ADDR, &amp;state, <span class="keyword">sizeof</span>(state));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>后台写入流程</strong></p>
+<p>当前系统检测到新固件可用后，确定非活动分区并逐块写入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 伪代码：写入非活动分区</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_to_inactive</span>(<span class="params">new_fw_path, inactive_partition</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(new_fw_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> fw:</span><br><span class="line">        block = fw.read(BLOCK_SIZE)</span><br><span class="line">        offset = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> block:</span><br><span class="line">            write_block(inactive_partition, offset, block)</span><br><span class="line">            offset += <span class="built_in">len</span>(block)</span><br><span class="line">            block = fw.read(BLOCK_SIZE)</span><br><span class="line">    <span class="comment"># 写入完成，更新状态</span></span><br><span class="line">    ota_set_state(OTA_STATE_VERIFYING)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>实现回滚逻辑</strong></p>
+<p>在 Bootloader 或 init 脚本中检测启动成功条件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment"># /etc/init.d/ota-confirm.sh</span></span><br><span class="line"><span class="comment"># 设备启动后由应用层调用，确认系统正常</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> = <span class="string">&quot;confirm&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    ota_set_state CONFIRMED</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;OTA confirmed, slot is stable.&quot;</span></span><br><span class="line"><span class="keyword">elif</span> [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> = <span class="string">&quot;rollback&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="comment"># 切换活动标记到另一分区</span></span><br><span class="line">    flip_active_slot</span><br><span class="line">    reboot</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>添加看门狗保护</strong></p>
+<p>内核启动后在用户空间喂狗，若应用层未在规定时间内确认，触发重启并切换分区。</p>
+</li>
+</ol>
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><ul>
+<li><strong>分区大小不一致</strong>：A 和 B 分区容量必须严格一致，否则镜像打包和校验逻辑容易出错。部署前用工具校验分区对齐。</li>
+<li><strong>数据分区共享陷阱</strong>：升级后新旧固件对数据分区的格式假设可能不同，务必在数据分区中保存版本兼容性标记，升级脚本需处理前向兼容。</li>
+<li><strong>校验覆盖不全</strong>：只校验 rootfs 不校验内核或设备树，可能导致部分更新后启动异常。校验应覆盖所有被替换的组件。</li>
+<li><strong>Bootloader 自身不升级</strong>：Bootloader 分区通常不纳入 OTA 范围，但 Bootloader 的 bug 会导致整个升级流程失效。需要单独的 Bootloader 升级通道（如 UART DFU）作为兜底。</li>
+<li><strong>写入性能瓶颈</strong>：NAND Flash 的写入速度有限，大镜像后台写入可能持续数十分钟，期间需处理存储磨损均衡和坏块管理。</li>
+<li><strong>时钟漂移与证书过期</strong>：OTA 下载依赖 HTTPS，设备时钟不准会导致 TLS 握手失败。首次启动或长时间离线后需同步时间。</li>
+</ul>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> 分区表已定义，A&#x2F;B 分区大小一致且对齐</li>
+<li><input disabled="" type="checkbox"> Bootloader 能正确读取并切换活动槽位</li>
+<li><input disabled="" type="checkbox"> 升级状态机覆盖所有阶段，断电后状态可恢复</li>
+<li><input disabled="" type="checkbox"> 校验逻辑覆盖 rootfs、内核、设备树等全部组件</li>
+<li><input disabled="" type="checkbox"> 回滚条件明确（启动失败次数阈值、应用层校验）</li>
+<li><input disabled="" type="checkbox"> 看门狗保护已配置，超时后触发重启与回滚</li>
+<li><input disabled="" type="checkbox"> 数据分区版本兼容性方案已确认</li>
+<li><input disabled="" type="checkbox"> Bootloader 自身升级通道已验证</li>
+<li><input disabled="" type="checkbox"> 升级包签名与验证机制已集成</li>
+<li><input disabled="" type="checkbox"> 已在目标硬件上完成断电、异常断网等异常场景测试</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>A&#x2F;B 分区方案的本质是用存储空间换取升级安全性。它不消除所有故障，但将故障的影响从”设备变砖”缩小为”自动回滚到旧版本”，这对大规模部署的嵌入式产品而言是值得的取舍。设计时需要关注状态机的完整性、校验覆盖的全面性、以及 Bootloader 兜底通道的可用性。实际落地建议先在少量设备上跑通完整生命周期，再逐步扩大 OTA 覆盖范围。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/22/daily_post_2026_07_22_2/" title="嵌入式系统 OTA 升级方案设计：A/B 分区与回滚机制">https://blog.hansong.icu/2026/07/22/daily_post_2026_07_22_2/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/22/daily_post_2026_07_22/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/default.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/22/daily_post_2026_07_22/" class="trm-anima-link">
+                    把临时脚本整理成可重复的小工具
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/22</li>
+                <li>09:01</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>

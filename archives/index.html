@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-22 09:02:10"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-22 09:03:44"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（109）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（110）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -360,6 +360,36 @@
     <div class="col-lg-12">
         <!-- timeline -->
         <div class="trm-timeline">
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/07/22/daily_post_2026_07_22_2/" class="trm-anima-link">
+                                        嵌入式系统 OTA 升级方案设计：A/B 分区与回滚机制
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">07/22</li>
+                                        <li class="trm-accent-color">09:03</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <p>嵌入式设备一旦部署到现场，固件升级就变成了一项高频且高风险的操作。传统的单分区原地升级（in-place upgrade）在写入过程中遭遇断电或异常，设备可能变砖，恢复成本极高。A&#x2F;B 分区方案通过保留两份完整的系统镜像，将升级风险从”写入失败”降级为”切换失败”，配合可靠的回滚机制，能显著提升 OTA 的成功率和设备可用性。本文将围绕 A&#x2F;B 分区的设计思路、落地步骤和常见陷阱展开讨论。</p>
+                            </div>
+                        
+                    
+                </div>
+            </div>
             
             <div class="trm-timeline-item trm-scroll-animation">
                 <div class="trm-timeline-mark-light"></div>
@@ -638,38 +668,6 @@
                                 <p>配置变更看起来通常比代码发布轻量：改一个开关、调整一个阈值、替换一个地址，提交后等待服务重新加载即可。但在很多小型服务中，故障并不来自复杂算法，而是来自配置项含义不清、默认值不一致、变更缺少验证和回滚入口。</p>
 <p>本文讨论的是团队规模较小、服务数量有限、还没有完整配置平台的场景。结论是：配置变更也应当按工程变更处理，至少要具备 schema 约束、启动前校验、灰度入口、审计记录和明确回滚步骤。</p>
 <p>这些防线不需要一次性建设成大型平台。更实际的做法，是先把最容易出错的配置纳入结构化管理，让配置从“文本约定”变成“可验证输入”。</p>
-                            </div>
-                        
-                    
-                </div>
-            </div>
-            
-            <div class="trm-timeline-item trm-scroll-animation">
-                <div class="trm-timeline-mark-light"></div>
-                <div class="trm-timeline-mark"></div>
-                <div class="trm-timeline-content more">
-                    
-                        <div class="trm-card-header">
-                            <div class="trm-left-side">
-                                <h6>
-                                    <a href="/2026/07/14/daily_post_2026_07_14/" class="trm-anima-link">
-                                        今天 GitHub 增长最快 AI 工具的观察方法
-                                    </a>
-                                </h6>
-                                <div class="trm-text-sm trm-accent-color trm-mt-15">
-                                    <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">07/14</li>
-                                        <li class="trm-accent-color">09:47</li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                            <div class="trm-publication trm-mt-15">
-                                <p>GitHub 的日榜很适合观察 AI 工具的短期热度，但它不等于长期价值判断。今天如果只看仓库排名，容易把一次性传播、示例合集、提示词包、脚手架项目和真正可落地的工程工具混在一起，最后得到一个很难指导选型的列表。</p>
-<p>本文讨论的场景是：团队想用较低成本跟踪 AI 工具生态，判断哪些仓库值得试用、哪些只适合记录、哪些需要等待成熟。结论是，观察“今天增长最快”时，不应只看 star 增量，而应同时记录用途、可运行性、维护信号、许可证和与现有工作流的集成成本。</p>
-<p>数据抓取时间：2026-07-14 09:47:45（Asia&#x2F;Shanghai）。本次参考 GitHub Trending 今日榜、OSSInsight 的 AI Trending 页面，以及 GitHubVC 的今日 star 增长榜。不同榜单的抓取频率、过滤规则和排序口径不同，本文只把它们作为观察样本，不把单一榜单视为最终排名。</p>
                             </div>
                         
                     
