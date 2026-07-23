@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-23 09:03:39"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-23 18:42:38"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（111）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（112）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -360,6 +360,38 @@
     <div class="col-lg-12">
         <!-- timeline -->
         <div class="trm-timeline">
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/07/15/daily_post_2026_07_15_2/" class="trm-anima-link">
+                                        GitHub 今日 Star 增长最快的 10 个项目观察
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">07/15</li>
+                                        <li class="trm-accent-color">11:37</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <p>每天看 GitHub 热门项目，直接按总 Star 数判断并不可靠。总量高只能说明历史积累，不能说明项目今天是否正在被更多开发者关注；要判断短期热度，更适合看当日新增 Star。</p>
+<p>本文基于 GitHub Trending 今日榜单做一次工程化整理。抓取时间为 2026-07-15 11:38:08 CST，数据口径是 GitHub Trending <code>since=daily</code> 页面中展示的 <code>stars today</code> 字段，并按该字段重新降序排列。</p>
+<p>结论是：今天增长最快的项目集中在视频编辑、AI 编程辅助、AI Agent、设计工作流和 Windows 工具几个方向。榜单适合用于技术雷达、选型初筛和开源趋势观察，但不应直接等同于生产可用性判断。</p>
+                            </div>
+                        
+                    
+                </div>
+            </div>
             
             <div class="trm-timeline-item trm-scroll-animation">
                 <div class="trm-timeline-mark-light"></div>
@@ -637,37 +669,6 @@
                             <div class="trm-publication trm-mt-15">
                                 <p>AI 工具真正提升效率的地方，往往不是第一次回答，而是它能否接住一段正在推进的工程上下文。Android 构建、Linux 服务排障、脚本迁移、依赖升级这些工作，都不是孤立的一问一答。它们会经历观察、假设、验证、修改、回滚和复盘。如果上下文交接混乱，AI 很容易给出看似合理但实际脱离现场的建议。</p>
 <p>很多团队把 AI 用得不稳定，并不是模型不会写代码，而是人没有把工程现场组织成可交接的状态。一次高质量交接，应该让后来者知道当前目标、已经确认的事实、不能碰的边界，以及下一步最小验证动作。这个后来者可以是同事，也可以是下一轮 AI 对话。</p>
-                            </div>
-                        
-                    
-                </div>
-            </div>
-            
-            <div class="trm-timeline-item trm-scroll-animation">
-                <div class="trm-timeline-mark-light"></div>
-                <div class="trm-timeline-mark"></div>
-                <div class="trm-timeline-content more">
-                    
-                        <div class="trm-card-header">
-                            <div class="trm-left-side">
-                                <h6>
-                                    <a href="/2026/07/08/ai_terminal_triage_workflow_20260708/" class="trm-anima-link">
-                                        把 AI 工具接进终端排障：一套可复用的工程工作流
-                                    </a>
-                                </h6>
-                                <div class="trm-text-sm trm-accent-color trm-mt-15">
-                                    <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">07/08</li>
-                                        <li class="trm-accent-color">09:01</li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                            <div class="trm-publication trm-mt-15">
-                                <p>很多人使用 AI 工具时，习惯把它当成一个更会说话的搜索框：复制报错、等待解释、再去终端里尝试命令。这个方式能解决一部分问题，但在真实工程里经常不够稳定。日志会截断，环境会变化，命令有副作用，Android 和 Linux 的问题还常常夹在权限、进程、文件系统、网络和构建缓存之间。</p>
-<p>更高效的做法，是把 AI 放进一套固定的排障工作流里。它不直接替你判断结论，而是帮助整理现场、收敛假设、设计下一步验证。人仍然负责执行命令、确认边界和决定是否修改系统状态。</p>
                             </div>
                         
                     
