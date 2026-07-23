@@ -55,7 +55,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-23 18:42:38"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":false,"isHome":false,"postUpdate":"2026-07-23 18:53:20"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -338,7 +338,7 @@
         <div class="trm-card">
             <div style="padding: 0 20px;">
                 
-                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（112）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
+                    <ul class="trm-tag-list"><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">（113）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">（51）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">（13）</span></li><li class="trm-tag-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">（19）</span></li></ul>
                 
             </div>
         </div>
@@ -360,6 +360,38 @@
     <div class="col-lg-12">
         <!-- timeline -->
         <div class="trm-timeline">
+            
+            <div class="trm-timeline-item trm-scroll-animation">
+                <div class="trm-timeline-mark-light"></div>
+                <div class="trm-timeline-mark"></div>
+                <div class="trm-timeline-content more">
+                    
+                        <div class="trm-card-header">
+                            <div class="trm-left-side">
+                                <h6>
+                                    <a href="/2026/07/23/daily_post_2026_07_23_2/" class="trm-anima-link">
+                                        从零写一个可维护的 Cloudflare Worker
+                                    </a>
+                                </h6>
+                                <div class="trm-text-sm trm-accent-color trm-mt-15">
+                                    <ul class="trm-card-data trm-label ">
+                                        <li class="trm-accent-color">07/23</li>
+                                        <li class="trm-accent-color">18:51</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="trm-publication trm-mt-15">
+                                <p>Cloudflare Worker 适合承载轻量 API、边缘代理、Webhook 入口、静态站点的动态补充逻辑，以及需要靠近用户执行的请求处理。它不是传统常驻进程，也不应该被当成一台小型服务器来写，核心模型是：每次请求进入一个 <code>fetch</code> 处理函数，代码在受限运行时中完成判断、转发、读写绑定资源并返回响应。</p>
+<p>写 Worker 的重点不在于把所有逻辑塞进一个文件，而在于先划清请求入口、路由、配置、外部资源和错误响应的边界。只要这些边界稳定，后续从单接口扩展到多接口，从简单代理扩展到鉴权、缓存、KV 或 D1 存储，代码仍然可以保持清楚。</p>
+<p>本文结论是：先写一个明确的 <code>fetch</code> 入口，再按路径拆分处理函数；环境差异通过绑定和变量注入，敏感信息不写进源码；上线前用本地请求、预览环境和日志把行为确认完，再发布到生产路由。</p>
+                            </div>
+                        
+                    
+                </div>
+            </div>
             
             <div class="trm-timeline-item trm-scroll-animation">
                 <div class="trm-timeline-mark-light"></div>
@@ -636,37 +668,6 @@
                                 <p>daily 热榜看起来只是把多个平台的热门条目放到一个页面里，实际落地时会同时遇到数据源不稳定、榜单更新频率不同、字段结构不一致、缓存过期策略难统一等问题。尤其是微博热搜、百度热搜、知乎热榜、GitHub Trending 这类来源，用户关心的是“当前是否可信”，而不是系统内部是否成功请求过某个接口。</p>
 <p>本文讨论的是面向个人站点、内部看板或内容运营工具的 daily 热榜聚合方案。结论是：不要把热榜当成一次性爬虫任务，而要把它设计成“多源采集、统一归一、短缓存、可降级、可追踪”的数据产品；榜单排名只适合短期展示，长期沉淀应保存快照和来源信息。</p>
 <p>实时信息核验时间：2026-07-17 15:03:33 CST。检索到的可参考实现和数据入口包括 DailyHotApi（支持 JSON&#x2F;RSS、可部署的热门数据聚合 API）、今日热榜官方 API 文档、今日热榜聚合站、微博热搜页等；这些来源共同说明热榜类数据覆盖多平台且更新频繁，工程实现需要把时效、缓存和来源标识作为一等需求处理。</p>
-                            </div>
-                        
-                    
-                </div>
-            </div>
-            
-            <div class="trm-timeline-item trm-scroll-animation">
-                <div class="trm-timeline-mark-light"></div>
-                <div class="trm-timeline-mark"></div>
-                <div class="trm-timeline-content more">
-                    
-                        <div class="trm-card-header">
-                            <div class="trm-left-side">
-                                <h6>
-                                    <a href="/2026/07/16/daily_post_2026_07_16/" class="trm-anima-link">
-                                        把一次性脚本整理成可复跑的工程步骤
-                                    </a>
-                                </h6>
-                                <div class="trm-text-sm trm-accent-color trm-mt-15">
-                                    <ul class="trm-card-data trm-label ">
-                                        <li class="trm-accent-color">07/16</li>
-                                        <li class="trm-accent-color">22:20</li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                            <div class="trm-publication trm-mt-15">
-                                <p>很多团队都会积累一批临时脚本：导数据、补配置、批量改文件、清理缓存、生成报表。它们通常从一次问题处理开始，能跑通，但没有边界、没有检查、没有回滚提示。问题不在于脚本短，而在于它已经承担了生产操作，却仍按临时命令的方式维护。</p>
-<p>本文讨论的不是如何把所有脚本改造成复杂平台，而是如何把一个已经有价值的脚本整理成可复跑、可审查、可交接的工程步骤。结论是：先明确输入输出和影响范围，再补齐预检查、幂等处理、日志记录和失败退出，让脚本从“某个人会用”变成“按说明就能稳定执行”。</p>
                             </div>
                         
                     
