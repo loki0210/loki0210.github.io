@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="嵌入式 Linux 系统中，多个进程协同完成任务是常态：传感器采集进程把数据交给显示进程，控制逻辑通过守护进程下发指令，日志服务从各模块收集状态。进程间通信（IPC）的选择直接决定了系统延迟、可靠性和可维护性。本文聚焦三种在嵌入式场景中高频使用的 IPC 机制——D-Bus、共享内存和 Unix Socket，从适用场景、性能特征和工程取舍三个维度给出判断框架。 实践中没有万能方案。D-Bus 适">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式 Linux 进程间通信：D-Bus、共享内存与 Unix Socket">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/23/daily_post_2026_07_23/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="嵌入式 Linux 系统中，多个进程协同完成任务是常态：传感器采集进程把数据交给显示进程，控制逻辑通过守护进程下发指令，日志服务从各模块收集状态。进程间通信（IPC）的选择直接决定了系统延迟、可靠性和可维护性。本文聚焦三种在嵌入式场景中高频使用的 IPC 机制——D-Bus、共享内存和 Unix Socket，从适用场景、性能特征和工程取舍三个维度给出判断框架。 实践中没有万能方案。D-Bus 适">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-23T01:03:01.000Z">
+<meta property="article:modified_time" content="2026-07-23T01:03:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="Communication">
+<meta name="twitter:card" content="summary">
+
+
+<title >嵌入式 Linux 进程间通信：D-Bus、共享内存与 Unix Socket</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-23 09:03:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            嵌入式 Linux 进程间通信：D-Bus、共享内存与 Unix Socket
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/23
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:03
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>嵌入式 Linux 系统中，多个进程协同完成任务是常态：传感器采集进程把数据交给显示进程，控制逻辑通过守护进程下发指令，日志服务从各模块收集状态。进程间通信（IPC）的选择直接决定了系统延迟、可靠性和可维护性。本文聚焦三种在嵌入式场景中高频使用的 IPC 机制——D-Bus、共享内存和 Unix Socket，从适用场景、性能特征和工程取舍三个维度给出判断框架。</p>
+<p>实践中没有万能方案。D-Bus 适合结构化的服务发现与消息路由，共享内存适合高吞吐低延迟的原始数据交换，Unix Socket 适合可靠的流式或数据报通信。选型时需要同时考虑数据量级、实时性要求、安全隔离粒度和团队维护成本。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>嵌入式 Linux 与桌面 Linux 的 IPC 需求存在本质差异。资源受限环境下，内存和 CPU 余量有限，不能像桌面系统那样随意引入重型中间件；同时，实时性要求使得某些场景下微秒级的延迟差异就足以影响系统行为。此外，嵌入式系统的 IPC 还必须考虑进程崩溃后的恢复、权限隔离以及跨平台移植性。</p>
+<p>本文讨论范围限定在用户空间进程间通信，不涉及内核驱动层面的 ioctl、netlink 或共享内存的内核态用法。讨论的三种机制分别代表三种典型模式：D-Bus 是消息总线模式，共享内存是零拷贝模式，Unix Socket 是传统 socket 模式的本地化变体。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><ul>
+<li><strong>D-Bus 的本质是服务注册与消息路由</strong>。它提供名称服务、接口定义和类型安全的消息序列化，适合需要服务发现和方法调用的场景，如系统服务管理、配置下发。代价是序列化开销和守护进程（dbus-daemon）的额外资源占用。</li>
+<li><strong>共享内存是延迟最低的 IPC 方式</strong>。通过 <code>shmget</code>&#x2F;<code>mmap</code> 将同一块物理内存映射到多个进程地址空间，数据传递零拷贝。但它不提供同步机制，需要配合信号量、futex 或无锁队列使用，工程复杂度较高。</li>
+<li><strong>Unix Socket 兼顾灵活性和可靠性</strong>。支持 SOCK_STREAM（有序可靠）和 SOCK_DGRAM（无序无连接），既可传递结构化消息，也可直接转发原始字节流。它是嵌入式系统中最通用的 IPC 骨干。</li>
+<li><strong>选型的关键判据是数据特征和耦合度</strong>。高频小数据包、低延迟要求→共享内存；结构化服务调用、需要接口版本管理→D-Bus；中等频率、需要可靠传输和简单实现→Unix Socket。</li>
+</ul>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><h3 id="1-共享内存方案示例"><a href="#1-共享内存方案示例" class="headerlink" title="1. 共享内存方案示例"></a>1. 共享内存方案示例</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sem.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SHM_KEY 0x1234</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SEM_KEY 0x5678</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SHM_SIZE 4096</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sensor_data</span> &#123;</span></span><br><span class="line">    <span class="type">uint32_t</span> timestamp;</span><br><span class="line">    <span class="type">float</span>    temperature;</span><br><span class="line">    <span class="type">float</span>    humidity;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">int</span> shmid = shmget(SHM_KEY, SHM_SIZE, IPC_CREAT | <span class="number">0666</span>);</span><br><span class="line">    <span class="keyword">if</span> (shmid &lt; <span class="number">0</span>) &#123; perror(<span class="string">&quot;shmget&quot;</span>); <span class="keyword">return</span> <span class="number">1</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sensor_data</span> *<span class="title">shared</span> =</span> shmat(shmid, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (shared == (<span class="type">void</span> *)<span class="number">-1</span>) &#123; perror(<span class="string">&quot;shmat&quot;</span>); <span class="keyword">return</span> <span class="number">1</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> semid = semget(SEM_KEY, <span class="number">1</span>, IPC_CREAT | <span class="number">0666</span>);</span><br><span class="line">    semctl(semid, <span class="number">0</span>, SETVAL, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 生产者写入数据 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">op</span> =</span> &#123;<span class="number">0</span>, <span class="number">-1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    semop(semid, &amp;op, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    shared-&gt;timestamp = <span class="number">1721686981</span>;</span><br><span class="line">    shared-&gt;temperature = <span class="number">25.3f</span>;</span><br><span class="line">    shared-&gt;humidity = <span class="number">60.1f</span>;</span><br><span class="line"></span><br><span class="line">    op.sem_op = <span class="number">1</span>;</span><br><span class="line">    semop(semid, &amp;op, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    shmdt(shared);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Unix-Socket-方案示例"><a href="#2-Unix-Socket-方案示例" class="headerlink" title="2. Unix Socket 方案示例"></a>2. Unix Socket 方案示例</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/un.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SOCK_PATH <span class="string">&quot;/tmp/embedded_ipc.sock&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">int</span> fd = socket(AF_UNIX, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123; perror(<span class="string">&quot;socket&quot;</span>); <span class="keyword">return</span> <span class="number">1</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_un</span> <span class="title">addr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(addr));</span><br><span class="line">    addr.sun_family = AF_UNIX;</span><br><span class="line">    <span class="built_in">strncpy</span>(addr.sun_path, SOCK_PATH, <span class="keyword">sizeof</span>(addr.sun_path) - <span class="number">1</span>);</span><br><span class="line">    unlink(SOCK_PATH);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(fd, (<span class="keyword">struct</span> sockaddr *)&amp;addr, <span class="keyword">sizeof</span>(addr)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        perror(<span class="string">&quot;bind&quot;</span>); <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    listen(fd, <span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> client = accept(fd, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (client &lt; <span class="number">0</span>) &#123; perror(<span class="string">&quot;accept&quot;</span>); <span class="keyword">return</span> <span class="number">1</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *msg = <span class="string">&quot;temp=25.3,humidity=60.1&quot;</span>;</span><br><span class="line">    write(client, msg, <span class="built_in">strlen</span>(msg));</span><br><span class="line"></span><br><span class="line">    close(client);</span><br><span class="line">    close(fd);</span><br><span class="line">    unlink(SOCK_PATH);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-D-Bus-方案要点"><a href="#3-D-Bus-方案要点" class="headerlink" title="3. D-Bus 方案要点"></a>3. D-Bus 方案要点</h3><p>使用 D-Bus 需要定义 XML 接口描述文件，通过 <code>dbus-binding-tool</code> 或手动编写适配代码。嵌入式场景推荐使用轻量级的 <code>dbus-broker</code> 替代传统的 <code>dbus-daemon</code>，可显著降低内存占用。关键配置步骤：</p>
+<ol>
+<li>编写接口 XML，定义方法、信号和属性。</li>
+<li>实现服务端，调用 <code>dbus_connection_register_object_path</code> 注册处理函数。</li>
+<li>客户端通过 <code>dbus_connection_call_with_reply</code> 发起方法调用。</li>
+<li>在 <code>/etc/dbus-1/system.d/</code> 中配置策略文件控制访问权限。</li>
+</ol>
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><ul>
+<li><strong>共享内存的竞态条件</strong>。不加同步机制直接读写共享内存，生产者和消费者会读到中间态数据。务必配合信号量或使用原子操作的无锁队列。</li>
+<li><strong>Unix Socket 的路径残留</strong>。进程异常退出后 socket 文件不会自动删除，重启时 <code>bind</code> 会失败。应在启动时调用 <code>unlink</code> 清理，或使用抽象命名空间（以 <code>\0</code> 开头的路径）避免文件系统残留。</li>
+<li><strong>D-Bus 的线程模型陷阱</strong>。<code>dbus_connection</code> 默认不是线程安全的，多线程访问必须手动加锁或为每个线程创建独立连接。嵌入式场景中单线程事件循环更可靠。</li>
+<li><strong>共享内存的权限管理</strong>。<code>shmget</code> 创建的共享内存段在进程退出后仍然存在，需要显式 <code>shmctl(shmid, IPC_RMID, NULL)</code> 删除，否则会导致资源泄漏。长期运行的嵌入式系统中这个问题尤其突出。</li>
+<li><strong>Unix Socket 缓冲区大小</strong>。默认的 <code>SO_RCVBUF</code> 和 <code>SO_SNDBUF</code> 在高吞吐场景下可能不足，需通过 <code>setsockopt</code> 调整。但内核会将用户设置值翻倍，需注意实际生效值。</li>
+</ul>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> 已明确 IPC 的数据量级和实时性要求</li>
+<li><input disabled="" type="checkbox"> 共享内存方案已添加信号量或无锁同步机制</li>
+<li><input disabled="" type="checkbox"> Unix Socket 启动时已处理旧 socket 文件残留</li>
+<li><input disabled="" type="checkbox"> D-Bus 策略文件已配置最小必要权限</li>
+<li><input disabled="" type="checkbox"> 共享内存段在进程退出时已显式删除</li>
+<li><input disabled="" type="checkbox"> 已测试进程异常退出后的恢复路径</li>
+<li><input disabled="" type="checkbox"> 已评估 IPC 机制对系统内存的总开销</li>
+<li><input disabled="" type="checkbox"> 跨平台移植性已验证（如涉及 ARM&#x2F;x86 差异）</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>D-Bus、共享内存和 Unix Socket 在嵌入式 Linux 中各有明确的适用边界。选型时应回到具体的数据特征、实时性约束和维护成本上做判断，而非追求某种机制的”最优”。工程实践中，同一个系统往往需要混合使用多种 IPC：用共享内存处理高频传感器数据流，用 Unix Socket 承载控制指令，用 D-Bus 管理系统级服务。把每种机制用在它最擅长的位置，是嵌入式 IPC 设计的基本原则。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/23/daily_post_2026_07_23/" title="嵌入式 Linux 进程间通信：D-Bus、共享内存与 Unix Socket">https://blog.hansong.icu/2026/07/23/daily_post_2026_07_23/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/22/daily_post_2026_07_22_2/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/embedded.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91-%E5%AD%98%E5%82%A8/">
+                    嵌入式开发/存储
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/22/daily_post_2026_07_22_2/" class="trm-anima-link">
+                    嵌入式系统 OTA 升级方案设计：A/B 分区与回滚机制
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/22</li>
+                <li>09:03</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="1. 共享内存方案示例"><a rel="nofollow" class="trm-toc-link" href="#1-共享内存方案示例"><span class="trm-toc-number">3.1.</span> <span class="trm-toc-text">1. 共享内存方案示例</span></a></li><li class="trm-toc-item trm-toc-level-3" title="2. Unix Socket 方案示例"><a rel="nofollow" class="trm-toc-link" href="#2-Unix-Socket-方案示例"><span class="trm-toc-number">3.2.</span> <span class="trm-toc-text">2. Unix Socket 方案示例</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3. D-Bus 方案要点"><a rel="nofollow" class="trm-toc-link" href="#3-D-Bus-方案要点"><span class="trm-toc-number">3.3.</span> <span class="trm-toc-text">3. D-Bus 方案要点</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
