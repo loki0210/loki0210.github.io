@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="嵌入式设备的功耗直接决定产品续航、散热设计和部署成本。在电池供电的 IoT 节点、工业网关、车载 ECU 等场景中，功耗控制甚至优先于峰值性能。本文聚焦三个核心手段——CPU Idle 管理、DVFS 动态调频和外设低功耗控制——梳理其原理、配置方法和常见陷阱，帮助开发者在不牺牲系统响应性的前提下将平均功耗压到最低。 实践中这三个维度往往需要协同调优：Idle 策略决定 CPU 何时进入低功耗状态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式系统功耗优化：CPU Idle、DVFS 与外设低功耗管理">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/24/daily_post_2026_07_24_2/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="嵌入式设备的功耗直接决定产品续航、散热设计和部署成本。在电池供电的 IoT 节点、工业网关、车载 ECU 等场景中，功耗控制甚至优先于峰值性能。本文聚焦三个核心手段——CPU Idle 管理、DVFS 动态调频和外设低功耗控制——梳理其原理、配置方法和常见陷阱，帮助开发者在不牺牲系统响应性的前提下将平均功耗压到最低。 实践中这三个维度往往需要协同调优：Idle 策略决定 CPU 何时进入低功耗状态">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-24T01:03:01.000Z">
+<meta property="article:modified_time" content="2026-07-24T01:03:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="PowerManagement">
+<meta name="twitter:card" content="summary">
+
+
+<title >嵌入式系统功耗优化：CPU Idle、DVFS 与外设低功耗管理</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-24 09:03:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            嵌入式系统功耗优化：CPU Idle、DVFS 与外设低功耗管理
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/24
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:03
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>嵌入式设备的功耗直接决定产品续航、散热设计和部署成本。在电池供电的 IoT 节点、工业网关、车载 ECU 等场景中，功耗控制甚至优先于峰值性能。本文聚焦三个核心手段——CPU Idle 管理、DVFS 动态调频和外设低功耗控制——梳理其原理、配置方法和常见陷阱，帮助开发者在不牺牲系统响应性的前提下将平均功耗压到最低。</p>
+<p>实践中这三个维度往往需要协同调优：Idle 策略决定 CPU 何时进入低功耗状态，DVFS 决定运行时的频率-电压档位，外设管理则覆盖 DMA、GPIO、时钟门控等周边模块。单独优化任何一项都难以获得最佳效果。</p>
+<p>以下内容基于 Linux 内核电源管理框架，兼顾 RTOS 和裸机 MCU 场景的差异。结论先行：合理的功耗优化需要系统级视角，从硬件能力、内核策略到应用层行为逐层审视。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>功耗优化是嵌入式系统设计中的永恒话题。随着 ARM Cortex-A&#x2F;M&#x2F;R 系列芯片的普及，硬件已经提供了丰富的低功耗状态，但软件层面的配置不当往往让这些能力形同虚设。很多开发者对功耗问题的认知停留在”关闭不用的模块”，忽略了 Idle 调度、频率调节和外设状态机之间的联动关系。</p>
+<p>本文讨论范围限定在 Linux 嵌入式平台（以 ARM 架构为主），同时对比 RTOS&#x2F;MCU 场景下的差异。不涉及模拟电路级的功耗分析（如电源树设计、LDO 选型），也不讨论应用层算法优化（如减少计算量、降低采样率）。</p>
+<p>核心目标是建立一套可操作的功耗优化流程：从度量到定位，从配置到验证，形成闭环。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><p><strong>CPU Idle 管理：</strong> 利用 <code>cpuidle</code> 框架在 CPU 无任务时选择合适的低功耗状态（C-state）。核心权衡是唤醒延迟与功耗节省——浅睡眠唤醒快但省电少，深睡眠反之。需要根据系统对中断响应时间的容忍度来选择默认策略。</p>
+<p><strong>DVFS 动态调频：</strong> <code>cpufreq</code> 框架根据负载动态调整 CPU 频率和电压。核心思路是在满足性能需求的前提下尽量降低频率档位。<code>schedutil</code> 调度器直接绑定调度器负载，比 <code>ondemand</code>&#x2F;<code>conservative</code> 更适合交互式场景。</p>
+<p><strong>外设低功耗管理：</strong> 通过 <code>runtime PM</code>、<code>system suspend</code> 和时钟门控（clock gating）控制外设功耗。关键在于区分外设的使用模式——持续活动、周期性活动、按需激活——分别采用不同的电源策略。</p>
+<p><strong>系统级协同：</strong> 单一手段的优化空间有限。Idle 策略需要与 DVFS 配合（深度 Idle 状态下 DVFS 切换失去意义），外设挂起需要与系统挂起流程协调（部分外设挂起后无法作为唤醒源）。</p>
+<p><strong>硬件依赖性：</strong> 不同 SoC 的低功耗状态定义差异很大。Cortex-A 系列的 <code>WFI</code>&#x2F;<code>WFE</code>、Cortex-M 的 <code>Sleep</code>&#x2F;<code>Deep Sleep</code>、以及厂商私有的 power domain 划分，都直接影响软件可用的优化手段。</p>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><p><strong>1. 度量当前功耗基线</strong></p>
+<p>在优化前必须建立可量化的基线。使用硬件功耗分析仪（如 Power Monitor、Monsoon）采集各场景下的电流波形，区分 idle、active、suspend 三个阶段的功耗值。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前 CPU 频率和 governor</span></span><br><span class="line"><span class="built_in">cat</span> /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line"><span class="built_in">cat</span> /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 cpuidle 可用状态</span></span><br><span class="line"><span class="built_in">cat</span> /sys/devices/system/cpu/cpu0/cpuidle/state*/name</span><br><span class="line"><span class="built_in">cat</span> /sys/devices/system/cpu/cpu0/cpuidle/state*/usage</span><br><span class="line"><span class="built_in">cat</span> /sys/devices/system/cpu/cpu0/cpuidle/state*/time</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 配置 cpuidle 策略</strong></p>
+<p>通过设备树或内核配置调整 Idle 簇的默认行为。对于延迟敏感的场景，限制可用的 C-state 深度；对于功耗敏感的场景，允许进入更深的睡眠状态。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 设备树中配置 idle 状态 */</span></span><br><span class="line"><span class="title class_">cpu@0</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">cpu-idle-states</span> <span class="operator">=</span> <span class="params">&lt;<span class="variable">&amp;</span>CPUIDLE_STATE_WFI</span></span><br><span class="line"><span class="params">                       <span class="variable">&amp;</span>CPUIDLE_STATE_CLOCK_STOP</span></span><br><span class="line"><span class="params">                       <span class="variable">&amp;</span>CPUIDLE_STATE_POWER_DOWN&gt;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">CPUIDLE_STATE_POWER_DOWN:</span> <span class="title class_">power-down</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;arm,idle-state&quot;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">entry-latency-us</span> <span class="operator">=</span> <span class="params">&lt;<span class="number">200</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">exit-latency-us</span> <span class="operator">=</span> <span class="params">&lt;<span class="number">300</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">min-residency-us</span> <span class="operator">=</span> <span class="params">&lt;<span class="number">1000</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">arm,psci-suspend-param</span> <span class="operator">=</span> <span class="params">&lt;<span class="number">0x00000008</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 调整 cpufreq governor</strong></p>
+<p>根据场景选择合适的调频策略。交互式系统推荐 <code>schedutil</code>，后台批处理可使用 <code>powersave</code>，需要精细控制的场景可考虑用户态 governor。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到 schedutil governor</span></span><br><span class="line"><span class="built_in">echo</span> schedutil &gt; /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置频率范围</span></span><br><span class="line"><span class="built_in">echo</span> 200000 &gt; /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq</span><br><span class="line"><span class="built_in">echo</span> 1200000 &gt; /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看频率切换统计</span></span><br><span class="line"><span class="built_in">cat</span> /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state</span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 启用外设 Runtime PM</strong></p>
+<p>为需要动态管理的外设启用 runtime power management，由内核自动在设备空闲时挂起、使用时恢复。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 驱动中启用 runtime PM */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">my_probe</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span><br><span class="line">&#123;</span><br><span class="line">    pm_runtime_enable(&amp;pdev-&gt;dev);</span><br><span class="line">    pm_runtime_set_autosuspend_delay(&amp;pdev-&gt;dev, <span class="number">50</span>); <span class="comment">/* 50ms 延迟后挂起 */</span></span><br><span class="line">    pm_runtime_use_autosuspend(&amp;pdev-&gt;dev);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 在需要操作硬件前获取设备 */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">my_transfer</span><span class="params">(<span class="keyword">struct</span> my_data *data)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> ret = pm_runtime_get_sync(data-&gt;dev);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    <span class="comment">/* 执行硬件操作 */</span></span><br><span class="line">    pm_runtime_put_autosuspend(data-&gt;dev);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5. 配置系统挂起流程</strong></p>
+<p>配置系统进入 suspend&#x2F;hibernate 时各子系统的挂起顺序和深度，确保外设状态正确保存和恢复。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可用的挂起状态</span></span><br><span class="line"><span class="built_in">cat</span> /sys/power/state</span><br><span class="line"></span><br><span class="line"><span class="comment"># 触发挂起测试</span></span><br><span class="line"><span class="built_in">echo</span> freeze &gt; /sys/power/state</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看挂起统计</span></span><br><span class="line"><span class="built_in">cat</span> /sys/power/pm_debug_messages</span><br></pre></td></tr></table></figure>
+
+<p><strong>6. 验证优化效果</strong></p>
+<p>优化后必须重新度量功耗，对比基线数据确认改善幅度，同时验证系统功能和响应延迟未受到负面影响。</p>
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><p><strong>误判空闲状态：</strong> 系统报告 idle 但 CPU 实际处于 polling 或频繁短唤醒状态，导致无法进入深度 C-state。常见原因包括高频率定时器（<code>hrtimer</code>）、网络轮询（<code>NAPI</code> busy polling）和频繁的 I&#x2F;O 中断。</p>
+<p><strong>DVFS 切换延迟：</strong> 频率切换本身需要时间（通常几十微秒），在极短的时间窗口内频繁切换反而增加功耗。<code>schedutil</code> 的 <code>rate_limit_us</code> 参数需要根据实际场景调整。</p>
+<p><strong>外设挂起顺序错误：</strong> 部分外设之间存在依赖关系（如 I2C 主控与挂在其上的传感器），挂起顺序不当会导致总线状态异常或数据丢失。需要在设备树中正确声明 <code>pm-domain</code> 依赖。</p>
+<p><strong>唤醒源遗漏：</strong> 深度挂起时关闭了需要的唤醒源（如 GPIO 中断、UART），导致系统无法被正常唤醒。需要逐一确认唤醒需求并配置对应的 wakeup source。</p>
+<p><strong>debugfs 遗留开销：</strong> 调试阶段开启的 <code>pm_debug_messages</code>、<code>dynamic_debug</code> 等功能在量产时忘记关闭，引入额外的 CPU 活动和 I&#x2F;O 开销。</p>
+<p><strong>时钟树未清理：</strong> 系统挂起时部分时钟未正确关闭（如看门狗时钟、调试接口时钟），导致某些 power domain 无法真正断电。需要逐级检查时钟树的引用计数。</p>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> 已使用功耗分析仪建立各场景的电流基线数据</li>
+<li><input disabled="" type="checkbox"> cpuidle 策略已根据系统延迟要求配置，可用状态列表已确认</li>
+<li><input disabled="" type="checkbox"> cpufreq governor 已选择合适类型，频率范围已限定</li>
+<li><input disabled="" type="checkbox"> 外设 runtime PM 已为动态设备启用，autosuspend 延迟已调优</li>
+<li><input disabled="" type="checkbox"> 系统挂起&#x2F;恢复流程已测试，所有唤醒源已验证</li>
+<li><input disabled="" type="checkbox"> 定时器合并（tickless&#x2F;nohz）已启用，避免不必要的 CPU 唤醒</li>
+<li><input disabled="" type="checkbox"> debug 功能（<code>pm_debug_messages</code>、<code>dynamic_debug</code>）已关闭</li>
+<li><input disabled="" type="checkbox"> 时钟引用计数已检查，无遗留活跃时钟</li>
+<li><input disabled="" type="checkbox"> 优化后功耗数据已与基线对比，功能回归测试通过</li>
+<li><input disabled="" type="checkbox"> 文档已更新，记录各参数配置依据和预期效果</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>功耗优化不是一次性任务，而是贯穿产品生命周期的持续过程。从硬件选型阶段的功耗预算，到开发阶段的策略配置，再到量产前的精细调优，每个环节都需要系统化的思维。CPU Idle、DVFS 和外设管理三个维度的协同配合，远比单一手段的极致优化更有价值。</p>
+<p>最终的优化效果取决于对硬件能力和软件行为的深入理解。建议建立常态化的功耗测试机制，在每次内核升级或驱动变更后重新验证功耗指标，避免优化成果悄然退化。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/24/daily_post_2026_07_24_2/" title="嵌入式系统功耗优化：CPU Idle、DVFS 与外设低功耗管理">https://blog.hansong.icu/2026/07/24/daily_post_2026_07_24_2/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/24/daily_post_2026_07_24/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/default.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/24/daily_post_2026_07_24/" class="trm-anima-link">
+                    把临时排障命令收敛成可复用的诊断流程
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/24</li>
+                <li>09:01</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
