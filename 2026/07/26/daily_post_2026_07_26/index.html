@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="嵌入式 Linux 设备接入网络后，TCP&#x2F;IP 协议栈的默认参数往往不能满足实时性或吞吐量要求。工业网关、边缘计算节点、车载终端等场景下，网络延迟的毫秒级波动可能直接影响控制回路或数据采集的完整性。本文聚焦内核网络栈中对延迟和吞吐影响最大的可调参数，给出一套可落地的调优方法。 调优的核心判断是：嵌入式场景的网络需求通常是低延迟、确定性优先，而非最大吞吐。基于此，本文围绕缓冲区大小、拥塞">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式 Linux 网络协议栈调优：TCP&#x2F;IP 参数与实时性">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/26/daily_post_2026_07_26/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="嵌入式 Linux 设备接入网络后，TCP&#x2F;IP 协议栈的默认参数往往不能满足实时性或吞吐量要求。工业网关、边缘计算节点、车载终端等场景下，网络延迟的毫秒级波动可能直接影响控制回路或数据采集的完整性。本文聚焦内核网络栈中对延迟和吞吐影响最大的可调参数，给出一套可落地的调优方法。 调优的核心判断是：嵌入式场景的网络需求通常是低延迟、确定性优先，而非最大吞吐。基于此，本文围绕缓冲区大小、拥塞">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-26T01:03:01.000Z">
+<meta property="article:modified_time" content="2026-07-26T01:03:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="Network">
+<meta name="twitter:card" content="summary">
+
+
+<title >嵌入式 Linux 网络协议栈调优：TCP/IP 参数与实时性</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-26 09:03:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/embedded.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            嵌入式 Linux 网络协议栈调优：TCP/IP 参数与实时性
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/26
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:03
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>嵌入式 Linux 设备接入网络后，TCP&#x2F;IP 协议栈的默认参数往往不能满足实时性或吞吐量要求。工业网关、边缘计算节点、车载终端等场景下，网络延迟的毫秒级波动可能直接影响控制回路或数据采集的完整性。本文聚焦内核网络栈中对延迟和吞吐影响最大的可调参数，给出一套可落地的调优方法。</p>
+<p>调优的核心判断是：嵌入式场景的网络需求通常是低延迟、确定性优先，而非最大吞吐。基于此，本文围绕缓冲区大小、拥塞控制算法、NAPI 调度、中断亲和性四个维度展开，最终形成一份可直接应用的检查清单。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>嵌入式 Linux 设备的网络调优与通用服务器有本质区别。服务器追求高并发、大吞吐，而嵌入式设备往往只运行少量关键连接，但对延迟抖动极为敏感。典型的痛点包括：TCP 重传导致控制指令超时、接收缓冲区溢出丢包、中断风暴拖慢实时任务调度。</p>
+<p>本文限定讨论范围为 Linux 内核 5.10+ 的 TCP&#x2F;IP 协议栈，不涉及 UDP 专项调优和硬件 PHY 层配置。所有参数均可通过 sysctl 或 &#x2F;proc&#x2F;sys 动态调整，无需重新编译内核。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><ul>
+<li><strong>小缓冲区优先</strong>：嵌入式设备内存有限，<code>net.core.rmem_max</code> 和 <code>net.core.wmem_max</code> 不宜设得过大。对于控制类短连接，接收缓冲区 256KB 通常足够；过大的缓冲区反而引入 bufferbloat。</li>
+<li><strong>选择合适的拥塞控制算法</strong>：BBR 在高带宽延迟积（BDP）链路上表现优于 CUBIC，但嵌入式设备多数运行在低速或不稳定链路上，CUBIC 的保守策略更安全。需要根据实际网络环境测试后决定。</li>
+<li><strong>NAPI 调度与中断亲和性</strong>：多核 SoC 上将网络中断绑定到非实时核心，可以避免协议栈处理抢占实时任务。<code>/proc/irq/&lt;irq&gt;/smp_affinity</code> 是最直接的手段。</li>
+<li><strong>关闭不需要的功能</strong>：TCP timestamp、SACK、窗口缩放在低速嵌入式链路上收益有限，关闭它们可以减少每个包的处理开销。</li>
+</ul>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><h3 id="3-1-调整缓冲区参数"><a href="#3-1-调整缓冲区参数" class="headerlink" title="3.1 调整缓冲区参数"></a>3.1 调整缓冲区参数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 接收缓冲区：256KB</span></span><br><span class="line">sysctl -w net.core.rmem_max=262144</span><br><span class="line">sysctl -w net.core.rmem_default=262144</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送缓冲区：128KB</span></span><br><span class="line">sysctl -w net.core.wmem_max=131072</span><br><span class="line">sysctl -w net.core.wmem_default=131072</span><br><span class="line"></span><br><span class="line"><span class="comment"># TCP 自动调优范围</span></span><br><span class="line">sysctl -w net.ipv4.tcp_rmem=<span class="string">&quot;4096 262144 262144&quot;</span></span><br><span class="line">sysctl -w net.ipv4.tcp_wmem=<span class="string">&quot;4096 131072 131072&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-选择拥塞控制算法"><a href="#3-2-选择拥塞控制算法" class="headerlink" title="3.2 选择拥塞控制算法"></a>3.2 选择拥塞控制算法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可用算法</span></span><br><span class="line">sysctl net.ipv4.tcp_available_congestion_control</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到 BBR（需内核模块支持）</span></span><br><span class="line">modprobe tcp_bbr</span><br><span class="line">sysctl -w net.ipv4.tcp_congestion_control=bbr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或保持 CUBIC（默认）</span></span><br><span class="line">sysctl -w net.ipv4.tcp_congestion_control=cubic</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-优化-NAPI-与中断"><a href="#3-3-优化-NAPI-与中断" class="headerlink" title="3.3 优化 NAPI 与中断"></a>3.3 优化 NAPI 与中断</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 减小 NAPI 调度的批量处理数（减少单次处理延迟）</span></span><br><span class="line">sysctl -w net.core.netdev_budget=300</span><br><span class="line">sysctl -w net.core.netdev_budget_usecs=2000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将网卡中断绑定到 CPU1（假设 CPU0 运行实时任务）</span></span><br><span class="line"><span class="built_in">echo</span> 2 &gt; /proc/irq/&lt;eth_irq&gt;/smp_affinity</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-关闭非必要-TCP-特性"><a href="#3-4-关闭非必要-TCP-特性" class="headerlink" title="3.4 关闭非必要 TCP 特性"></a>3.4 关闭非必要 TCP 特性</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w net.ipv4.tcp_timestamps=0</span><br><span class="line">sysctl -w net.ipv4.tcp_sack=0</span><br><span class="line">sysctl -w net.ipv4.tcp_window_scaling=0</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-持久化配置"><a href="#3-5-持久化配置" class="headerlink" title="3.5 持久化配置"></a>3.5 持久化配置</h3><p>将上述 sysctl 配置写入 <code>/etc/sysctl.d/90-network-tuning.conf</code>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">net.core.rmem_max</span>=<span class="number">262144</span></span><br><span class="line"><span class="attr">net.core.rmem_default</span>=<span class="number">262144</span></span><br><span class="line"><span class="attr">net.core.wmem_max</span>=<span class="number">131072</span></span><br><span class="line"><span class="attr">net.core.wmem_default</span>=<span class="number">131072</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_congestion_control</span>=cubic</span><br><span class="line"><span class="attr">net.ipv4.tcp_timestamps</span>=<span class="number">0</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_sack</span>=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><ul>
+<li><strong>bufferbloat 陷阱</strong>：盲目增大缓冲区会导致延迟飙升。调优时必须配合 ping 延迟测量，确认 RTT 没有异常增大。</li>
+<li><strong>BBR 在嵌入式链路上的表现</strong>：BBR 需要较准确的带宽估计，在丢包率高的链路上可能表现不如 CUBIC。上线前必须做对比测试。</li>
+<li><strong>中断亲和性与实时任务冲突</strong>：将网络中断绑定到运行 RT 任务的 CPU 核心上，会导致不可预期的调度抖动。务必确认实时核心不处理网络中断。</li>
+<li><strong>tcp_timestamps 关闭的影响</strong>：关闭 timestamps 会影响 PAWS（Protection Against Wrapped Sequences），在高带宽长连接中可能导致序列号回绕问题。嵌入式短连接场景通常无碍。</li>
+<li><strong>sysctl 动态生效范围</strong>：部分参数修改后只对新连接生效，已有连接不受影响。调优后建议重启相关服务或等待连接重建。</li>
+</ul>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> 确认内核版本 ≥ 5.10，支持所需 TCP 特性</li>
+<li><input disabled="" type="checkbox"> 缓冲区参数已根据实际链路 BDP 调整，非盲目设大</li>
+<li><input disabled="" type="checkbox"> 拥塞控制算法已测试对比，选定 CUBIC 或 BBR</li>
+<li><input disabled="" type="checkbox"> 网卡中断已绑定到非实时 CPU 核心</li>
+<li><input disabled="" type="checkbox"> NAPI budget 参数已调整以平衡延迟与吞吐</li>
+<li><input disabled="" type="checkbox"> 不需要的 TCP 特性已关闭（timestamps、SACK 等）</li>
+<li><input disabled="" type="checkbox"> 配置已持久化到 &#x2F;etc&#x2F;sysctl.d&#x2F;，重启后自动加载</li>
+<li><input disabled="" type="checkbox"> 通过 iperf3 或实际业务流量验证延迟和丢包率</li>
+<li><input disabled="" type="checkbox"> 与实时任务调度（如 PREEMPT_RT）无冲突</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>嵌入式 Linux 网络调优的本质是权衡：用确定性换吞吐，用保守策略换稳定性。参数调整本身不复杂，难的是理解每个参数背后的取舍逻辑，并结合具体硬件和网络环境做验证。建议建立一套基线测试方案，每次内核升级或网络拓扑变更后重新跑一遍，确保调优效果持续有效。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/26/daily_post_2026_07_26/" title="嵌入式 Linux 网络协议栈调优：TCP/IP 参数与实时性">https://blog.hansong.icu/2026/07/26/daily_post_2026_07_26/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/25/daily_post_2026_07_25_2/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/default.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+                    工程实践
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/25/daily_post_2026_07_25_2/" class="trm-anima-link">
+                    技术方案中的可回滚设计
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/25</li>
+                <li>21:09</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="3.1 调整缓冲区参数"><a rel="nofollow" class="trm-toc-link" href="#3-1-调整缓冲区参数"><span class="trm-toc-number">3.1.</span> <span class="trm-toc-text">3.1 调整缓冲区参数</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3.2 选择拥塞控制算法"><a rel="nofollow" class="trm-toc-link" href="#3-2-选择拥塞控制算法"><span class="trm-toc-number">3.2.</span> <span class="trm-toc-text">3.2 选择拥塞控制算法</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3.3 优化 NAPI 与中断"><a rel="nofollow" class="trm-toc-link" href="#3-3-优化-NAPI-与中断"><span class="trm-toc-number">3.3.</span> <span class="trm-toc-text">3.3 优化 NAPI 与中断</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3.4 关闭非必要 TCP 特性"><a rel="nofollow" class="trm-toc-link" href="#3-4-关闭非必要-TCP-特性"><span class="trm-toc-number">3.4.</span> <span class="trm-toc-text">3.4 关闭非必要 TCP 特性</span></a></li><li class="trm-toc-item trm-toc-level-3" title="3.5 持久化配置"><a rel="nofollow" class="trm-toc-link" href="#3-5-持久化配置"><span class="trm-toc-number">3.5.</span> <span class="trm-toc-text">3.5 持久化配置</span></a></li></ol></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
