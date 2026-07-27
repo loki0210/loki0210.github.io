@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="很多技术任务的返工并不是因为实现能力不足，而是因为一开始没有把变更边界说清楚。需求、代码、测试、发布影响混在一起推进时，团队很容易在后期发现遗漏：改动范围比预期更大，依赖模块没有同步处理，或者评审时才发现目标和实现并不一致。 适合先定义变更边界的场景包括：修复线上缺陷、重构共享模块、调整数据结构、替换底层依赖、修改构建或发布流程。本文的结论是：在写代码前用一份轻量边界说明约束任务范围，在实现中持续">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用变更边界降低技术任务返工">
+<meta property="og:url" content="https://blog.hansong.icu/2026/07/27/daily_post_2026_07_27/index.html">
+<meta property="og:site_name" content="Zihuatanejo">
+<meta property="og:description" content="很多技术任务的返工并不是因为实现能力不足，而是因为一开始没有把变更边界说清楚。需求、代码、测试、发布影响混在一起推进时，团队很容易在后期发现遗漏：改动范围比预期更大，依赖模块没有同步处理，或者评审时才发现目标和实现并不一致。 适合先定义变更边界的场景包括：修复线上缺陷、重构共享模块、调整数据结构、替换底层依赖、修改构建或发布流程。本文的结论是：在写代码前用一份轻量边界说明约束任务范围，在实现中持续">
+<meta property="og:locale">
+<meta property="article:published_time" content="2026-07-27T01:01:01.000Z">
+<meta property="article:modified_time" content="2026-07-27T01:01:01.000Z">
+<meta property="article:author" content="Zihuatanejo">
+<meta property="article:tag" content="变更管理">
+<meta property="article:tag" content="代码评审">
+<meta property="article:tag" content="工程效率">
+<meta name="twitter:card" content="summary">
+
+
+<title >用变更边界降低技术任务返工</title>
+
+<!-- Favicon -->
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/custom-favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"blog.hansong.icu","author":"Zihuatanejo","root":"/","typed_text":["Android Developer","Java / Kotlin Learner","Technical Writer"],"theme_version":"2.2.7","theme":{"switch":true,"default":"auto"},"favicon":{"logo":"/img/custom-favicon.svg","icon16":"/img/custom-favicon.svg","icon32":"/img/custom-favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"欢迎回来","hide_text":"页面已离开"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"09/10/2019 09:19:54","prefix":"已运行"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-07-27 09:01:01"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/custom-favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            Zihuatanejo<span></span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:blog.hansong.icu">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/img/covers/default.svg">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            用变更边界降低技术任务返工
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2026
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.png">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Zihuatanejo
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/loki0210" title="Github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                站点:
+            </div>
+            <div class="trm-label trm-label-light">
+                Zihuatanejo
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                领域:
+            </div>
+            <div class="trm-label trm-label-light">
+                Android / Java / Kotlin
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            07/27
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:01
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Zihuatanejo
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>很多技术任务的返工并不是因为实现能力不足，而是因为一开始没有把变更边界说清楚。需求、代码、测试、发布影响混在一起推进时，团队很容易在后期发现遗漏：改动范围比预期更大，依赖模块没有同步处理，或者评审时才发现目标和实现并不一致。</p>
+<p>适合先定义变更边界的场景包括：修复线上缺陷、重构共享模块、调整数据结构、替换底层依赖、修改构建或发布流程。本文的结论是：在写代码前用一份轻量边界说明约束任务范围，在实现中持续对照，在评审和发布前再次核对，可以显著减少无效改动和二次返工。</p>
+<span id="more"></span>
+
+<h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p>软件系统中的一次变更通常会穿过多个层次：入口接口、领域逻辑、存储结构、缓存策略、测试用例、构建配置和发布脚本。即使代码 diff 看起来不大，也可能影响调用方行为或运行环境。</p>
+<p>这个问题值得写，是因为很多返工发生在“大家以为理解一致”的区域。开发者认为自己只是在修一个局部问题，评审者却按架构调整来检查；产品或使用方期待行为改变，代码实际只处理了某个分支；测试只覆盖了新路径，却没有确认旧路径是否仍然成立。</p>
+<p>本文限定讨论普通业务系统和工具型项目中的代码变更管理，不展开组织流程、排期管理或大型项目治理。目标是给个人开发和小团队提供一套足够轻量、能落地的边界控制方法。</p>
+<h2 id="二、核心思路"><a href="#二、核心思路" class="headerlink" title="二、核心思路"></a>二、核心思路</h2><ul>
+<li>先写目标，不先写方案。目标描述应该回答“这次完成后，外部可观察行为有什么变化”，而不是直接写“修改某个函数”。</li>
+<li>明确不做什么。不做项可以减少评审时的分歧，也能防止实现过程中顺手重构、顺手优化导致范围扩大。</li>
+<li>把影响面拆成可检查对象。常见对象包括接口、数据、配置、日志、权限、性能、兼容性、测试和发布。</li>
+<li>让边界跟随代码演进。实现过程中如果发现原边界不准确，应先更新边界判断，再继续编码，而不是在提交说明里事后解释。</li>
+<li>用验证结果闭环。边界不是文档装饰，最终要落到测试、构建、人工检查或灰度观察上。</li>
+</ul>
+<p>一个可用的边界说明不需要很长，但需要具体。比如“修复导出接口在空结果时返回 500”比“优化导出功能”更容易判断完成状态；“不调整文件格式和权限规则”比“保持兼容”更容易检查。</p>
+<h2 id="三、落地步骤"><a href="#三、落地步骤" class="headerlink" title="三、落地步骤"></a>三、落地步骤</h2><p>第一步，写一个任务边界草稿。可以放在 issue、提交说明草稿、评审描述或本地记录中。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">目标：</span><br><span class="line"><span class="bullet">-</span> 修复订单导出在无数据时返回 500 的问题。</span><br><span class="line"></span><br><span class="line">范围：</span><br><span class="line"><span class="bullet">-</span> 修改导出服务的空结果处理。</span><br><span class="line"><span class="bullet">-</span> 补充空结果测试用例。</span><br><span class="line"></span><br><span class="line">不做：</span><br><span class="line"><span class="bullet">-</span> 不调整导出文件字段。</span><br><span class="line"><span class="bullet">-</span> 不修改权限校验逻辑。</span><br><span class="line"><span class="bullet">-</span> 不替换导出组件。</span><br><span class="line"></span><br><span class="line">验证：</span><br><span class="line"><span class="bullet">-</span> 单元测试覆盖空结果。</span><br><span class="line"><span class="bullet">-</span> 手动请求确认返回空文件或约定响应。</span><br><span class="line"><span class="bullet">-</span> 构建通过。</span><br></pre></td></tr></table></figure>
+
+<p>第二步，进入代码前先定位影响面。可以从入口开始向下追踪调用链，记录每个可能被影响的点。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HTTP 接口</span><br><span class="line">  -&gt; 参数校验</span><br><span class="line">  -&gt; 查询服务</span><br><span class="line">  -&gt; 导出组装</span><br><span class="line">  -&gt; 文件响应</span><br><span class="line">  -&gt; 日志与错误码</span><br></pre></td></tr></table></figure>
+
+<p>第三步，只改和目标直接相关的路径。如果在阅读代码时发现命名混乱、重复逻辑或旧问题，先记录下来，不直接并入当前变更。除非这些问题阻塞当前目标，否则不要扩大 diff。</p>
+<p>第四步，把验证动作和边界逐条对应。不要只写“测试通过”，而要确认每个关键判断都有验证方式。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">空结果行为变化：单元测试 + 手动请求</span><br><span class="line">文件字段不变化：对比导出头部</span><br><span class="line">权限逻辑不变化：复用原有权限测试</span><br><span class="line">异常日志仍可定位：检查错误分支日志</span><br></pre></td></tr></table></figure>
+
+<p>第五步，在评审描述中保留边界信息。评审者看到目标、范围、不做项和验证方式后，更容易聚焦在真正需要检查的部分。</p>
+<h2 id="四、常见坑"><a href="#四、常见坑" class="headerlink" title="四、常见坑"></a>四、常见坑</h2><ul>
+<li>把“顺手修一下”当作低成本改动。顺手改动通常缺少上下文验证，后续出现问题时也难以判断责任边界。</li>
+<li>只定义代码范围，不定义行为范围。文件改动少不代表影响小，尤其是共享函数、公共配置和数据迁移。</li>
+<li>不写不做项。没有不做项时，评审者和使用方容易把未覆盖的期待误认为遗漏。</li>
+<li>验证只覆盖新路径。修复缺陷时还需要确认原有正常路径没有被破坏。</li>
+<li>边界变化后不更新说明。实现中发现范围扩大是正常现象，但需要同步更新任务描述和验证计划。</li>
+<li>把构建通过等同于任务完成。构建只能证明项目在当前环境下能生成产物，不能替代行为验证。</li>
+</ul>
+<h2 id="五、检查清单"><a href="#五、检查清单" class="headerlink" title="五、检查清单"></a>五、检查清单</h2><ul>
+<li><input disabled="" type="checkbox"> 是否用一句话写清楚本次变更的外部可观察目标。</li>
+<li><input disabled="" type="checkbox"> 是否列出本次明确不处理的事项。</li>
+<li><input disabled="" type="checkbox"> 是否确认影响面包含接口、数据、配置、日志、测试和发布相关点。</li>
+<li><input disabled="" type="checkbox"> 是否避免把无关重构混入当前提交。</li>
+<li><input disabled="" type="checkbox"> 是否为核心行为变化补充了自动化测试或可复现的手动验证。</li>
+<li><input disabled="" type="checkbox"> 是否检查旧路径、异常路径和边界输入。</li>
+<li><input disabled="" type="checkbox"> 是否在评审描述中说明范围、风险和验证结果。</li>
+<li><input disabled="" type="checkbox"> 是否确认构建命令可以通过。</li>
+</ul>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>变更边界的价值在于把模糊任务变成可检查任务。它不要求团队引入复杂流程，只要求在动手前明确目标、范围、不做项和验证方式，并在实现过程中持续校准。</p>
+<p>当任务变复杂时，边界说明还能帮助团队判断是否需要拆分提交、扩大测试或延后非必要优化。这样做不会消除所有返工，但可以减少那些由误解、范围漂移和验证缺口造成的返工。</p>
+
+</article>
+    
+    
+
+<ul class="trm-post-copyright">
+    <li class="trm-post-copyright-author">
+        <strong>本文作者：</strong>
+        Zihuatanejo
+    </li>
+    <li class="trm-post-copyright-link">
+        <strong>本文链接：</strong>
+        <a id="original-link" href="https://blog.hansong.icu/2026/07/27/daily_post_2026_07_27/" title="用变更边界降低技术任务返工">https://blog.hansong.icu/2026/07/27/daily_post_2026_07_27/</a>
+    </li>
+    <li class="trm-post-copyright-license">
+        <strong>版权声明：</strong>
+        本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 ">CC BY-NC-SA 4.0</a> 许可协议。
+    </li>
+</ul>
+
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/2026/07/26/daily_post_2026_07_26/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/covers/embedded.svg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91-%E7%BD%91%E7%BB%9C/">
+                    嵌入式开发/网络
+                </a>
+            </div>
+            <h5>
+                <a href="/2026/07/26/daily_post_2026_07_26/" class="trm-anima-link">
+                    嵌入式 Linux 网络协议栈调优：TCP/IP 参数与实时性
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/07/26</li>
+                <li>09:03</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2019 - 2026</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Zihuatanejo</span>
+        </div>
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+    
+        <div class="trm-footer-item blog-run-long"></div>
+     
+
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="一、问题背景"><a rel="nofollow" class="trm-toc-link" href="#一、问题背景"><span class="trm-toc-number">1.</span> <span class="trm-toc-text">一、问题背景</span></a></li><li class="trm-toc-item trm-toc-level-2" title="二、核心思路"><a rel="nofollow" class="trm-toc-link" href="#二、核心思路"><span class="trm-toc-number">2.</span> <span class="trm-toc-text">二、核心思路</span></a></li><li class="trm-toc-item trm-toc-level-2" title="三、落地步骤"><a rel="nofollow" class="trm-toc-link" href="#三、落地步骤"><span class="trm-toc-number">3.</span> <span class="trm-toc-text">三、落地步骤</span></a></li><li class="trm-toc-item trm-toc-level-2" title="四、常见坑"><a rel="nofollow" class="trm-toc-link" href="#四、常见坑"><span class="trm-toc-number">4.</span> <span class="trm-toc-text">四、常见坑</span></a></li><li class="trm-toc-item trm-toc-level-2" title="五、检查清单"><a rel="nofollow" class="trm-toc-link" href="#五、检查清单"><span class="trm-toc-number">5.</span> <span class="trm-toc-text">五、检查清单</span></a></li><li class="trm-toc-item trm-toc-level-2" title="六、小结"><a rel="nofollow" class="trm-toc-link" href="#六、小结"><span class="trm-toc-number">6.</span> <span class="trm-toc-text">六、小结</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
